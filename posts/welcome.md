@@ -39,6 +39,6 @@ This course is designed to cover the in-depth math knowledge essential for resea
 
 ## Contact
 
-- **Yulin Yang** — <yangyulin1@gmail.com>
-- **Chuchu Chen** — <chuchu.chen@gwu.edu>
-- **Xingxing Zuo** — <xingxing.zuo@mbzuai.ac.ae>
+- **[Yulin Yang](https://yangyulin.net/)** — <yangyulin1@gmail.com>
+- **[Chuchu Chen](https://chuchuchen.net/)** — <chuchu.chen@gwu.edu>
+- **[Xingxing Zuo](https://xingxingzuo.github.io/)** — <xingxing.zuo@mbzuai.ac.ae>
