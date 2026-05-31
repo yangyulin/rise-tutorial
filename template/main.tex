@@ -1,0 +1,129 @@
+\documentclass[11pt]{extarticle}
+\usepackage[letterpaper,margin=1.0in]{geometry}
+%% Load our math packages
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{xfrac} % Allow sidways fractions num/denom
+\usepackage{mathtools} % Allow multiline equations
+\usepackage[font=footnotesize]{caption}
+\usepackage{url}
+\usepackage{cancel}
+\usepackage{subcaption} % used for subfigure side by sides
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{epstopdf}
+\usepackage{bm}
+%% Load TIKZ for drawing figures
+\usepackage{tikz}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shapes,snakes}
+%% Load core packages we need
+\usepackage{algorithm}% http://ctan.org/pkg/algorithms
+% \usepackage{algorithmic} % algorithms!!
+\usepackage{algpseudocode}% http://ctan.org/pkg/algorithmicx
+\usepackage{lipsum} % for generated text
+\usepackage{empheq} % Boxed equations http://tex.stackexchange.com/a/14298
+\usepackage{xcolor} % Boxed equations http://tex.stackexchange.com/a/14298
+\usepackage{fancyhdr} % Allow for nice footers
+\pagestyle{fancy} % Allow for nice footers
+\usepackage{tabulary} % allow tables with line breaks
+\usepackage{enumitem} % allows for removal of list spacing
+\usepackage[colorlinks]{hyperref} % allow url links (REMOVE "colorlinks" IF PRINTING)
+\usepackage{float} % allow using of [H] tag on "figure"s
+\usepackage{color} % color text package
+\usepackage[titletoc,title]{appendix} % appendix
+\usepackage[backend=bibtex,sorting=none]{biblatex}
+\bibliography{libraries/extras,libraries/library}
+\graphicspath{{figures/}}
+\DeclareGraphicsExtensions{.PNG,.JPG,.pdf,.png,.jpg,.jpeg}
+%
+% Clear the headers and footers
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+%
+%
+% Allow more then 10 columns in matrix
+\setcounter{MaxMatrixCols}{20}
+%
+% Fix appendix titles
+\usepackage{etoolbox}
+\patchcmd{\appendices}{\quad}{: }{}{}
+%
+% Custom references (used in the rules section)
+\makeatletter
+\newcommand{\customlabel}[2]{%
+   \protected@write \@auxout {}{\string \newlabel {#1}{{#2}{\thepage}{#2}{#1}{}} }%
+   \hypertarget{#1}{#2}
+}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% CUSTOM COMMANDS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Custom command to stick things to bottom of pages
+\newenvironment{bottompar}{\par\vspace*{\fill}}{\clearpage}
+% Better cancel line
+% https://tex.stackexchange.com/a/20648
+\usepackage{tikz}
+\usetikzlibrary{calc}
+\usepackage{xparse}
+\DeclareDocumentCommand{\hcancel}{mO{0pt}O{0pt}O{0pt}O{0pt}}{%
+    \tikz[baseline=(tocancel.base)]{
+        \node[inner sep=0pt,outer sep=0pt] (tocancel) {$#1$};
+        \draw[red] ($(tocancel.south west)+(#2,#3)$) -- ($(tocancel.north east)+(#4,#5)$);
+    }%
+}%
+% Allow for absolute value and norm brackets
+% https://tex.stackexchange.com/a/43009
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+\newcommand{\skewsym}[1]{\left\lfloor#1\times\right\rfloor}
+\newcommand{\vect}[1]{\boldsymbol{\mathbf{#1}}}
+% Swap the definition of \abs* and \norm*, so that \abs
+% and \norm resizes the size of the brackets, and the 
+% starred version does not.
+\makeatletter
+\let\oldabs\abs
+\def\abs{\@ifstar{\oldabs}{\oldabs*}}
+\let\oldnorm\norm
+\def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+\makeatother
+
+\begin{document}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Main sections of the report
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\input{sections_main/00_titlepage}
+\input{sections_main/01_introduction}
+\input{sections_main/02_examples}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Our appendixes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+\begin{appendices}
+\newpage
+\input{sections_appendix/01_cool_things}
+\end{appendices}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Append our bibliography
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% \newpage
+\addcontentsline{toc}{section}{References}
+\printbibliography
+\newpage
+
+%
+\end{document}
+\grid
+\grid
