@@ -4,7 +4,7 @@
 % =====================================================================
 \subsection{Probability}
 
-\subsubsection{Definition.}
+\subsubsection{Definition}
 
 For an event $A$, the probability $P(A)$ is
 \begin{align}
@@ -12,7 +12,7 @@ P(A) = \frac{N_A}{N},
 \end{align}
 where $N_A$ is the number of occurrences of $A$ and $N$ is the number of all possible outcomes.
 
-\subsubsection{Conditional probability.}
+\subsubsection{Conditional probability}
 The probability of event $A$ given that event $B$ is true is
 \begin{align}
 P(A\mid B) = \frac{P(A,B)}{P(B)}, \qquad P(B)\neq 0,
@@ -23,18 +23,18 @@ P(A,B) & = P(A\mid B)\,P(B)\\
 & = P(B\mid A)\,P(A).
 \end{align}
 
-\subsubsection{Total probability theorem.}
+\subsubsection{Total probability theorem}
 If $\{A_1,\dots,A_n\}$ is a partition (mutually exclusive, $P(A_i,A_j)=0$ for $i\neq j$) and $B$ is an arbitrary event, then
 \begin{align}
 P(B) = P(B\mid A_1)P(A_1) + \cdots + P(B\mid A_n)P(A_n) = \sum_{i} P(B\mid A_i)\,P(A_i).
 \end{align}
 
-\paragraph{Bayes' theorem.}
+\subsubsection{Bayes' theorem}
 \begin{align}
 P(A_i\mid B) = \frac{P(B\mid A_i)\,P(A_i)}{P(B)} = \frac{P(B\mid A_i)\,P(A_i)}{\sum_{i} P(B\mid A_i)\,P(A_i)}.
 \end{align}
 
-\paragraph{Independence.}
+\subsubsection{Independence}
 With the inclusion--exclusion relation $P(A\cup B) = P(A) + P(B) - P(A\cap B)$, two events $A$ and $B$ are independent when
 \begin{align}
 P(A,B) = P(A\mid B)\,P(B) = P(A)\,P(B) = P(B\mid A)\,P(A) = P(B)\,P(A).
@@ -45,14 +45,14 @@ P(A,B) = P(A\mid B)\,P(B) = P(A)\,P(B) = P(B\mid A)\,P(A) = P(B)\,P(A).
 
 A random variable defines a function that quantifies an experiment. For a sample space $S=\{s_1,\dots,s_n\}$, a random variable is a map $\mathrm{x}:S\to\Reals$ with $\mathrm{x}(s_i)=x_i$.
 
-\paragraph{Distribution.}
+\subsubsection{Distribution}
 The (cumulative) distribution of a random variable $\mathrm{x}$ is
 \begin{align}
 F_{\mathrm{x}}(x) = P(\mathrm{x}\le x),
 \end{align}
 i.e. the probability that $\mathrm{x}$ takes a value lower than or equal to $x$.
 
-\paragraph{Probability density function (pdf).}
+\subsubsection{Probability density function (pdf)}
 \begin{align}
 p(x) = \lim_{\varepsilon\to 0}\frac{F_{\mathrm{x}}(x)-F_{\mathrm{x}}(x-\varepsilon)}{\varepsilon} = \frac{\mathrm{d}F_{\mathrm{x}}(x)}{\mathrm{d}x} = \frac{\mathrm{d}P(\mathrm{x}\le x)}{\mathrm{d}x},
 \end{align}
@@ -66,25 +66,25 @@ and for an interval
 P(x_1\le \mathrm{x} < x_2) = \int_{x_1}^{x_2} p(\xi)\,\mathrm{d}\xi.
 \end{align}
 
-\paragraph{Example distributions.}
+\subsubsection{Example distributions}
 \begin{itemize}[itemsep=0.4em]
 \item Gaussian: $\mathrm{x}\sim\mathcal{N}(m,\sigma) \;\Longleftrightarrow\; p(x) = \dfrac{1}{\sqrt{2\pi}\,\sigma}\,e^{-\frac{(x-m)^2}{2\sigma^2}}$.
 \item Uniform: $p(x) = \begin{cases} 0 & x < x_1 \\[2pt] \dfrac{1}{x_2-x_1} & x_1\le x\le x_2 \\[4pt] 0 & x > x_2 \end{cases}$
 \end{itemize}
 
-\paragraph{Conditional distribution and density.}
+\subsubsection{Conditional distribution and density}
 \begin{align}
 P(\mathrm{x}\le x\mid A) = \frac{P(\mathrm{x}\le x,\, A)}{P(A)}, \qquad
 p(x\mid A) = \frac{\mathrm{d}P(\mathrm{x}\le x\mid A)}{\mathrm{d}x}.
 \end{align}
 
-\paragraph{Total probability theorem for pdfs.}
+\subsubsection{Total probability theorem for pdfs}
 For a mutually exclusive partition $\{A_1,\dots,A_n\}$,
 \begin{align}
 p(x) = p(x\mid A_1)P(A_1) + \cdots + p(x\mid A_n)P(A_n).
 \end{align}
 
-\paragraph{Continuous Bayes' theorem.}
+\subsubsection{Continuous Bayes' theorem}
 Using the infinitesimal relations $P(\mathrm{x}=x) = p(x)\,\delta x$ and $P(\mathrm{x}=x\mid A) = p(x\mid A)\,\delta x$,
 \begin{align}
 P(A\mid \mathrm{x}=x) = \frac{P(A,\, \mathrm{x}=x)}{P(\mathrm{x}=x)}
@@ -101,14 +101,14 @@ p(x\mid A) &= \frac{P(A\mid \mathrm{x}=x)}{P(A)}\,p(x)
 % =====================================================================
 \subsection{Expectation, Variance, and Random Vectors}
 
-\paragraph{Mean.}
+\subsubsection{Mean}
 The expected value (mean) of a continuous random variable, and its conditional version, are
 \begin{align}
 m_x = \E(\mathrm{x}) = \int_{-\infty}^{+\infty} x\,p(x)\,\mathrm{d}x, \qquad
 m_x = \E(\mathrm{x}\mid A) = \int_{-\infty}^{+\infty} x\,p(x\mid A)\,\mathrm{d}x.
 \end{align}
 
-\paragraph{Variance.}
+\subsubsection{Variance}
 \begin{align}
 \sigma_x^2 = \E\big((\mathrm{x}-m_x)^2\big) = \int_{-\infty}^{+\infty}(x-m_x)^2\,p(x)\,\mathrm{d}x = \E(\mathrm{x}^2) - \big(\E(\mathrm{x})\big)^2,
 \end{align}
@@ -117,7 +117,7 @@ with the conditional variance
 \sigma_{x\mid A}^2 = \E\big\{(\mathrm{x}-m_{x\mid A})^2 \mid A\big\} = \int_{-\infty}^{+\infty}(x-m_{x\mid A})^2\,p(x\mid A)\,\mathrm{d}x.
 \end{align}
 
-\paragraph{A set of random variables.}
+\subsubsection{A set of random variables}
 The joint pdf of $x_1,\dots,x_n$ satisfies
 \begin{align}
 \int_{-\infty}^{+\infty}\!\!\!\cdots\!\int_{-\infty}^{+\infty} p(x_1,\dots,x_n)\,\mathrm{d}x_1\cdots\mathrm{d}x_n = 1.
@@ -127,7 +127,7 @@ If $x_i,x_j$ are independent, $p(x_i,x_j) = p(x_i)\,p(x_j)$. Expectation is line
 \E(y) = \alpha\,\E(x_i) + \beta\,\E(x_j).
 \end{align}
 
-\paragraph{Covariance.}
+\subsubsection{Covariance}
 \begin{align}
 \sigma_{ij}^2 = \E\big((x_i-m_i)(x_j-m_j)\big) = \E(x_i x_j) - \E(x_i)\,\E(x_j).
 \end{align}
@@ -142,7 +142,7 @@ When $\sigma_{ij}=0$ we have $\E(x_i x_j) = \E(x_i)\,\E(x_j)$ and $x_i,x_j$ are 
 \end{enumerate}
 \end{quote}
 
-\paragraph{Random vector.}
+\subsubsection{Random vector}
 Let $\vect{x} = [x_1,\dots,x_n]\trans$, where all elements are random variables, with mean $\E(\vect{x})\triangleq\vect{m}_x$ and covariance
 \begin{align}
 \vect{P} = \E\big((\vect{x}-\vect{m}_x)(\vect{x}-\vect{m}_x)\trans\big) = \E(\vect{x}\vect{x}\trans) - \E(\vect{x})\,\E(\vect{x}\trans),
@@ -155,7 +155,7 @@ P_{ij} = \E\big((x_i-m_i)(x_j-m_j)\big).
 \end{align}
 Since $P_{ij}=P_{ji}$, the covariance $\vect{P}$ is a symmetric matrix; it is also positive (semi-)definite.
 
-\paragraph{Gaussian vector pdf.}
+\subsubsection{Gaussian vector pdf}
 \begin{align}
 p(\vect{x}) = \frac{1}{(2\pi)^{n/2}\sqrt{|\vect{P}|}}\,\exp\!\Big(-\tfrac{1}{2}(\vect{x}-\vect{m}_x)\trans \vect{P}^{-1}(\vect{x}-\vect{m}_x)\Big),
 \end{align}
@@ -208,7 +208,7 @@ This is the classical weighted least-squares solution.
 \end{enumerate}
 \end{quote}
 
-\paragraph{Optimization.}
+\subsubsection{Optimization}
 Nonlinear least-squares problems are solved iteratively, e.g. Gauss--Newton (GN) and Levenberg--Marquardt (LM).
 
 % =====================================================================
@@ -224,7 +224,7 @@ where $\vect{x}$ is the state, $\vect{u}$ the input, and $\vect{y}$ the output. 
 \end{align}
 If $\vect{A},\vect{B},\vect{C},\vect{D}$ are constant, the system is \emph{linear time-invariant} (LTI); if they depend on time, it is \emph{linear time-variant} (LTV).
 
-\paragraph{Homogeneous solution.}
+\subsubsection{Homogeneous solution}
 Consider $\dot{\vect{x}} = \vect{A}\vect{x}$ with $\vect{x}(t_0)=\vect{x}_0$ and $\vect{y} = \vect{C}\vect{x}$. From $\dot{\vect{x}} - \vect{A}\vect{x} = \vect{0}$,
 \begin{align}
 \frac{\mathrm{d}}{\mathrm{d}t}\big(e^{-\vect{A}t}\vect{x}\big)
@@ -237,14 +237,14 @@ Integrating from $0$ to $t$ gives $e^{-\vect{A}t}\vect{x}(t) - \vect{x}(t_0) = \
 \end{align}
 where $\vect{\Phi}(t,0)$ is the \emph{state transition matrix}, and $\vect{y} = \vect{C}\,\vect{\Phi}(t,0)\,\vect{x}_0$.
 
-\paragraph{Properties of the state transition matrix.}
+\subsubsection{Properties of the state transition matrix}
 \begin{align}
 \vect{\Phi}(t_2,t_0) = \vect{\Phi}(t_2,t_1)\,\vect{\Phi}(t_1,t_0), \qquad
 \frac{\mathrm{d}}{\mathrm{d}t}\vect{\Phi}(t,0) = \vect{A}\,\vect{\Phi}(t,0).
 \end{align}
 The second follows from $\dot{\vect{x}} = \dot{\vect{\Phi}}(t,0)\vect{x}_0 = \vect{A}\vect{x} = \vect{A}\,\vect{\Phi}(t,0)\vect{x}_0$.
 
-\paragraph{Output sequence and observability.}
+\subsubsection{Output sequence and observability}
 Sampling the homogeneous response at $t_0,t_1,\dots,t_n$ with $\vect{x}_k = \vect{\Phi}(k,0)\vect{x}_0$ and $\vect{y}_k = \vect{C}\vect{x}_k$ stacks into
 \begin{align}
 \begin{bmatrix} \vect{y}_1 \\ \vdots \\ \vect{y}_n \end{bmatrix}
@@ -253,7 +253,7 @@ Sampling the homogeneous response at $t_0,t_1,\dots,t_n$ with $\vect{x}_k = \vec
 \end{align}
 which relates the measured outputs to the initial state (an observability-type relation).
 
-\paragraph{Full LTV solution.}
+\subsubsection{Full LTV solution}
 For the complete system $\dot{\vect{x}} = \vect{A}(t)\vect{x} + \vect{B}(t)\vect{u}(t)$, write $\dot{\vect{x}} - \vect{A}(t)\vect{x} = \vect{B}(t)\vect{u}(t)$ and use the integrating factor $e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}$:
 \begin{align}
 \frac{\mathrm{d}}{\mathrm{d}t}\Big(e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}\vect{x}\Big)
