@@ -8,4 +8,4 @@ main.run.xml
 main.synctex.gz
 main.toc
 main-blx.bib
-main.pdf
+# main.pdf is tracked in this lecture so the rendered notes are viewable on GitHub
