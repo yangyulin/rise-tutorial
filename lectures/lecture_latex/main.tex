@@ -78,6 +78,10 @@
 \DeclarePairedDelimiter\norm{\lVert}{\rVert}%
 \newcommand{\skewsym}[1]{\left\lfloor#1\times\right\rfloor}
 \newcommand{\vect}[1]{\boldsymbol{\mathbf{#1}}}
+% Expectation, reals, and transpose shortcuts used in the lecture notes
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Reals}{\mathbb{R}}
+\newcommand{\trans}{^\top}
 % Swap the definition of \abs* and \norm*, so that \abs
 % and \norm resizes the size of the brackets, and the 
 % starred version does not.
@@ -97,31 +101,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
 \input{sections_main/00_titlepage}
-\input{sections_main/01_introduction}
-\input{sections_main/02_examples}
+%
+% One \section per lecture. Add \input lines here as lectures are added.
+\input{sections_main/01_lecture01}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Our appendixes
+% Append our bibliography (no citations yet -- enable once references are added)
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-\begin{appendices}
-\newpage
-\input{sections_appendix/01_cool_things}
-\end{appendices}
-
-
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Append our bibliography
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
+% \addcontentsline{toc}{section}{References}
+% \printbibliography
 % \newpage
-\addcontentsline{toc}{section}{References}
-\printbibliography
-\newpage
 
 %
 \end{document}

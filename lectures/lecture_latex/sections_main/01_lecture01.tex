@@ -1,0 +1,272 @@
+\section{Lecture 1: Foundations --- Probability, Linear Algebra, and Linear Systems}
+\label{sec:lecture01}
+
+% =====================================================================
+\subsection{Probability}
+
+\subsubsection{Definition.}
+
+For an event $A$, the probability $P(A)$ is
+\begin{align}
+P(A) = \frac{N_A}{N},
+\end{align}
+where $N_A$ is the number of occurrences of $A$ and $N$ is the number of all possible outcomes.
+
+\subsubsection{Conditional probability.}
+The probability of event $A$ given that event $B$ is true is
+\begin{align}
+P(A\mid B) = \frac{P(A,B)}{P(B)}, \qquad P(B)\neq 0,
+\end{align}
+which yields the product rule
+\begin{align}
+P(A,B) & = P(A\mid B)\,P(B)\\
+& = P(B\mid A)\,P(A).
+\end{align}
+
+\subsubsection{Total probability theorem.}
+If $\{A_1,\dots,A_n\}$ is a partition (mutually exclusive, $P(A_i,A_j)=0$ for $i\neq j$) and $B$ is an arbitrary event, then
+\begin{align}
+P(B) = P(B\mid A_1)P(A_1) + \cdots + P(B\mid A_n)P(A_n) = \sum_{i} P(B\mid A_i)\,P(A_i).
+\end{align}
+
+\paragraph{Bayes' theorem.}
+\begin{align}
+P(A_i\mid B) = \frac{P(B\mid A_i)\,P(A_i)}{P(B)} = \frac{P(B\mid A_i)\,P(A_i)}{\sum_{i} P(B\mid A_i)\,P(A_i)}.
+\end{align}
+
+\paragraph{Independence.}
+With the inclusion--exclusion relation $P(A\cup B) = P(A) + P(B) - P(A\cap B)$, two events $A$ and $B$ are independent when
+\begin{align}
+P(A,B) = P(A\mid B)\,P(B) = P(A)\,P(B) = P(B\mid A)\,P(A) = P(B)\,P(A).
+\end{align}
+
+% =====================================================================
+\subsection{Random Variables}
+
+A random variable defines a function that quantifies an experiment. For a sample space $S=\{s_1,\dots,s_n\}$, a random variable is a map $\mathrm{x}:S\to\Reals$ with $\mathrm{x}(s_i)=x_i$.
+
+\paragraph{Distribution.}
+The (cumulative) distribution of a random variable $\mathrm{x}$ is
+\begin{align}
+F_{\mathrm{x}}(x) = P(\mathrm{x}\le x),
+\end{align}
+i.e. the probability that $\mathrm{x}$ takes a value lower than or equal to $x$.
+
+\paragraph{Probability density function (pdf).}
+\begin{align}
+p(x) = \lim_{\varepsilon\to 0}\frac{F_{\mathrm{x}}(x)-F_{\mathrm{x}}(x-\varepsilon)}{\varepsilon} = \frac{\mathrm{d}F_{\mathrm{x}}(x)}{\mathrm{d}x} = \frac{\mathrm{d}P(\mathrm{x}\le x)}{\mathrm{d}x},
+\end{align}
+hence
+\begin{align}
+P(\mathrm{x}\le x) = \int_{-\infty}^{x} p(\xi)\,\mathrm{d}\xi, \qquad
+P(\mathrm{x}\le\infty) = 1 = \int_{-\infty}^{+\infty} p(\xi)\,\mathrm{d}\xi,
+\end{align}
+and for an interval
+\begin{align}
+P(x_1\le \mathrm{x} < x_2) = \int_{x_1}^{x_2} p(\xi)\,\mathrm{d}\xi.
+\end{align}
+
+\paragraph{Example distributions.}
+\begin{itemize}[itemsep=0.4em]
+\item Gaussian: $\mathrm{x}\sim\mathcal{N}(m,\sigma) \;\Longleftrightarrow\; p(x) = \dfrac{1}{\sqrt{2\pi}\,\sigma}\,e^{-\frac{(x-m)^2}{2\sigma^2}}$.
+\item Uniform: $p(x) = \begin{cases} 0 & x < x_1 \\[2pt] \dfrac{1}{x_2-x_1} & x_1\le x\le x_2 \\[4pt] 0 & x > x_2 \end{cases}$
+\end{itemize}
+
+\paragraph{Conditional distribution and density.}
+\begin{align}
+P(\mathrm{x}\le x\mid A) = \frac{P(\mathrm{x}\le x,\, A)}{P(A)}, \qquad
+p(x\mid A) = \frac{\mathrm{d}P(\mathrm{x}\le x\mid A)}{\mathrm{d}x}.
+\end{align}
+
+\paragraph{Total probability theorem for pdfs.}
+For a mutually exclusive partition $\{A_1,\dots,A_n\}$,
+\begin{align}
+p(x) = p(x\mid A_1)P(A_1) + \cdots + p(x\mid A_n)P(A_n).
+\end{align}
+
+\paragraph{Continuous Bayes' theorem.}
+Using the infinitesimal relations $P(\mathrm{x}=x) = p(x)\,\delta x$ and $P(\mathrm{x}=x\mid A) = p(x\mid A)\,\delta x$,
+\begin{align}
+P(A\mid \mathrm{x}=x) = \frac{P(A,\, \mathrm{x}=x)}{P(\mathrm{x}=x)}
+= \frac{P(\mathrm{x}=x\mid A)\,P(A)}{P(\mathrm{x}=x)}
+= \frac{p(x\mid A)}{p(x)}\,P(A),
+\end{align}
+so that $P(A\mid \mathrm{x}=x)\,p(x) = p(x\mid A)\,P(A)$, which gives the continuous total-probability and Bayes' relations
+\begin{align}
+P(A) &= \int_{-\infty}^{+\infty} P(A\mid \mathrm{x}=x)\,p(x)\,\mathrm{d}x, \\
+p(x\mid A) &= \frac{P(A\mid \mathrm{x}=x)}{P(A)}\,p(x)
+= \frac{P(A\mid \mathrm{x}=x)\,p(x)}{\int_{-\infty}^{+\infty} P(A\mid \mathrm{x}=x)\,p(x)\,\mathrm{d}x}.
+\end{align}
+
+% =====================================================================
+\subsection{Expectation, Variance, and Random Vectors}
+
+\paragraph{Mean.}
+The expected value (mean) of a continuous random variable, and its conditional version, are
+\begin{align}
+m_x = \E(\mathrm{x}) = \int_{-\infty}^{+\infty} x\,p(x)\,\mathrm{d}x, \qquad
+m_x = \E(\mathrm{x}\mid A) = \int_{-\infty}^{+\infty} x\,p(x\mid A)\,\mathrm{d}x.
+\end{align}
+
+\paragraph{Variance.}
+\begin{align}
+\sigma_x^2 = \E\big((\mathrm{x}-m_x)^2\big) = \int_{-\infty}^{+\infty}(x-m_x)^2\,p(x)\,\mathrm{d}x = \E(\mathrm{x}^2) - \big(\E(\mathrm{x})\big)^2,
+\end{align}
+with the conditional variance
+\begin{align}
+\sigma_{x\mid A}^2 = \E\big\{(\mathrm{x}-m_{x\mid A})^2 \mid A\big\} = \int_{-\infty}^{+\infty}(x-m_{x\mid A})^2\,p(x\mid A)\,\mathrm{d}x.
+\end{align}
+
+\paragraph{A set of random variables.}
+The joint pdf of $x_1,\dots,x_n$ satisfies
+\begin{align}
+\int_{-\infty}^{+\infty}\!\!\!\cdots\!\int_{-\infty}^{+\infty} p(x_1,\dots,x_n)\,\mathrm{d}x_1\cdots\mathrm{d}x_n = 1.
+\end{align}
+If $x_i,x_j$ are independent, $p(x_i,x_j) = p(x_i)\,p(x_j)$. Expectation is linear: for $y = \alpha x_i + \beta x_j$,
+\begin{align}
+\E(y) = \alpha\,\E(x_i) + \beta\,\E(x_j).
+\end{align}
+
+\paragraph{Covariance.}
+\begin{align}
+\sigma_{ij}^2 = \E\big((x_i-m_i)(x_j-m_j)\big) = \E(x_i x_j) - \E(x_i)\,\E(x_j).
+\end{align}
+When $\sigma_{ij}=0$ we have $\E(x_i x_j) = \E(x_i)\,\E(x_j)$ and $x_i,x_j$ are \emph{uncorrelated}.
+
+\begin{quote}
+\textbf{Discussion questions.}
+\begin{enumerate}[itemsep=0.2em]
+\item If $x_i,x_j$ are independent, then $p(x_i,x_j)=p(x_i)p(x_j) \Rightarrow \E(x_i x_j)=\E(x_i)\E(x_j)$ --- so independence implies uncorrelated.
+\item If $x_i,x_j$ are uncorrelated, are they necessarily independent?
+\item If $x_i,x_j$ are jointly Gaussian, is independence equivalent to being uncorrelated?
+\end{enumerate}
+\end{quote}
+
+\paragraph{Random vector.}
+Let $\vect{x} = [x_1,\dots,x_n]\trans$, where all elements are random variables, with mean $\E(\vect{x})\triangleq\vect{m}_x$ and covariance
+\begin{align}
+\vect{P} = \E\big((\vect{x}-\vect{m}_x)(\vect{x}-\vect{m}_x)\trans\big) = \E(\vect{x}\vect{x}\trans) - \E(\vect{x})\,\E(\vect{x}\trans),
+\end{align}
+with entries
+\begin{align}
+P_{ii} = \E\big((x_i-m_i)^2\big) = \int_{-\infty}^{+\infty}(x_i-m_i)^2 p(x_i)\,\mathrm{d}x_i,
+\qquad
+P_{ij} = \E\big((x_i-m_i)(x_j-m_j)\big).
+\end{align}
+Since $P_{ij}=P_{ji}$, the covariance $\vect{P}$ is a symmetric matrix; it is also positive (semi-)definite.
+
+\paragraph{Gaussian vector pdf.}
+\begin{align}
+p(\vect{x}) = \frac{1}{(2\pi)^{n/2}\sqrt{|\vect{P}|}}\,\exp\!\Big(-\tfrac{1}{2}(\vect{x}-\vect{m}_x)\trans \vect{P}^{-1}(\vect{x}-\vect{m}_x)\Big),
+\end{align}
+where $|\vect{P}|$ is the determinant of $\vect{P}$, $\vect{m}_x=\E(\vect{x})$, and $\vect{P}=\E\big((\vect{x}-\vect{m}_x)(\vect{x}-\vect{m}_x)\trans\big)$.
+
+\begin{quote}
+\textbf{Homework.}
+Let $\vect{x}=[x_1,\dots,x_n]\trans$ with $p(\vect{x})=\mathcal{N}(\vect{m}_x,\vect{P}_{xx})$. Define
+\begin{align*}
+q = (\vect{x}-\vect{m}_x)\trans \vect{P}_{xx}^{-1}(\vect{x}-\vect{m}_x),
+\qquad
+\vect{y} = \vect{P}_{xx}^{-1/2}(\vect{x}-\vect{m}_x), \quad q = \vect{y}\trans\vect{y} = \sum_i y_i^2.
+\end{align*}
+What are the mean and covariance of $q$?
+\end{quote}
+
+% =====================================================================
+\subsection{Maximum Likelihood and Maximum a Posteriori Estimation}
+
+For a measurement model with additive noise $z_i = h_i(\vect{x}) + n_i$, stacked as $\vect{z} = \vect{h}(\vect{x}) + \vect{n}$, two estimators are
+\begin{itemize}[itemsep=0.3em]
+\item \textbf{Maximum likelihood estimation (MLE):} $\displaystyle \max_{\vect{x}}\, p(\vect{z}\mid\vect{x})$.
+\item \textbf{Maximum a posteriori (MAP):} $\displaystyle \max_{\vect{x}}\, p(\vect{x}\mid\vect{z})$, with $p(\vect{x}\mid\vect{z}) = \dfrac{p(\vect{z}\mid\vect{x})\,p(\vect{x})}{p(\vect{z})}$.
+\end{itemize}
+
+For zero-mean Gaussian noise $\vect{n}\sim\mathcal{N}(\vect{0},\vect{P})$,
+\begin{align}
+\max_{\vect{x}} p(\vect{z}\mid\vect{x}) = \max_{\vect{x}} \frac{1}{(2\pi)^{n/2}\sqrt{|\vect{P}|}}\,\exp\!\Big(-(\vect{z}-\vect{h}(\vect{x}))\trans \vect{P}^{-1}(\vect{z}-\vect{h}(\vect{x}))\Big),
+\end{align}
+which is equivalent to the weighted least-squares problem
+\begin{align}
+\min_{\vect{x}}\; C = (\vect{z}-\vect{h}(\vect{x}))\trans \vect{P}^{-1}(\vect{z}-\vect{h}(\vect{x})).
+\end{align}
+Linearizing about $\hat{\vect{x}}$ with $\vect{z} = \vect{h}(\vect{x}) + \vect{n} = \vect{h}(\hat{\vect{x}}) + \vect{H}(\vect{x}-\hat{\vect{x}}) + \vect{n}$, and defining the residual $\tilde{\vect{z}} = \vect{z} - \vect{h}(\hat{\vect{x}})$ and error $\tilde{\vect{x}} = \vect{x} - \hat{\vect{x}}$,
+\begin{align}
+\min_{\tilde{\vect{x}}}\; (\tilde{\vect{z}} - \vect{H}\tilde{\vect{x}})\trans \vect{P}^{-1}(\tilde{\vect{z}} - \vect{H}\tilde{\vect{x}})
+= \min_{\tilde{\vect{x}}}\big(\tilde{\vect{z}}\trans\tilde{\vect{z}} - 2\,\tilde{\vect{z}}\trans\vect{P}^{-1}\vect{H}\tilde{\vect{x}} + \tilde{\vect{x}}\trans \vect{H}\trans\vect{P}^{-1}\vect{H}\tilde{\vect{x}}\big).
+\end{align}
+Setting the gradient to zero gives the normal equations $\vect{H}\trans\vect{P}^{-1}\vect{H}\,\tilde{\vect{x}} = \vect{H}\trans\vect{P}^{-1}\tilde{\vect{z}}$, hence
+\begin{empheq}[box=\fbox]{align}
+\vect{x}^{\oplus} = \hat{\vect{x}} + \tilde{\vect{x}} = \hat{\vect{x}} + (\vect{H}\trans\vect{P}^{-1}\vect{H})^{-1}\vect{H}\trans\vect{P}^{-1}\tilde{\vect{z}}.
+\end{empheq}
+This is the classical weighted least-squares solution.
+
+\begin{quote}
+\textbf{Questions.}
+\begin{enumerate}[itemsep=0.2em]
+\item What is the covariance of the new estimate $\vect{x}^{\oplus}$?
+\item For a prior $\vect{x}_p = \vect{x} + \vect{n}_p$ together with $z_i = h_i(\vect{x}) + n_i$, $i=1,\dots,n$, what is the MAP solution $\max_{\vect{x}} p(\vect{x}\mid\vect{z})$?
+\end{enumerate}
+\end{quote}
+
+\paragraph{Optimization.}
+Nonlinear least-squares problems are solved iteratively, e.g. Gauss--Newton (GN) and Levenberg--Marquardt (LM).
+
+% =====================================================================
+\subsection{Linear Systems}
+
+A linear (continuous-time) state-space system is
+\begin{align}
+\dot{\vect{x}} = \vect{A}\vect{x} + \vect{B}\vect{u}, \qquad \vect{y} = \vect{C}\vect{x} + \vect{D}\vect{u},
+\end{align}
+where $\vect{x}$ is the state, $\vect{u}$ the input, and $\vect{y}$ the output. Its discrete-time counterpart is
+\begin{align}
+\vect{x}_{k+1} = \vect{A}'\vect{x}_k + \vect{B}'\vect{u}_k, \qquad \vect{y}_{k+1} = \vect{C}'\vect{x}_{k+1} + \vect{D}'\vect{u}_{k+1}.
+\end{align}
+If $\vect{A},\vect{B},\vect{C},\vect{D}$ are constant, the system is \emph{linear time-invariant} (LTI); if they depend on time, it is \emph{linear time-variant} (LTV).
+
+\paragraph{Homogeneous solution.}
+Consider $\dot{\vect{x}} = \vect{A}\vect{x}$ with $\vect{x}(t_0)=\vect{x}_0$ and $\vect{y} = \vect{C}\vect{x}$. From $\dot{\vect{x}} - \vect{A}\vect{x} = \vect{0}$,
+\begin{align}
+\frac{\mathrm{d}}{\mathrm{d}t}\big(e^{-\vect{A}t}\vect{x}\big)
+= e^{-\vect{A}t}\dot{\vect{x}} + e^{-\vect{A}t}(-\vect{A})\vect{x}
+= e^{-\vect{A}t}\big(\dot{\vect{x}} - \vect{A}\vect{x}\big) = \vect{0}.
+\end{align}
+Integrating from $0$ to $t$ gives $e^{-\vect{A}t}\vect{x}(t) - \vect{x}(t_0) = \vect{0}$, so
+\begin{align}
+\vect{x}(t) = e^{\vect{A}t}\vect{x}_0 = \vect{\Phi}(t,0)\,\vect{x}_0, \qquad \vect{\Phi}(t,0) = e^{\vect{A}t},
+\end{align}
+where $\vect{\Phi}(t,0)$ is the \emph{state transition matrix}, and $\vect{y} = \vect{C}\,\vect{\Phi}(t,0)\,\vect{x}_0$.
+
+\paragraph{Properties of the state transition matrix.}
+\begin{align}
+\vect{\Phi}(t_2,t_0) = \vect{\Phi}(t_2,t_1)\,\vect{\Phi}(t_1,t_0), \qquad
+\frac{\mathrm{d}}{\mathrm{d}t}\vect{\Phi}(t,0) = \vect{A}\,\vect{\Phi}(t,0).
+\end{align}
+The second follows from $\dot{\vect{x}} = \dot{\vect{\Phi}}(t,0)\vect{x}_0 = \vect{A}\vect{x} = \vect{A}\,\vect{\Phi}(t,0)\vect{x}_0$.
+
+\paragraph{Output sequence and observability.}
+Sampling the homogeneous response at $t_0,t_1,\dots,t_n$ with $\vect{x}_k = \vect{\Phi}(k,0)\vect{x}_0$ and $\vect{y}_k = \vect{C}\vect{x}_k$ stacks into
+\begin{align}
+\begin{bmatrix} \vect{y}_1 \\ \vdots \\ \vect{y}_n \end{bmatrix}
+=
+\begin{bmatrix} \vect{C}\,\vect{\Phi}(1,0) \\ \vdots \\ \vect{C}\,\vect{\Phi}(n,0) \end{bmatrix} \vect{x}_0,
+\end{align}
+which relates the measured outputs to the initial state (an observability-type relation).
+
+\paragraph{Full LTV solution.}
+For the complete system $\dot{\vect{x}} = \vect{A}(t)\vect{x} + \vect{B}(t)\vect{u}(t)$, write $\dot{\vect{x}} - \vect{A}(t)\vect{x} = \vect{B}(t)\vect{u}(t)$ and use the integrating factor $e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}$:
+\begin{align}
+\frac{\mathrm{d}}{\mathrm{d}t}\Big(e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}\vect{x}\Big)
+= e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}\big(\dot{\vect{x}} - \vect{A}(t)\vect{x}\big)
+= e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}\vect{B}(t)\vect{u}(t).
+\end{align}
+Integrating,
+\begin{align}
+e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}\vect{x}(t) - \vect{x}_0 = \int_0^t e^{-\int_0^\tau \vect{A}(s)\mathrm{d}s}\vect{B}(\tau)\vect{u}(\tau)\,\mathrm{d}\tau,
+\end{align}
+so that, with $\vect{\Phi}(t,0)=e^{\int_0^t \vect{A}(\tau)\mathrm{d}\tau}$ and $\vect{\Phi}(t,\tau)=e^{\int_\tau^t \vect{A}(s)\mathrm{d}s}$,
+\begin{empheq}[box=\fbox]{align}
+\vect{x}(t) &= \vect{\Phi}(t,0)\,\vect{x}_0 + \int_0^t \vect{\Phi}(t,\tau)\,\vect{B}(\tau)\,\vect{u}(\tau)\,\mathrm{d}\tau, \\
+\vect{y}(t) &= \vect{C}(t)\Big(\vect{\Phi}(t,0)\vect{x}_0 + \int_0^t \vect{\Phi}(t,\tau)\vect{B}(\tau)\vect{u}(\tau)\,\mathrm{d}\tau\Big) + \vect{D}(t)\vect{u}(t).
+\end{empheq}
+This is one of the most important properties of linear systems.
