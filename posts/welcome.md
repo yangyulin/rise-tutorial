@@ -37,6 +37,17 @@ This course is designed to cover the in-depth math knowledge essential for resea
 - Video recordings and notes are shared after each lecture. **Please do not redistribute (e.g., to YouTube) for now.**
 - Discussions and office hours are held on GitHub: <https://github.com/yangyulin/rise-tutorial/discussions>
 
+## Course Time
+
+Weekly on **Sunday**:
+
+| Location      | Local time              |
+|---------------|-------------------------|
+| Seattle       | 6:30 AM – 7:45 AM PDT   |
+| Washington DC | 9:30 AM – 10:45 AM EDT  |
+| Abu Dhabi     | 5:30 PM – 6:45 PM       |
+| Beijing       | 9:30 PM – 10:45 PM      |
+
 ## Contact
 
 - **[Yulin Yang](https://yangyulin.net/)** — <yangyulin1@gmail.com>
