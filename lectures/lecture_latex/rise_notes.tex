@@ -82,6 +82,11 @@
 \newcommand{\E}{\mathbb{E}}
 \newcommand{\Reals}{\mathbb{R}}
 \newcommand{\trans}{^\top}
+% Lie-group operators used in Lecture 2
+\DeclareMathOperator{\Exp}{Exp}
+\DeclareMathOperator{\Log}{Log}
+\DeclareMathOperator{\Ad}{Ad}
+\DeclareMathOperator{\tr}{tr}
 % Swap the definition of \abs* and \norm*, so that \abs
 % and \norm resizes the size of the brackets, and the 
 % starred version does not.
@@ -104,16 +109,17 @@
 %
 % One \section per lecture. Add \input lines here as lectures are added.
 \input{sections_main/01_lecture01}
+\input{sections_main/02_lecture02}
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Append our bibliography (no citations yet -- enable once references are added)
+% Append our bibliography
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %
-% \addcontentsline{toc}{section}{References}
-% \printbibliography
-% \newpage
+\addcontentsline{toc}{section}{References}
+\printbibliography
+\newpage
 
 %
 \end{document}
