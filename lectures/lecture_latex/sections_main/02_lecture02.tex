@@ -7,9 +7,12 @@
 \subsection{Preliminaries: useful series}
 The matrix exponential and the sine/cosine series underpin everything that follows:
 \begin{align}
-e^{x} = \exp(x) &= \sum_{k=0}^{\infty}\frac{1}{k!}x^{k} = I + x + \tfrac{1}{2!}x^{2} + \tfrac{1}{3!}x^{3} + \tfrac{1}{4!}x^{4} + \cdots, \\
-\sin(x) &= \sum_{k=0}^{\infty}\frac{(-1)^{k}}{(2k+1)!}x^{2k+1} = x - \tfrac{1}{3!}x^{3} + \tfrac{1}{5!}x^{5} - \cdots, \\
-\cos(x) &= \sum_{k=0}^{\infty}\frac{(-1)^{k}}{(2k)!}x^{2k} = 1 - \tfrac{1}{2!}x^{2} + \tfrac{1}{4!}x^{4} - \cdots.
+e^{x} = \exp(x) &= \sum_{k=0}^{\infty}\frac{1}{k!}x^{k}
+= I + x + \tfrac{1}{2!}x^{2} + \tfrac{1}{3!}x^{3} + \tfrac{1}{4!}x^{4} + \cdots, \\
+\sin(x) &= \sum_{k=0}^{\infty}\frac{(-1)^{k}}{(2k+1)!}x^{2k+1}
+= x - \tfrac{1}{3!}x^{3} + \tfrac{1}{5!}x^{5} - \cdots, \\
+\cos(x) &= \sum_{k=0}^{\infty}\frac{(-1)^{k}}{(2k)!}x^{2k}
+= 1 - \tfrac{1}{2!}x^{2} + \tfrac{1}{4!}x^{4} - \cdots.
 \end{align}
 For small $x$ (so that $x^2,x^3\to 0$), the important first-order approximations are $e^{x}\approx I + x$, $\sin(x)\approx x$, and $\cos(x)\approx 1$.
 
@@ -246,7 +249,10 @@ Using the adjoint identity $\Exp(\vect{\theta})\Exp(\vect{x})\Exp(\vect{\theta})
 
 \paragraph{(9) Identity $\skewsym{\vect{R}\vect{\omega}} = \vect{R}\skewsym{\vect{\omega}}\vect{R}\trans$.} For any vector $\vect{v}$, using $\vect{R}(\vect{u}\times\vect{v}) = (\vect{R}\vect{u})\times(\vect{R}\vect{v})$ and $\vect{R}\trans\vect{R}=\vect{I}$,
 \begin{align}
-\skewsym{\vect{R}\vect{u}}(\vect{R}\vect{v}) = \vect{R}\big(\skewsym{\vect{u}}\vect{v}\big) = \vect{R}\big(\skewsym{\vect{u}}\vect{R}\trans\vect{R}\vect{v}\big) = \vect{R}\skewsym{\vect{u}}\vect{R}\trans\,(\vect{R}\vect{v}).
+\skewsym{\vect{R}\vect{u}}(\vect{R}\vect{v})
+&= \vect{R}\big(\skewsym{\vect{u}}\vect{v}\big) \\
+&= \vect{R}\big(\skewsym{\vect{u}}\vect{R}\trans\vect{R}\vect{v}\big) \\
+&= \vect{R}\skewsym{\vect{u}}\vect{R}\trans\,(\vect{R}\vect{v}).
 \end{align}
 Since this holds for all $\vect{R}\vect{v}$, we conclude $\skewsym{\vect{R}\vect{u}} = \vect{R}\skewsym{\vect{u}}\vect{R}\trans$.
 \begin{quote}
@@ -499,7 +505,8 @@ so
 \end{align}
 Finally substitute $q_w = \cos\tfrac{\theta}{2}$, $\vect{q}_v = \sin\tfrac{\theta}{2}\vect{k}$, so $2q_w\skewsym{\vect{q}_v} = 2\cos\tfrac{\theta}{2}\sin\tfrac{\theta}{2}\skewsym{\vect{k}} = \sin\theta\,\skewsym{\vect{k}}$ and $2\skewsym{\vect{q}_v}^2 = 2\sin^2\tfrac{\theta}{2}\skewsym{\vect{k}}^2 = (1-\cos\theta)\skewsym{\vect{k}}^2$:
 \begin{align}
-{}^{G}\vect{p} = \big(\vect{I}_3 + \sin\theta\,\skewsym{\vect{k}} + (1-\cos\theta)\skewsym{\vect{k}}^2\big){}^{I}\vect{p} = {}^{G}_{I}\vect{R}\,{}^{I}\vect{p} = \Exp(\theta\vect{k})\,{}^{I}\vect{p},
+{}^{G}\vect{p} &= \big(\vect{I}_3 + \sin\theta\,\skewsym{\vect{k}} + (1-\cos\theta)\skewsym{\vect{k}}^2\big){}^{I}\vect{p} \\
+&= {}^{G}_{I}\vect{R}\,{}^{I}\vect{p} = \Exp(\theta\vect{k})\,{}^{I}\vect{p},
 \end{align}
 recovering Rodrigues' formula --- which is why the half-angle $\theta/2$ appears.
 
