@@ -341,19 +341,19 @@ For $SO(3)$ the left Jacobian also appears directly in the exponential expansion
 % =====================================================================
 \subsection{SE(3)}
 
-\paragraph{Exp / Log.} With $\vect{\xi} = \begin{bmatrix}\vect{\theta}\\\vect{\rho}\end{bmatrix}\in\Reals^6$ and the $4\times4$ algebra element $\vect{\xi}^{\wedge} = \begin{bmatrix}\skewsym{\vect{\theta}} & \vect{p}\\ \vect{0}_{1\times3} & 0\end{bmatrix}$,
+\paragraph{Exp / Log.} The SE(3) tangent vector uses $\vect{\rho}$ for its translation component, $\vect{\xi} = \begin{bmatrix}\vect{\theta}\\\vect{\rho}\end{bmatrix}\in\Reals^6$, which is \emph{distinct} from the group translation $\vect{p}$ in $\vect{T} = \begin{bmatrix}\vect{R} & \vect{p}\\ \vect{0} & 1\end{bmatrix}$; the two are related by $\vect{p} = \vect{J}_l(\vect{\theta})\vect{\rho}$. With the $4\times4$ algebra element $\vect{\xi}^{\wedge} = \begin{bmatrix}\skewsym{\vect{\theta}} & \vect{\rho}\\ \vect{0}_{1\times3} & 0\end{bmatrix}$,
 \begin{align}
-\vect{T} = \Exp(\vect{\xi}) = \exp\!\begin{bmatrix}\skewsym{\vect{\theta}} & \vect{p}\\ \vect{0} & 0\end{bmatrix} = \begin{bmatrix} \exp(\skewsym{\vect{\theta}}) & \vect{J}_l(\vect{\theta})\,\vect{p} \\ \vect{0}_{1\times3} & 1 \end{bmatrix} = \begin{bmatrix} \vect{R} & \vect{p}' \\ \vect{0} & 1 \end{bmatrix},
+\vect{T} = \Exp(\vect{\xi}) = \exp\!\begin{bmatrix}\skewsym{\vect{\theta}} & \vect{\rho}\\ \vect{0} & 0\end{bmatrix} = \begin{bmatrix} \exp(\skewsym{\vect{\theta}}) & \vect{J}_l(\vect{\theta})\,\vect{\rho} \\ \vect{0}_{1\times3} & 1 \end{bmatrix} = \begin{bmatrix} \vect{R} & \vect{p} \\ \vect{0} & 1 \end{bmatrix}, \qquad \vect{p} = \vect{J}_l(\vect{\theta})\,\vect{\rho},
 \end{align}
 and inverting,
 \begin{align}
 \vect{\xi} = \Log(\vect{T})^{\vee}, \qquad
-\log(\vect{T}) = \log\begin{bmatrix}\vect{R} & \vect{p}'\\ \vect{0} & 1\end{bmatrix} = \begin{bmatrix}\log(\vect{R}) & \vect{J}_l^{-1}(\vect{\theta})\vect{p}'\\ \vect{0} & 0\end{bmatrix}
+\log(\vect{T}) = \log\begin{bmatrix}\vect{R} & \vect{p}\\ \vect{0} & 1\end{bmatrix} = \begin{bmatrix}\log(\vect{R}) & \vect{J}_l^{-1}(\vect{\theta})\vect{p}\\ \vect{0} & 0\end{bmatrix}
 \;\Rightarrow\;
-\vect{\xi} = \begin{bmatrix}\vect{\theta}\\ \vect{J}_l^{-1}(\vect{\theta})\vect{p}'\end{bmatrix}.
+\vect{\xi} = \begin{bmatrix}\vect{\theta}\\ \vect{J}_l^{-1}(\vect{\theta})\vect{p}\end{bmatrix} = \begin{bmatrix}\vect{\theta}\\ \vect{\rho}\end{bmatrix}.
 \end{align}
 \begin{quote}
-\textbf{Discussion.} Prove $\exp\!\Big(\begin{bmatrix}\skewsym{\vect{\theta}} & \vect{p}\\ \vect{0} & 0\end{bmatrix}\Big) = \begin{bmatrix}\vect{R} & \vect{J}_l(\vect{\theta})\vect{p}\\ \vect{0} & 1\end{bmatrix}$.
+\textbf{Discussion.} Prove $\exp\!\Big(\begin{bmatrix}\skewsym{\vect{\theta}} & \vect{\rho}\\ \vect{0} & 0\end{bmatrix}\Big) = \begin{bmatrix}\vect{R} & \vect{J}_l(\vect{\theta})\vect{\rho}\\ \vect{0} & 1\end{bmatrix}$.
 \end{quote}
 
 \paragraph{Left/right Jacobians.} With $\Exp(\vect{\xi}+\delta\vect{\xi}) = \Exp(\vect{\xi})\Exp(\vect{J}_R(\vect{\xi})\delta\vect{\xi}) = \Exp(\vect{J}_L(\vect{\xi})\delta\vect{\xi})\Exp(\vect{\xi})$,
@@ -361,7 +361,7 @@ and inverting,
 \vect{J}_R(\vect{\xi}) = \begin{bmatrix} \vect{J}_R(\vect{\theta}) & \vect{0} \\ \vect{Q}_R(\vect{\xi}) & \vect{J}_R(\vect{\theta}) \end{bmatrix}_{6\times6}, \quad
 \vect{J}_L(\vect{\xi}) = \begin{bmatrix} \vect{J}_L(\vect{\theta}) & \vect{0} \\ \vect{Q}_L(\vect{\xi}) & \vect{J}_L(\vect{\theta}) \end{bmatrix}_{6\times6},
 \end{align}
-and to first order, with $\vect{\xi}^{\curlywedge} = \begin{bmatrix}\skewsym{\vect{\theta}} & \vect{0}\\ \skewsym{\vect{p}} & \skewsym{\vect{\theta}}\end{bmatrix}_{6\times6}$,
+and to first order, with $\vect{\xi}^{\curlywedge} = \begin{bmatrix}\skewsym{\vect{\theta}} & \vect{0}\\ \skewsym{\vect{\rho}} & \skewsym{\vect{\theta}}\end{bmatrix}_{6\times6}$,
 \begin{align}
 \vect{J}_L(\vect{\xi}) \approx \vect{I}_6 + \tfrac{1}{2}\vect{\xi}^{\curlywedge}, \qquad
 \vect{J}_R(\vect{\xi}) \approx \vect{I}_6 - \tfrac{1}{2}\vect{\xi}^{\curlywedge}.
@@ -370,24 +370,24 @@ and to first order, with $\vect{\xi}^{\curlywedge} = \begin{bmatrix}\skewsym{\ve
 \textbf{Homework.} Find $\vect{Q}_L$ (and $\vect{Q}_R$).
 \end{quote}
 
-\paragraph{Error states: SE(3) vs SO(3)\,$+\,\Reals^3$.} Perturb $\vect{T}$ on the right by the translation part $\Exp\!\big(\big[\begin{smallmatrix}\vect{0}\\\delta\vect{p}\end{smallmatrix}\big]^{\wedge}\big)$ and rotation part $\Exp\!\big(\big[\begin{smallmatrix}\delta\vect{\theta}\\\vect{0}\end{smallmatrix}\big]^{\wedge}\big)$. Expanding with $\vect{J}_l(\delta\vect{\theta})\approx\vect{I}+\tfrac12\skewsym{\delta\vect{\theta}}$ and $\delta\vect{R} = \Exp(\delta\vect{\theta})$,
+\paragraph{Error states: SE(3) vs SO(3)\,$+\,\Reals^3$.} Perturb $\vect{T}$ on the right by the SE(3) tangent $\delta\vect{\xi} = [\delta\vect{\theta}\trans,\;\delta\vect{\rho}\trans]\trans$. Expanding with $\vect{J}_l(\delta\vect{\theta})\approx\vect{I}+\tfrac12\skewsym{\delta\vect{\theta}}$ and $\delta\vect{R} = \Exp(\delta\vect{\theta})$,
 \begin{align}
 \vect{T}\,\delta\vect{T}
-&= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\Exp(\delta\vect{\theta}) & \vect{J}_l(\delta\vect{\theta})\delta\vect{p}\\\vect{0}&1\end{bmatrix}
-= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R} & (\vect{I}+\tfrac12\skewsym{\delta\vect{\theta}})\delta\vect{p}\\\vect{0}&1\end{bmatrix} \notag\\
-&\approx \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R} & \delta\vect{p}\\\vect{0}&1\end{bmatrix}
-= \begin{bmatrix}\vect{R}\delta\vect{R} & \vect{R}\delta\vect{p}+\vect{p}\\ \vect{0}&1\end{bmatrix}.
+&= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\Exp(\delta\vect{\theta}) & \vect{J}_l(\delta\vect{\theta})\delta\vect{\rho}\\\vect{0}&1\end{bmatrix}
+= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R} & (\vect{I}+\tfrac12\skewsym{\delta\vect{\theta}})\delta\vect{\rho}\\\vect{0}&1\end{bmatrix} \notag\\
+&\approx \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R} & \delta\vect{\rho}\\\vect{0}&1\end{bmatrix}
+= \begin{bmatrix}\vect{R}\delta\vect{R} & \vect{R}\delta\vect{\rho}+\vect{p}\\ \vect{0}&1\end{bmatrix}.
 \end{align}
 If instead we treat the pose as $SO(3)+\Reals^3$ (rotation and translation perturbed separately, $\vect{p}\to\vect{p}+\delta\vect{p}$),
 \begin{align}
 \vect{T} = \begin{bmatrix}\vect{R}\delta\vect{R} & \vect{p}+\delta\vect{p}\\\vect{0}&1\end{bmatrix} = \begin{bmatrix}\vect{R}\delta\vect{R} & \vect{p}+\vect{R}\vect{R}\trans\delta\vect{p}\\\vect{0}&1\end{bmatrix} = \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R} & \vect{R}\trans\delta\vect{p}\\\vect{0}&1\end{bmatrix}.
 \end{align}
-Comparing the two conventions gives the relation between the error states,
+Comparing the two conventions gives the relation between the error states (SE(3) tangent translation $\delta\vect{\rho}$ vs.\ naive position error $\delta\vect{p}$),
 \begin{align}
 \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R}&\delta\vect{p}\\\vect{0}&1\end{bmatrix}_{SO(3)+\Reals^3}
-= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R}&\vect{R}\trans\delta\vect{p}\\\vect{0}&1\end{bmatrix}_{SE(3)}
+= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R}&\delta\vect{\rho}\\\vect{0}&1\end{bmatrix}_{SE(3)}
 \;\Rightarrow\;
-\begin{cases} \delta\vect{p}_{SE(3)} = \vect{R}\trans\delta\vect{p} \\ \delta\vect{R}_{SE(3)} = \delta\vect{R} \end{cases}.
+\begin{cases} \delta\vect{\rho} = \vect{R}\trans\delta\vect{p} \\ \delta\vect{R}_{SE(3)} = \delta\vect{R} \end{cases}.
 \end{align}
 
 \paragraph{Adjoint.} The adjoint transfers algebra elements across the group:
@@ -411,13 +411,13 @@ in $SO(3)+\Reals^3$, the rotation interpolates on the manifold and the position 
 {}^{G}\vect{p}_{t} = {}^{G}\vect{p}_{t_1} + \lambda({}^{G}\vect{p}_{t_2} - {}^{G}\vect{p}_{t_1}).
 \end{align}
 
-\paragraph{(2) Time derivative.} For $SE(3)$, with $\vect{T} = \vect{T}\,\Exp\!\big([\delta\vect{\theta};\delta\vect{p}]^{\wedge}\big)$ and body velocity, expand the limit using $\exp(\skewsym{\delta\vect{\theta}})-\vect{I}_3\approx\skewsym{\delta\vect{\theta}}$ and $\vect{J}_l(\delta\vect{\theta})\approx\vect{I}+\tfrac12\skewsym{\delta\vect{\theta}}$:
+\paragraph{(2) Time derivative.} For $SE(3)$, with $\vect{T} = \vect{T}\,\Exp\!\big([\delta\vect{\theta};\delta\vect{\rho}]^{\wedge}\big)$ and body velocity, expand the limit using $\exp(\skewsym{\delta\vect{\theta}})-\vect{I}_3\approx\skewsym{\delta\vect{\theta}}$ and $\vect{J}_l(\delta\vect{\theta})\approx\vect{I}+\tfrac12\skewsym{\delta\vect{\theta}}$:
 \begin{align}
 \frac{\mathrm{d}\vect{T}}{\mathrm{d}t}
 &= \lim_{\delta t\to0}\frac{\vect{T}(t+\delta t)-\vect{T}(t)}{\delta t}
-= \lim_{\delta t\to0}\frac{1}{\delta t}\left(\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\exp(\skewsym{\delta\vect{\theta}}) & \vect{J}_l(\delta\vect{\theta})\delta\vect{p}\\\vect{0}&1\end{bmatrix} - \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\right) \notag\\
-&= \lim_{\delta t\to0}\frac{1}{\delta t}\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\exp(\skewsym{\delta\vect{\theta}})-\vect{I}_3 & \vect{J}_l(\delta\vect{\theta})\delta\vect{p}\\\vect{0}&0\end{bmatrix}
-= \lim_{\delta t\to0}\frac{1}{\delta t}\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\skewsym{\delta\vect{\theta}} & \delta\vect{p}\\\vect{0}&0\end{bmatrix} \notag\\
+= \lim_{\delta t\to0}\frac{1}{\delta t}\left(\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\exp(\skewsym{\delta\vect{\theta}}) & \vect{J}_l(\delta\vect{\theta})\delta\vect{\rho}\\\vect{0}&1\end{bmatrix} - \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\right) \notag\\
+&= \lim_{\delta t\to0}\frac{1}{\delta t}\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\exp(\skewsym{\delta\vect{\theta}})-\vect{I}_3 & \vect{J}_l(\delta\vect{\theta})\delta\vect{\rho}\\\vect{0}&0\end{bmatrix}
+= \lim_{\delta t\to0}\frac{1}{\delta t}\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\skewsym{\delta\vect{\theta}} & \delta\vect{\rho}\\\vect{0}&0\end{bmatrix} \notag\\
 &= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\skewsym{\vect{\omega}} & \vect{v}\\\vect{0}&0\end{bmatrix}
 = \begin{bmatrix}\vect{R}\skewsym{\vect{\omega}} & \vect{R}\vect{v}\\\vect{0}&0\end{bmatrix},
 \end{align}
@@ -441,11 +441,11 @@ with ${}^{G}\vect{v}$ the global velocity.
 Augmenting the pose with a velocity column gives the $5\times5$ group element
 \begin{align}
 \vect{\Upsilon} = \begin{bmatrix} \vect{R} & \vect{p} & \vect{v} \\ \vect{0}_{1\times3} & 1 & 0 \\ \vect{0}_{1\times3} & 0 & 1 \end{bmatrix}, \qquad
-\vect{\xi} = \begin{bmatrix}\vect{\theta}\\\vect{p}\\\vect{v}\end{bmatrix} \to \vect{\xi}^{\wedge} = \begin{bmatrix}\skewsym{\vect{\theta}} & \vect{p} & \vect{v} \\ \vect{0} & 0 & 0 \\ \vect{0} & 0 & 0\end{bmatrix}_{5\times5}.
+\vect{\xi} = \begin{bmatrix}\vect{\theta}\\\vect{\rho}\\\vect{\nu}\end{bmatrix} \to \vect{\xi}^{\wedge} = \begin{bmatrix}\skewsym{\vect{\theta}} & \vect{\rho} & \vect{\nu} \\ \vect{0} & 0 & 0 \\ \vect{0} & 0 & 0\end{bmatrix}_{5\times5},
 \end{align}
-The exponential, logarithm, and adjoint follow the same pattern as $SE(3)$:
+where (as in SE(3)) the tangent components $\vect{\rho},\vect{\nu}$ are distinct from the group position/velocity $\vect{p} = \vect{J}_l(\vect{\theta})\vect{\rho}$, $\vect{v} = \vect{J}_l(\vect{\theta})\vect{\nu}$. The exponential, logarithm, and adjoint follow the same pattern as $SE(3)$:
 \begin{align}
-\Exp(\vect{\xi}) = \begin{bmatrix} \vect{R} & \vect{J}_l(\vect{\theta})\vect{p} & \vect{J}_l(\vect{\theta})\vect{v} \\ \vect{0} & 1 & 0 \\ \vect{0} & 0 & 1\end{bmatrix}, \quad
+\Exp(\vect{\xi}) = \begin{bmatrix} \vect{R} & \vect{J}_l(\vect{\theta})\vect{\rho} & \vect{J}_l(\vect{\theta})\vect{\nu} \\ \vect{0} & 1 & 0 \\ \vect{0} & 0 & 1\end{bmatrix} = \begin{bmatrix}\vect{R} & \vect{p} & \vect{v}\\ \vect{0} & 1 & 0\\ \vect{0} & 0 & 1\end{bmatrix}, \quad
 \Log(\vect{\Upsilon})^{\vee} = \begin{bmatrix}\vect{\theta}\\ \vect{J}_l^{-1}(\vect{\theta})\vect{p}\\ \vect{J}_l^{-1}(\vect{\theta})\vect{v}\end{bmatrix}, \quad
 \Ad_{\vect{\Upsilon}} = \begin{bmatrix}\vect{R} & \vect{0} & \vect{0}\\ \skewsym{\vect{p}}\vect{R} & \vect{R} & \vect{0}\\ \skewsym{\vect{v}}\vect{R} & \vect{0} & \vect{R}\end{bmatrix}.
 \end{align}
