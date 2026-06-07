@@ -1,3 +1,5 @@
 # Third-party reference PDFs are NOT committed (copyright / repo size).
 # They are downloaded locally for convenience; see README.md for official links.
 *.pdf
+# Exception: the GTSAM doc is BSD-licensed (borglab/gtsam) and safe to redistribute.
+!gtsam_lie_groups.pdf

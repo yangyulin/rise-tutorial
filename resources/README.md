@@ -1,9 +1,10 @@
 # Resources — reference reading list
 
-Background references for the RiSE lectures. These are **third-party works**, so the
-PDFs are **not committed** to this repo (copyright + repo size); use the official links
-below. Each entry notes the relevant section. A matching BibTeX entry lives in
-`lectures/lecture_latex/libraries/extras.bib`.
+Background references for the RiSE lectures. Most are **third-party copyrighted works**, so
+their PDFs are **not committed** to this repo (copyright + repo size); use the official links
+below. The exception is the **GTSAM doc**, which is BSD-licensed and committed here
+(`gtsam_lie_groups.pdf`). Each entry notes the relevant section. A matching BibTeX entry lives
+in `lectures/lecture_latex/libraries/extras.bib`.
 
 > To fetch local copies (gitignored) into this folder, see the download commands at the
 > bottom of this file.
