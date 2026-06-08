@@ -1,18 +1,18 @@
 \section{Lecture 2: Rotation, Lie Groups, SE(3), SE\texorpdfstring{$_2$}{2}(3), and Quaternions}
 \label{sec:lecture02}
 
-\paragraph{Further reading.} This lecture draws on several standard references: matrix Lie groups in Barfoot~\cite[Ch.~7]{Barfoot2017StateEstimation}; the Lie-group treatment of $SO(3)$/$SE(3)$ in the GTSAM notes~\cite{DellaertGTSAMLieGroups} and Atanasov's ECE276A slides~\cite{Atanasov2020SO3SE3}; and quaternion algebra/kinematics in Trawny \& Roumeliotis~\cite[Sec.~1]{Trawny2005Quaternion} and Sol\`a~\cite[Sec.~1--3]{Sola2017Quaternion}.
+\paragraph{Further reading.} This lecture draws on several standard references: matrix Lie groups in Barfoot~\cite[Ch.~7]{Barfoot2017StateEstimation}; the Lie-group treatment of $SO(3)$/$SE(3)$ in the GTSAM notes~\cite{DellaertGTSAMLieGroups}, Atanasov's ECE276A slides~\cite{Atanasov2020SO3SE3}, and the micro Lie theory of Sol\`a, Deray \& Atchuthan~\cite{Sola2018MicroLie}; and quaternion algebra/kinematics in Trawny \& Roumeliotis~\cite[Sec.~1]{Trawny2005Quaternion} and Sol\`a~\cite[Sec.~1--3]{Sola2017Quaternion}.
 
 % =====================================================================
 \subsection{Preliminaries: useful series}
 The matrix exponential and the sine/cosine series underpin everything that follows:
 \begin{align}
-e^{x} = \exp(x) &= \sum_{k=0}^{\infty}\frac{1}{k!}x^{k}
-= I + x + \tfrac{1}{2!}x^{2} + \tfrac{1}{3!}x^{3} + \tfrac{1}{4!}x^{4} + \cdots, \\
-\sin(x) &= \sum_{k=0}^{\infty}\frac{(-1)^{k}}{(2k+1)!}x^{2k+1}
-= x - \tfrac{1}{3!}x^{3} + \tfrac{1}{5!}x^{5} - \cdots, \\
-\cos(x) &= \sum_{k=0}^{\infty}\frac{(-1)^{k}}{(2k)!}x^{2k}
-= 1 - \tfrac{1}{2!}x^{2} + \tfrac{1}{4!}x^{4} - \cdots.
+e^{x} = \exp(x) &= \sum_{k=0}^{\infty}\frac{1}{k!}x^{k} \\
+&= I + x + \tfrac{1}{2!}x^{2} + \tfrac{1}{3!}x^{3} + \tfrac{1}{4!}x^{4} + \cdots, \\
+\sin(x) &= \sum_{k=0}^{\infty}\frac{(-1)^{k}}{(2k+1)!}x^{2k+1} \\
+&= x - \tfrac{1}{3!}x^{3} + \tfrac{1}{5!}x^{5} - \cdots, \\
+\cos(x) &= \sum_{k=0}^{\infty}\frac{(-1)^{k}}{(2k)!}x^{2k} \\
+&= 1 - \tfrac{1}{2!}x^{2} + \tfrac{1}{4!}x^{4} - \cdots.
 \end{align}
 For small $x$ (so that $x^2,x^3\to 0$), the important first-order approximations are $e^{x}\approx I + x$, $\sin(x)\approx x$, and $\cos(x)\approx 1$.
 
@@ -44,7 +44,8 @@ We work with coordinate frames $\{A\}$ and $\{B\}$. A point/vector $\vect{L}$ ex
 
 The rotation matrix ${}^{A}_{B}\vect{R}$ maps a vector from $\{B\}$ to $\{A\}$:
 \begin{align}
-{}^{A}\vect{L} = {}^{A}_{B}\vect{R}\,{}^{B}\vect{L} = {}^{A}_{B}\vect{R}(\theta_{A\to B})\,{}^{B}\vect{L}.
+{}^{A}\vect{L} &= {}^{A}_{B}\vect{R}\,{}^{B}\vect{L} \\
+&= {}^{A}_{B}\vect{R}(\theta_{A\to B})\,{}^{B}\vect{L}.
 \end{align}
 Adding the translation ${}^{A}\vect{p}_{B}$ (the origin of $\{B\}$ expressed in $\{A\}$, Fig.~\ref{fig:lec02-transl}) gives the full rigid-body transformation
 \begin{align}
@@ -84,8 +85,8 @@ With roll $\theta$ (about $x$), pitch $r$ (about $y$), yaw $\psi$ (about $z$),
 \end{align}
 and the yaw--pitch--roll composition is
 \begin{align}
-\vect{R} = \vect{R}(\psi)\,\vect{R}(r)\,\vect{R}(\theta)
-= \begin{bmatrix} \cos\psi & -\sin\psi & 0 \\ \sin\psi & \cos\psi & 0 \\ 0 & 0 & 1 \end{bmatrix}
+\vect{R} &= \vect{R}(\psi)\,\vect{R}(r)\,\vect{R}(\theta) \\
+&= \begin{bmatrix} \cos\psi & -\sin\psi & 0 \\ \sin\psi & \cos\psi & 0 \\ 0 & 0 & 1 \end{bmatrix}
 \begin{bmatrix} \cos r & 0 & \sin r \\ 0 & 1 & 0 \\ -\sin r & 0 & \cos r \end{bmatrix}
 \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix}.
 \end{align}
@@ -100,18 +101,18 @@ For small angles $\delta\theta,\delta r,\delta\psi\to 0$ each elementary rotatio
 Multiplying the last two and dropping all second-order products ($\delta r\,\delta\theta\approx0$ etc.),
 \begin{align}
 \vect{R}(\delta r)\vect{R}(\delta\theta)
-= \begin{bmatrix} 1 & 0 & \delta r \\ 0 & 1 & 0 \\ -\delta r & 0 & 1 \end{bmatrix}
-\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & -\delta\theta \\ 0 & \delta\theta & 1 \end{bmatrix}
-= \begin{bmatrix} 1 & 0 & \delta r \\ 0 & 1 & -\delta\theta \\ -\delta r & \delta\theta & 1 \end{bmatrix},
+&= \begin{bmatrix} 1 & 0 & \delta r \\ 0 & 1 & 0 \\ -\delta r & 0 & 1 \end{bmatrix}
+\begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & -\delta\theta \\ 0 & \delta\theta & 1 \end{bmatrix} \\
+&= \begin{bmatrix} 1 & 0 & \delta r \\ 0 & 1 & -\delta\theta \\ -\delta r & \delta\theta & 1 \end{bmatrix},
 \end{align}
 and then
 \begin{align}
 \vect{R} = \vect{R}(\delta\psi)\vect{R}(\delta r)\vect{R}(\delta\theta)
 &= \begin{bmatrix} 1 & -\delta\psi & 0 \\ \delta\psi & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}
 \begin{bmatrix} 1 & 0 & \delta r \\ 0 & 1 & -\delta\theta \\ -\delta r & \delta\theta & 1 \end{bmatrix} \notag\\
-&= \begin{bmatrix} 1 & -\delta\psi & \delta r \\ \delta\psi & 1 & -\delta\theta \\ -\delta r & \delta\theta & 1 \end{bmatrix}
-= \vect{I} + \begin{bmatrix} 0 & -\delta\psi & \delta r \\ \delta\psi & 0 & -\delta\theta \\ -\delta r & \delta\theta & 0 \end{bmatrix}
-= \vect{I} + \skewsym{\vect{\theta}},
+&= \begin{bmatrix} 1 & -\delta\psi & \delta r \\ \delta\psi & 1 & -\delta\theta \\ -\delta r & \delta\theta & 1 \end{bmatrix} \\
+&= \vect{I} + \begin{bmatrix} 0 & -\delta\psi & \delta r \\ \delta\psi & 0 & -\delta\theta \\ -\delta r & \delta\theta & 0 \end{bmatrix} \\
+&= \vect{I} + \skewsym{\vect{\theta}},
 \end{align}
 where the small-angle vector is $\vect{\theta} = [\delta\theta,\;\delta r,\;\delta\psi]\trans$. The matrix $\skewsym{\vect{\theta}}$ is skew-symmetric, $\skewsym{\vect{\theta}} = -\skewsym{\vect{\theta}}\trans$. This motivates writing a finite rotation as $\vect{R}(\vect{\theta}) \approx \vect{I} + \skewsym{\vect{\theta}} \approx \exp(\skewsym{\vect{\theta}})$, and defining $\Exp(\vect{\theta}) \triangleq \exp(\skewsym{\vect{\theta}})$. The question is then whether $\vect{R}(\vect{\theta}) = \Exp(\vect{\theta})$.
 
@@ -143,7 +144,8 @@ Substituting $\skewsym{\vect{\theta}} = \theta\skewsym{\vect{k}}$ into the expon
 \end{align}
 which gives \textbf{Rodrigues' rotation formula}
 \begin{empheq}[box=\fbox]{align}
-\vect{R}(\vect{\theta}) = \Exp(\vect{\theta}) = \exp(\theta\skewsym{\vect{k}}) = \vect{I} + \sin\theta\,\skewsym{\vect{k}} + (1-\cos\theta)\,\skewsym{\vect{k}}^2.
+\vect{R}(\vect{\theta}) = \Exp(\vect{\theta}) = \exp(\theta\skewsym{\vect{k}})
+= \vect{I} + \sin\theta\,\skewsym{\vect{k}} + (1-\cos\theta)\,\skewsym{\vect{k}}^2.
 \end{empheq}
 For a small angle $\delta\theta\to0$, $\vect{R}(\delta\vect{\theta}) \approx \vect{I} + \skewsym{\delta\vect{\theta}}$ (small-angle approximation).
 
@@ -172,26 +174,28 @@ so $\dot{\vect{R}}\vect{R}\trans$ is skew-symmetric. Writing it as $\skewsym{\ve
 
 \paragraph{(2) Equivalent limit form.} With $\vect{R}(t+\Delta t) = \vect{R}(t)\exp(\skewsym{\vect{\omega}}\Delta t)$,
 \begin{align}
-\dot{\vect{R}}(t) = \lim_{\Delta t\to0}\frac{\vect{R}(t+\Delta t) - \vect{R}(t)}{\Delta t}
-= \lim_{\Delta t\to0}\frac{\vect{R}(t)\exp(\skewsym{\vect{\omega}}\Delta t) - \vect{R}(t)}{\Delta t}
-= \vect{R}(t)\lim_{\Delta t\to0}\frac{\exp(\skewsym{\vect{\omega}}\Delta t) - \vect{I}}{\Delta t}
-= \vect{R}(t)\skewsym{\vect{\omega}}.
+\dot{\vect{R}}(t) &= \lim_{\Delta t\to0}\frac{\vect{R}(t+\Delta t) - \vect{R}(t)}{\Delta t} \\
+&= \lim_{\Delta t\to0}\frac{\vect{R}(t)\exp(\skewsym{\vect{\omega}}\Delta t) - \vect{R}(t)}{\Delta t} \\
+&= \vect{R}(t)\lim_{\Delta t\to0}\frac{\exp(\skewsym{\vect{\omega}}\Delta t) - \vect{I}}{\Delta t} \\
+&= \vect{R}(t)\skewsym{\vect{\omega}}.
 \end{align}
 
 \paragraph{(3) Integration.} With $\vect{R}_i = \exp(\skewsym{\vect{\omega}_i}\Delta t_i)$, composing increments gives
 \begin{align}
-\vect{R}_{1\to k} = \vect{R}_k\vect{R}_{k-1}\cdots\vect{R}_2\vect{R}_1 = \exp(\skewsym{\vect{\omega}_k}\Delta t_k)\cdots\exp(\skewsym{\vect{\omega}_1}\Delta t_1).
+\vect{R}_{1\to k} &= \vect{R}_k\vect{R}_{k-1}\cdots\vect{R}_2\vect{R}_1 \\
+&= \exp(\skewsym{\vect{\omega}_k}\Delta t_k)\cdots\exp(\skewsym{\vect{\omega}_1}\Delta t_1).
 \end{align}
 
 \paragraph{(4) Interpolation.} For ${}^{G}_{t_1}\vect{R},{}^{G}_{t_2}\vect{R}$ and $t\in[t_1,t_2]$, define the relative rotation and its angle, and the interpolation ratio:
 \begin{align}
-{}^{t_1}_{t_2}\vect{R} = {}^{G}_{t_1}\vect{R}\trans\,{}^{G}_{t_2}\vect{R}, \qquad
-{}^{t_1}_{t_2}\vect{\theta} = \Log({}^{t_1}_{t_2}\vect{R}) = \Log({}^{G}_{t_1}\vect{R}\trans\,{}^{G}_{t_2}\vect{R}), \qquad
-\lambda = \frac{t-t_1}{t_2-t_1}.
+{}^{t_1}_{t_2}\vect{R} &= {}^{G}_{t_1}\vect{R}\trans\,{}^{G}_{t_2}\vect{R}, \\
+{}^{t_1}_{t_2}\vect{\theta} &= \Log({}^{t_1}_{t_2}\vect{R}) = \Log({}^{G}_{t_1}\vect{R}\trans\,{}^{G}_{t_2}\vect{R}), \\
+\lambda &= \frac{t-t_1}{t_2-t_1}.
 \end{align}
 Then
 \begin{align}
-{}^{G}_{t}\vect{R} = {}^{G}_{t_1}\vect{R}\,{}^{t_1}_{t}\vect{R} = {}^{G}_{t_1}\vect{R}\,\Exp\!\big(\lambda\,{}^{t_1}_{t_2}\vect{\theta}\big).
+{}^{G}_{t}\vect{R} &= {}^{G}_{t_1}\vect{R}\,{}^{t_1}_{t}\vect{R} \\
+&= {}^{G}_{t_1}\vect{R}\,\Exp\!\big(\lambda\,{}^{t_1}_{t_2}\vect{\theta}\big).
 \end{align}
 
 \paragraph{(5) Right Jacobian.} For a rotation $\vect{R}(\vect{\theta}) = \Exp(\vect{\theta})$, perturb the angle by $\delta\vect{\theta}\in\Reals^3$ and let $\delta\vect{\varphi}$ be the corresponding small rotation in $\mathfrak{so}(3)$:
@@ -264,8 +268,8 @@ Since this holds for all $\vect{R}\vect{v}$, we conclude $\skewsym{\vect{R}\vect
 \Exp(\vect{R}\vect{\varphi})
 &= \vect{I} + \skewsym{\vect{R}\vect{\varphi}} + \tfrac{1}{2!}\skewsym{\vect{R}\vect{\varphi}}^{2} + \tfrac{1}{3!}\skewsym{\vect{R}\vect{\varphi}}^{3} + \cdots \notag\\
 &= \vect{R}\vect{R}\trans + \vect{R}\skewsym{\vect{\varphi}}\vect{R}\trans + \tfrac{1}{2!}\vect{R}\skewsym{\vect{\varphi}}^{2}\vect{R}\trans + \cdots \notag\\
-&= \vect{R}\big(\vect{I} + \skewsym{\vect{\varphi}} + \tfrac{1}{2!}\skewsym{\vect{\varphi}}^{2} + \tfrac{1}{3!}\skewsym{\vect{\varphi}}^{3} + \cdots\big)\vect{R}\trans
-= \vect{R}\,\Exp(\vect{\varphi})\,\vect{R}\trans.
+&= \vect{R}\big(\vect{I} + \skewsym{\vect{\varphi}} + \tfrac{1}{2!}\skewsym{\vect{\varphi}}^{2} + \tfrac{1}{3!}\skewsym{\vect{\varphi}}^{3} + \cdots\big)\vect{R}\trans \\
+&= \vect{R}\,\Exp(\vect{\varphi})\,\vect{R}\trans.
 \end{align}
 \begin{quote}
 \textbf{Homework.} Prove $\Exp(\vect{R}\vect{\varphi}) = \vect{R}\,\Exp(\vect{\varphi})\,\vect{R}\trans$.
@@ -298,7 +302,8 @@ SE(3) = \left\{\vect{T} = \begin{bmatrix} \vect{R} & \vect{p} \\ \vect{0}_{1\tim
 \end{align}
 The four axioms: \emph{closure}
 \begin{align}
-\vect{T}_1\vect{T}_2 = \begin{bmatrix}\vect{R}_1 & \vect{p}_1\\\vect{0} & 1\end{bmatrix}\begin{bmatrix}\vect{R}_2 & \vect{p}_2\\\vect{0} & 1\end{bmatrix} = \begin{bmatrix}\vect{R}_1\vect{R}_2 & \vect{R}_1\vect{p}_2+\vect{p}_1\\\vect{0} & 1\end{bmatrix} \in SE(3),
+\vect{T}_1\vect{T}_2 &= \begin{bmatrix}\vect{R}_1 & \vect{p}_1\\\vect{0} & 1\end{bmatrix}\begin{bmatrix}\vect{R}_2 & \vect{p}_2\\\vect{0} & 1\end{bmatrix} \\
+&= \begin{bmatrix}\vect{R}_1\vect{R}_2 & \vect{R}_1\vect{p}_2+\vect{p}_1\\\vect{0} & 1\end{bmatrix} \in SE(3),
 \end{align}
 \emph{identity} $\begin{bmatrix}\vect{I}_3 & \vect{0}_{3\times1}\\\vect{0}_{1\times3} & 1\end{bmatrix}$, \emph{inverse}
 \begin{align}
@@ -340,8 +345,9 @@ It \emph{simplifies} estimation: the core idea is to use a smooth manifold to mo
 
 For $SO(3)$ the left Jacobian also appears directly in the exponential expansion:
 \begin{align}
-\vect{R}(\vect{\theta}) = \Exp(\vect{\theta}) = \vect{I}_3 + \skewsym{\vect{\theta}}\vect{J}_l(\vect{\theta}) = \vect{I}_3 + \vect{\theta}^{\wedge}\vect{J}_l(\vect{\theta}), \qquad
-\vect{J}_l(\vect{\theta}) = \sum_{n=0}^{\infty}\frac{1}{(n+1)!}(\vect{\theta}^{\wedge})^{n}.
+\vect{R}(\vect{\theta}) &= \Exp(\vect{\theta}) \\
+&= \vect{I}_3 + \skewsym{\vect{\theta}}\vect{J}_l(\vect{\theta}) = \vect{I}_3 + \vect{\theta}^{\wedge}\vect{J}_l(\vect{\theta}), \\
+\vect{J}_l(\vect{\theta}) &= \sum_{n=0}^{\infty}\frac{1}{(n+1)!}(\vect{\theta}^{\wedge})^{n}.
 \end{align}
 
 % =====================================================================
@@ -349,12 +355,15 @@ For $SO(3)$ the left Jacobian also appears directly in the exponential expansion
 
 \paragraph{Exp / Log.} The SE(3) tangent vector uses $\vect{\rho}$ for its translation component, $\vect{\xi} = \begin{bmatrix}\vect{\theta}\\\vect{\rho}\end{bmatrix}\in\Reals^6$, which is \emph{distinct} from the group translation $\vect{p}$ in $\vect{T} = \begin{bmatrix}\vect{R} & \vect{p}\\ \vect{0} & 1\end{bmatrix}$; the two are related by $\vect{p} = \vect{J}_l(\vect{\theta})\vect{\rho}$. With the $4\times4$ algebra element $\vect{\xi}^{\wedge} = \begin{bmatrix}\skewsym{\vect{\theta}} & \vect{\rho}\\ \vect{0}_{1\times3} & 0\end{bmatrix}$,
 \begin{align}
-\vect{T} = \Exp(\vect{\xi}) = \exp\!\begin{bmatrix}\skewsym{\vect{\theta}} & \vect{\rho}\\ \vect{0} & 0\end{bmatrix} = \begin{bmatrix} \exp(\skewsym{\vect{\theta}}) & \vect{J}_l(\vect{\theta})\,\vect{\rho} \\ \vect{0}_{1\times3} & 1 \end{bmatrix} = \begin{bmatrix} \vect{R} & \vect{p} \\ \vect{0} & 1 \end{bmatrix}, \qquad \vect{p} = \vect{J}_l(\vect{\theta})\,\vect{\rho},
+\vect{T} = \Exp(\vect{\xi}) &= \exp\!\begin{bmatrix}\skewsym{\vect{\theta}} & \vect{\rho}\\ \vect{0} & 0\end{bmatrix} \\
+&= \begin{bmatrix} \exp(\skewsym{\vect{\theta}}) & \vect{J}_l(\vect{\theta})\,\vect{\rho} \\ \vect{0}_{1\times3} & 1 \end{bmatrix} \\
+&= \begin{bmatrix} \vect{R} & \vect{p} \\ \vect{0} & 1 \end{bmatrix}, \qquad \vect{p} = \vect{J}_l(\vect{\theta})\,\vect{\rho},
 \end{align}
 and inverting,
 \begin{align}
 \vect{\xi} = \Log(\vect{T})^{\vee}, \qquad
-\log(\vect{T}) = \log\begin{bmatrix}\vect{R} & \vect{p}\\ \vect{0} & 1\end{bmatrix} = \begin{bmatrix}\log(\vect{R}) & \vect{J}_l^{-1}(\vect{\theta})\vect{p}\\ \vect{0} & 0\end{bmatrix}
+\log(\vect{T}) &= \log\begin{bmatrix}\vect{R} & \vect{p}\\ \vect{0} & 1\end{bmatrix} \\
+&= \begin{bmatrix}\log(\vect{R}) & \vect{J}_l^{-1}(\vect{\theta})\vect{p}\\ \vect{0} & 0\end{bmatrix}
 \;\Rightarrow\;
 \vect{\xi} = \begin{bmatrix}\vect{\theta}\\ \vect{J}_l^{-1}(\vect{\theta})\vect{p}\end{bmatrix} = \begin{bmatrix}\vect{\theta}\\ \vect{\rho}\end{bmatrix}.
 \end{align}
@@ -379,14 +388,16 @@ and to first order, with $\vect{\xi}^{\curlywedge} = \begin{bmatrix}\skewsym{\ve
 \paragraph{Error states: SE(3) vs SO(3)\,$+\,\Reals^3$.} Perturb $\vect{T}$ on the right by the SE(3) tangent $\delta\vect{\xi} = [\delta\vect{\theta}\trans,\;\delta\vect{\rho}\trans]\trans$. Expanding with $\vect{J}_l(\delta\vect{\theta})\approx\vect{I}+\tfrac12\skewsym{\delta\vect{\theta}}$ and $\delta\vect{R} = \Exp(\delta\vect{\theta})$,
 \begin{align}
 \vect{T}\,\delta\vect{T}
-&= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\Exp(\delta\vect{\theta}) & \vect{J}_l(\delta\vect{\theta})\delta\vect{\rho}\\\vect{0}&1\end{bmatrix}
-= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R} & (\vect{I}+\tfrac12\skewsym{\delta\vect{\theta}})\delta\vect{\rho}\\\vect{0}&1\end{bmatrix} \notag\\
-&\approx \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R} & \delta\vect{\rho}\\\vect{0}&1\end{bmatrix}
-= \begin{bmatrix}\vect{R}\delta\vect{R} & \vect{R}\delta\vect{\rho}+\vect{p}\\ \vect{0}&1\end{bmatrix}.
+&= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\Exp(\delta\vect{\theta}) & \vect{J}_l(\delta\vect{\theta})\delta\vect{\rho}\\\vect{0}&1\end{bmatrix} \\
+&= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R} & (\vect{I}+\tfrac12\skewsym{\delta\vect{\theta}})\delta\vect{\rho}\\\vect{0}&1\end{bmatrix} \\
+&\approx \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R} & \delta\vect{\rho}\\\vect{0}&1\end{bmatrix} \\
+&= \begin{bmatrix}\vect{R}\delta\vect{R} & \vect{R}\delta\vect{\rho}+\vect{p}\\ \vect{0}&1\end{bmatrix}.
 \end{align}
 If instead we treat the pose as $SO(3)+\Reals^3$ (rotation and translation perturbed separately, $\vect{p}\to\vect{p}+\delta\vect{p}$),
 \begin{align}
-\vect{T} = \begin{bmatrix}\vect{R}\delta\vect{R} & \vect{p}+\delta\vect{p}\\\vect{0}&1\end{bmatrix} = \begin{bmatrix}\vect{R}\delta\vect{R} & \vect{p}+\vect{R}\vect{R}\trans\delta\vect{p}\\\vect{0}&1\end{bmatrix} = \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R} & \vect{R}\trans\delta\vect{p}\\\vect{0}&1\end{bmatrix}.
+\vect{T} &= \begin{bmatrix}\vect{R}\delta\vect{R} & \vect{p}+\delta\vect{p}\\\vect{0}&1\end{bmatrix} \\
+&= \begin{bmatrix}\vect{R}\delta\vect{R} & \vect{p}+\vect{R}\vect{R}\trans\delta\vect{p}\\\vect{0}&1\end{bmatrix} \\
+&= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\delta\vect{R} & \vect{R}\trans\delta\vect{p}\\\vect{0}&1\end{bmatrix}.
 \end{align}
 Comparing the two conventions gives the relation between the error states (SE(3) tangent translation $\delta\vect{\rho}$ vs.\ naive position error $\delta\vect{p}$),
 \begin{align}
@@ -420,12 +431,12 @@ in $SO(3)+\Reals^3$, the rotation interpolates on the manifold and the position 
 \paragraph{(2) Time derivative.} For $SE(3)$, with $\vect{T} = \vect{T}\,\Exp\!\big([\delta\vect{\theta};\delta\vect{\rho}]^{\wedge}\big)$ and body velocity, expand the limit using $\exp(\skewsym{\delta\vect{\theta}})-\vect{I}_3\approx\skewsym{\delta\vect{\theta}}$ and $\vect{J}_l(\delta\vect{\theta})\approx\vect{I}+\tfrac12\skewsym{\delta\vect{\theta}}$:
 \begin{align}
 \frac{\mathrm{d}\vect{T}}{\mathrm{d}t}
-&= \lim_{\delta t\to0}\frac{\vect{T}(t+\delta t)-\vect{T}(t)}{\delta t}
-= \lim_{\delta t\to0}\frac{1}{\delta t}\left(\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\exp(\skewsym{\delta\vect{\theta}}) & \vect{J}_l(\delta\vect{\theta})\delta\vect{\rho}\\\vect{0}&1\end{bmatrix} - \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\right) \notag\\
-&= \lim_{\delta t\to0}\frac{1}{\delta t}\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\exp(\skewsym{\delta\vect{\theta}})-\vect{I}_3 & \vect{J}_l(\delta\vect{\theta})\delta\vect{\rho}\\\vect{0}&0\end{bmatrix}
-= \lim_{\delta t\to0}\frac{1}{\delta t}\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\skewsym{\delta\vect{\theta}} & \delta\vect{\rho}\\\vect{0}&0\end{bmatrix} \notag\\
-&= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\skewsym{\vect{\omega}} & \vect{v}\\\vect{0}&0\end{bmatrix}
-= \begin{bmatrix}\vect{R}\skewsym{\vect{\omega}} & \vect{R}\vect{v}\\\vect{0}&0\end{bmatrix},
+&= \lim_{\delta t\to0}\frac{\vect{T}(t+\delta t)-\vect{T}(t)}{\delta t} \\
+&= \lim_{\delta t\to0}\frac{1}{\delta t}\left(\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\exp(\skewsym{\delta\vect{\theta}}) & \vect{J}_l(\delta\vect{\theta})\delta\vect{\rho}\\\vect{0}&1\end{bmatrix} - \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\right) \\
+&= \lim_{\delta t\to0}\frac{1}{\delta t}\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\exp(\skewsym{\delta\vect{\theta}})-\vect{I}_3 & \vect{J}_l(\delta\vect{\theta})\delta\vect{\rho}\\\vect{0}&0\end{bmatrix} \\
+&= \lim_{\delta t\to0}\frac{1}{\delta t}\begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\skewsym{\delta\vect{\theta}} & \delta\vect{\rho}\\\vect{0}&0\end{bmatrix} \\
+&= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\skewsym{\vect{\omega}} & \vect{v}\\\vect{0}&0\end{bmatrix} \\
+&= \begin{bmatrix}\vect{R}\skewsym{\vect{\omega}} & \vect{R}\vect{v}\\\vect{0}&0\end{bmatrix},
 \end{align}
 where $\vect{v}$ is the body velocity. For $SO(3)+\Reals^3$ the same computation with $\vect{T} = \begin{bmatrix}\vect{R}\exp(\skewsym{\delta\vect{\theta}}) & \vect{p}+\delta\vect{p}\\\vect{0}&1\end{bmatrix}$ gives
 \begin{align}
@@ -451,8 +462,8 @@ Augmenting the pose with a velocity column gives the $5\times5$ group element
 \end{align}
 where (as in SE(3)) the tangent components $\vect{\rho},\vect{\nu}$ are distinct from the group position/velocity $\vect{p} = \vect{J}_l(\vect{\theta})\vect{\rho}$, $\vect{v} = \vect{J}_l(\vect{\theta})\vect{\nu}$. The exponential, logarithm, and adjoint follow the same pattern as $SE(3)$:
 \begin{align}
-\Exp(\vect{\xi}) = \begin{bmatrix} \vect{R} & \vect{J}_l(\vect{\theta})\vect{\rho} & \vect{J}_l(\vect{\theta})\vect{\nu} \\ \vect{0} & 1 & 0 \\ \vect{0} & 0 & 1\end{bmatrix} = \begin{bmatrix}\vect{R} & \vect{p} & \vect{v}\\ \vect{0} & 1 & 0\\ \vect{0} & 0 & 1\end{bmatrix}, \quad
-\Log(\vect{\Upsilon})^{\vee} = \begin{bmatrix}\vect{\theta}\\ \vect{J}_l^{-1}(\vect{\theta})\vect{p}\\ \vect{J}_l^{-1}(\vect{\theta})\vect{v}\end{bmatrix}, \quad
+\Exp(\vect{\xi}) &= \begin{bmatrix} \vect{R} & \vect{J}_l(\vect{\theta})\vect{\rho} & \vect{J}_l(\vect{\theta})\vect{\nu} \\ \vect{0} & 1 & 0 \\ \vect{0} & 0 & 1\end{bmatrix} = \begin{bmatrix}\vect{R} & \vect{p} & \vect{v}\\ \vect{0} & 1 & 0\\ \vect{0} & 0 & 1\end{bmatrix}, \\
+\Log(\vect{\Upsilon})^{\vee} &= \begin{bmatrix}\vect{\theta}\\ \vect{J}_l^{-1}(\vect{\theta})\vect{p}\\ \vect{J}_l^{-1}(\vect{\theta})\vect{v}\end{bmatrix}, \qquad
 \Ad_{\vect{\Upsilon}} = \begin{bmatrix}\vect{R} & \vect{0} & \vect{0}\\ \skewsym{\vect{p}}\vect{R} & \vect{R} & \vect{0}\\ \skewsym{\vect{v}}\vect{R} & \vect{0} & \vect{R}\end{bmatrix}.
 \end{align}
 
@@ -468,9 +479,9 @@ written as the $4\times1$ vector $\bar{q} = [q_w,\;q_x,\;q_y,\;q_z]\trans = [q_w
 
 \paragraph{Product.} The quaternion product is bilinear and can be written with left/right matrices:
 \begin{align}
-\bar{p}\otimes\bar{q} = \mathcal{L}(\bar{p})\,\bar{q} = \mathcal{R}(\bar{q})\,\bar{p}, \quad
-\mathcal{L}(\bar{p}) = p_w\vect{I}_4 + \begin{bmatrix} 0 & -\vect{p}_v\trans \\ \vect{p}_v & \skewsym{\vect{p}_v} \end{bmatrix}, \quad
-\mathcal{R}(\bar{q}) = q_w\vect{I}_4 + \begin{bmatrix} 0 & -\vect{q}_v\trans \\ \vect{q}_v & -\skewsym{\vect{q}_v} \end{bmatrix}.
+\bar{p}\otimes\bar{q} &= \mathcal{L}(\bar{p})\,\bar{q} = \mathcal{R}(\bar{q})\,\bar{p}, \\
+\mathcal{L}(\bar{p}) &= p_w\vect{I}_4 + \begin{bmatrix} 0 & -\vect{p}_v\trans \\ \vect{p}_v & \skewsym{\vect{p}_v} \end{bmatrix}, \\
+\mathcal{R}(\bar{q}) &= q_w\vect{I}_4 + \begin{bmatrix} 0 & -\vect{q}_v\trans \\ \vect{q}_v & -\skewsym{\vect{q}_v} \end{bmatrix}.
 \end{align}
 
 \paragraph{Identity, unit quaternion, inverse.} The identity is $\bar{q} = [1,\;\vect{0}_{3\times1}\trans]\trans$. A rotation by angle $\theta$ about unit axis $\vect{k}$ is the unit quaternion
@@ -482,8 +493,9 @@ written as the $4\times1$ vector $\bar{q} = [q_w,\;q_x,\;q_y,\;q_z]\trans = [q_w
 
 \paragraph{Why $\theta/2$? --- rotating a vector.} With global frame $\{G\}$ and IMU frame $\{I\}$, rotate ${}^{I}\vect{p}$ via the sandwich product and convert to matrices with $\bar p \otimes \bar q = \mathcal{R}(\bar q)\bar p$ and $\bar p\otimes \bar q=\mathcal{L}(\bar p)\bar q$:
 \begin{align}
-\begin{bmatrix}0\\ {}^{G}\vect{p}\end{bmatrix} = {}^{G}_{I}\bar{q}\otimes\begin{bmatrix}0\\ {}^{I}\vect{p}\end{bmatrix}\otimes{}^{G}_{I}\bar{q}^{-1}
-= \mathcal{R}({}^{G}_{I}\bar{q}^{-1})\,\mathcal{L}({}^{G}_{I}\bar{q})\begin{bmatrix}0\\ {}^{I}\vect{p}\end{bmatrix}.
+\begin{bmatrix}0\\ {}^{G}\vect{p}\end{bmatrix}
+&= {}^{G}_{I}\bar{q}\otimes\begin{bmatrix}0\\ {}^{I}\vect{p}\end{bmatrix}\otimes{}^{G}_{I}\bar{q}^{-1} \\
+&= \mathcal{R}({}^{G}_{I}\bar{q}^{-1})\,\mathcal{L}({}^{G}_{I}\bar{q})\begin{bmatrix}0\\ {}^{I}\vect{p}\end{bmatrix}.
 \end{align}
 Writing $\bar q = [q_w,\vect{q}_v\trans]\trans$ and multiplying the two matrices,
 \begin{align}
@@ -497,7 +509,9 @@ whose lower-right $3\times3$ block (acting on ${}^{I}\vect{p}$) gives
 \end{align}
 Using $\skewsym{\vect{q}_v}^2 = \vect{q}_v\vect{q}_v\trans - (\vect{q}_v\trans\vect{q}_v)\vect{I}_3$ and the unit-norm condition $q_w^2 + \vect{q}_v\trans\vect{q}_v = 1$,
 \begin{align}
-q_w^2\vect{I}_3 + \vect{q}_v\vect{q}_v\trans + \skewsym{\vect{q}_v}^2 = q_w^2\vect{I}_3 + (\vect{q}_v\trans\vect{q}_v)\vect{I}_3 + 2\skewsym{\vect{q}_v}^2 = \vect{I}_3 + 2\skewsym{\vect{q}_v}^2,
+q_w^2\vect{I}_3 + \vect{q}_v\vect{q}_v\trans + \skewsym{\vect{q}_v}^2
+&= q_w^2\vect{I}_3 + (\vect{q}_v\trans\vect{q}_v)\vect{I}_3 + 2\skewsym{\vect{q}_v}^2 \\
+&= \vect{I}_3 + 2\skewsym{\vect{q}_v}^2,
 \end{align}
 so
 \begin{align}
@@ -506,20 +520,21 @@ so
 Finally substitute $q_w = \cos\tfrac{\theta}{2}$, $\vect{q}_v = \sin\tfrac{\theta}{2}\vect{k}$, so $2q_w\skewsym{\vect{q}_v} = 2\cos\tfrac{\theta}{2}\sin\tfrac{\theta}{2}\skewsym{\vect{k}} = \sin\theta\,\skewsym{\vect{k}}$ and $2\skewsym{\vect{q}_v}^2 = 2\sin^2\tfrac{\theta}{2}\skewsym{\vect{k}}^2 = (1-\cos\theta)\skewsym{\vect{k}}^2$:
 \begin{align}
 {}^{G}\vect{p} &= \big(\vect{I}_3 + \sin\theta\,\skewsym{\vect{k}} + (1-\cos\theta)\skewsym{\vect{k}}^2\big){}^{I}\vect{p} \\
-&= {}^{G}_{I}\vect{R}\,{}^{I}\vect{p} = \Exp(\theta\vect{k})\,{}^{I}\vect{p},
+&= {}^{G}_{I}\vect{R}\,{}^{I}\vect{p} \\
+&= \Exp(\theta\vect{k})\,{}^{I}\vect{p},
 \end{align}
 recovering Rodrigues' formula --- which is why the half-angle $\theta/2$ appears.
 
 \paragraph{Derivative.} With $\delta\vect{\theta} = \delta\theta\,\vect{k}$ and small-angle $\delta\bar{q} = [\cos\tfrac{\delta\theta}{2},\;\sin\tfrac{\delta\theta}{2}\vect{k}\trans]\trans \approx [1,\;\tfrac12\delta\vect{\theta}\trans]\trans$,
 \begin{align}
 {}^{G}_{t}\dot{\bar{q}}
-&= \lim_{\Delta t\to0}\frac{{}^{G}_{t+\Delta t}\bar{q} - {}^{G}_{t}\bar{q}}{\Delta t}
-= \lim_{\Delta t\to0}\frac{{}^{G}_{t}\bar{q}\otimes\begin{bmatrix}\cos\tfrac{\delta\theta}{2}\\ \sin\tfrac{\delta\theta}{2}\vect{k}\end{bmatrix} - {}^{G}_{t}\bar{q}\otimes\begin{bmatrix}1\\ \vect{0}\end{bmatrix}}{\Delta t}
-= \lim_{\Delta t\to0}\frac{{}^{G}_{t}\bar{q}\otimes\begin{bmatrix}0\\ \tfrac12\delta\vect{\theta}\end{bmatrix}}{\Delta t} \notag\\
-&= {}^{G}_{t}\bar{q}\otimes\begin{bmatrix}0\\ \tfrac12\vect{\omega}\end{bmatrix}
-= \tfrac12\,\mathcal{R}\!\left(\begin{bmatrix}0\\ \vect{\omega}\end{bmatrix}\right){}^{G}_{t}\bar{q}
-= \tfrac12\begin{bmatrix}0 & -\vect{\omega}\trans\\ \vect{\omega} & -\skewsym{\vect{\omega}}\end{bmatrix}{}^{G}_{t}\bar{q}
-= \tfrac12\,\Omega(\vect{\omega})\,{}^{G}_{t}\bar{q},
+&= \lim_{\Delta t\to0}\frac{{}^{G}_{t+\Delta t}\bar{q} - {}^{G}_{t}\bar{q}}{\Delta t} \\
+&= \lim_{\Delta t\to0}\frac{{}^{G}_{t}\bar{q}\otimes\begin{bmatrix}\cos\tfrac{\delta\theta}{2}\\ \sin\tfrac{\delta\theta}{2}\vect{k}\end{bmatrix} - {}^{G}_{t}\bar{q}\otimes\begin{bmatrix}1\\ \vect{0}\end{bmatrix}}{\Delta t} \\
+&= \lim_{\Delta t\to0}\frac{{}^{G}_{t}\bar{q}\otimes\begin{bmatrix}0\\ \tfrac12\delta\vect{\theta}\end{bmatrix}}{\Delta t} \\
+&= {}^{G}_{t}\bar{q}\otimes\begin{bmatrix}0\\ \tfrac12\vect{\omega}\end{bmatrix} \\
+&= \tfrac12\,\mathcal{R}\!\left(\begin{bmatrix}0\\ \vect{\omega}\end{bmatrix}\right){}^{G}_{t}\bar{q} \\
+&= \tfrac12\begin{bmatrix}0 & -\vect{\omega}\trans\\ \vect{\omega} & -\skewsym{\vect{\omega}}\end{bmatrix}{}^{G}_{t}\bar{q} \\
+&= \tfrac12\,\Omega(\vect{\omega})\,{}^{G}_{t}\bar{q},
 \end{align}
 where $\Omega(\vect{\omega}) \triangleq \begin{bmatrix} 0 & -\vect{\omega}\trans \\ \vect{\omega} & -\skewsym{\vect{\omega}} \end{bmatrix}$.
 

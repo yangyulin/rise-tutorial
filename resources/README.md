@@ -16,6 +16,7 @@ in `lectures/lecture_latex/libraries/extras.bib`.
 | Barfoot, *State Estimation for Robotics*, Cambridge Univ. Press, 2017 | Ch. 7 — matrix Lie groups | <http://asrl.utias.utoronto.ca/~tdb/bib/barfoot_ser17.pdf> |
 | Dellaert et al., *Lie Groups for 2D and 3D Transformations* (GTSAM) | whole | <https://github.com/borglab/gtsam/blob/develop/doc/LieGroups.pdf> |
 | Atanasov, *Rotations SO(3) and Rigid-Body Motions SE(3)* (ECE276A, UCSD, 2020) | whole | <https://natanaso.github.io/ece276a2020/ref/ECE276A_12_SO3_SE3.pdf> |
+| Solà, Deray & Atchuthan, *A Micro Lie Theory for State Estimation in Robotics*, 2018 | whole | <https://arxiv.org/abs/1812.01537> |
 | Trawny & Roumeliotis, *Indirect Kalman Filter for 3D Attitude Estimation*, UMN TR 2005-002 | Sec. 1 — quaternion algebra | <https://mediawiki.isr.tecnico.ulisboa.pt/images/d/db/Indirect_Kalman_Filter_for_3D_Attitude_Estimation.pdf> |
 | Solà, *Quaternion Kinematics for the Error-State Kalman Filter*, 2017 | Sec. 1–3 | <https://arxiv.org/abs/1711.02508> · <https://www.iri.upc.edu/people/jsola/JoanSola/objectes/notes/kinematics.pdf> |
 
@@ -27,5 +28,6 @@ curl -L -o trawny_indirect_kf_3d_attitude.pdf "https://mediawiki.isr.tecnico.uli
 curl -L -o gtsam_lie_groups.pdf "https://github.com/borglab/gtsam/raw/develop/doc/LieGroups.pdf"
 curl -L -o atanasov_ece276a_so3_se3.pdf "https://natanaso.github.io/ece276a2020/ref/ECE276A_12_SO3_SE3.pdf"
 curl -L -A "Mozilla/5.0" -o sola_quaternion_kinematics.pdf "https://arxiv.org/pdf/1711.02508"
+curl -L -A "Mozilla/5.0" -o sola_micro_lie_theory.pdf "https://arxiv.org/pdf/1812.01537"
 # Barfoot: download from the author's page (link above)
 ```

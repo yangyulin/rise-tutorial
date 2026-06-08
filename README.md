@@ -39,6 +39,7 @@ See [`resources/`](resources/README.md) for the full reading list and links.
 - Barfoot, *State Estimation for Robotics*, Cambridge Univ. Press, 2017 — Ch. 7 (matrix Lie groups): <http://asrl.utias.utoronto.ca/~tdb/bib/barfoot_ser17.pdf>
 - Dellaert et al., *Lie Groups for 2D and 3D Transformations* (GTSAM): <https://github.com/borglab/gtsam/blob/develop/doc/LieGroups.pdf>
 - Atanasov, *Rotations SO(3) and Rigid-Body Motions SE(3)* (ECE276A, UCSD, 2020): <https://natanaso.github.io/ece276a2020/ref/ECE276A_12_SO3_SE3.pdf>
+- Solà, Deray & Atchuthan, *A Micro Lie Theory for State Estimation in Robotics*, 2018: <https://arxiv.org/abs/1812.01537>
 - Trawny & Roumeliotis, *Indirect Kalman Filter for 3D Attitude Estimation*, UMN TR 2005-002 — Sec. 1: <https://mediawiki.isr.tecnico.ulisboa.pt/images/d/db/Indirect_Kalman_Filter_for_3D_Attitude_Estimation.pdf>
 - Solà, *Quaternion Kinematics for the Error-State Kalman Filter*, 2017 — Sec. 1–3: <https://arxiv.org/abs/1711.02508>
 

@@ -19,27 +19,30 @@ P(A\mid B) = \frac{P(A,B)}{P(B)}, \qquad P(B)\neq 0,
 \end{align}
 which yields the product rule
 \begin{align}
-P(A,B) & = P(A\mid B)\,P(B)\\
-& = P(B\mid A)\,P(A).
+P(A,B) &= P(A\mid B)\,P(B) \\
+&= P(B\mid A)\,P(A).
 \end{align}
 
 \subsubsection{Total probability theorem}
 If $\{A_1,\dots,A_n\}$ is a partition (mutually exclusive, $P(A_i,A_j)=0$ for $i\neq j$) and $B$ is an arbitrary event, then
 \begin{align}
-P(B) = P(B\mid A_1)P(A_1) + \cdots + P(B\mid A_n)P(A_n) = \sum_{i} P(B\mid A_i)\,P(A_i).
+P(B) &= P(B\mid A_1)P(A_1) + \cdots + P(B\mid A_n)P(A_n) \\
+&= \sum_{i} P(B\mid A_i)\,P(A_i).
 \end{align}
 
 \subsubsection{Bayes' theorem}
 \begin{align}
-P(A_i\mid B) = \frac{P(B\mid A_i)\,P(A_i)}{P(B)} = \frac{P(B\mid A_i)\,P(A_i)}{\sum_{i} P(B\mid A_i)\,P(A_i)}.
+P(A_i\mid B) &= \frac{P(B\mid A_i)\,P(A_i)}{P(B)} \\
+&= \frac{P(B\mid A_i)\,P(A_i)}{\sum_{i} P(B\mid A_i)\,P(A_i)}.
 \end{align}
 
 \subsubsection{Independence}
 With the inclusion--exclusion relation $P(A\cup B) = P(A) + P(B) - P(A\cap B)$, two events $A$ and $B$ are independent when
 \begin{align}
 P(A,B) &= P(A\mid B)\,P(B) \\
-       &= P(B\mid A)\,P(A) \\
-       &= P(A)\,P(B) = P(B)\,P(A).
+&= P(B\mid A)\,P(A) \\
+&= P(A)\,P(B) \\
+&= P(B)\,P(A).
 \end{align}
 
 % =====================================================================
@@ -57,12 +60,13 @@ i.e. the probability that $\mathrm{x}$ takes a value lower than or equal to $x$.
 \subsubsection{Probability density function (pdf)}
 \begin{align}
 p(x) &= \lim_{\varepsilon\to 0}\frac{F_{\mathrm{x}}(x)-F_{\mathrm{x}}(x-\varepsilon)}{\varepsilon} \\
-     &= \frac{\mathrm{d}F_{\mathrm{x}}(x)}{\mathrm{d}x} = \frac{\mathrm{d}P(\mathrm{x}\le x)}{\mathrm{d}x},
+&= \frac{\mathrm{d}F_{\mathrm{x}}(x)}{\mathrm{d}x} \\
+&= \frac{\mathrm{d}P(\mathrm{x}\le x)}{\mathrm{d}x},
 \end{align}
 hence
 \begin{align}
-P(\mathrm{x}\le x) = \int_{-\infty}^{x} p(\xi)\,\mathrm{d}\xi, \qquad
-P(\mathrm{x}\le\infty) = 1 = \int_{-\infty}^{+\infty} p(\xi)\,\mathrm{d}\xi,
+P(\mathrm{x}\le x) &= \int_{-\infty}^{x} p(\xi)\,\mathrm{d}\xi, \\
+P(\mathrm{x}\le\infty) &= \int_{-\infty}^{+\infty} p(\xi)\,\mathrm{d}\xi = 1,
 \end{align}
 and for an interval
 \begin{align}
@@ -77,8 +81,8 @@ P(x_1\le \mathrm{x} < x_2) = \int_{x_1}^{x_2} p(\xi)\,\mathrm{d}\xi.
 
 \subsubsection{Conditional distribution and density}
 \begin{align}
-P(\mathrm{x}\le x\mid A) = \frac{P(\mathrm{x}\le x,\, A)}{P(A)}, \qquad
-p(x\mid A) = \frac{\mathrm{d}P(\mathrm{x}\le x\mid A)}{\mathrm{d}x}.
+P(\mathrm{x}\le x\mid A) &= \frac{P(\mathrm{x}\le x,\, A)}{P(A)}, \\
+p(x\mid A) &= \frac{\mathrm{d}P(\mathrm{x}\le x\mid A)}{\mathrm{d}x}.
 \end{align}
 
 \subsubsection{Total probability theorem for pdfs}
@@ -107,8 +111,10 @@ p(x\mid A) &= \frac{P(A\mid \mathrm{x}=x)}{P(A)}\,p(x) \\
 \subsubsection{Mean}
 The expected value (mean) of a continuous random variable, and its conditional version, are
 \begin{align}
-m_x = \E(\mathrm{x}) = \int_{-\infty}^{+\infty} x\,p(x)\,\mathrm{d}x, \qquad
-m_x = \E(\mathrm{x}\mid A) = \int_{-\infty}^{+\infty} x\,p(x\mid A)\,\mathrm{d}x.
+m_x &= \E(\mathrm{x}) \\
+&= \int_{-\infty}^{+\infty} x\,p(x)\,\mathrm{d}x, \\
+m_{x\mid A} &= \E(\mathrm{x}\mid A) \\
+&= \int_{-\infty}^{+\infty} x\,p(x\mid A)\,\mathrm{d}x.
 \end{align}
 
 \subsubsection{Variance}
@@ -119,7 +125,8 @@ m_x = \E(\mathrm{x}\mid A) = \int_{-\infty}^{+\infty} x\,p(x\mid A)\,\mathrm{d}x
 \end{align}
 with the conditional variance
 \begin{align}
-\sigma_{x\mid A}^2 = \E\big\{(\mathrm{x}-m_{x\mid A})^2 \mid A\big\} = \int_{-\infty}^{+\infty}(x-m_{x\mid A})^2\,p(x\mid A)\,\mathrm{d}x.
+\sigma_{x\mid A}^2 &= \E\big\{(\mathrm{x}-m_{x\mid A})^2 \mid A\big\} \\
+&= \int_{-\infty}^{+\infty}(x-m_{x\mid A})^2\,p(x\mid A)\,\mathrm{d}x.
 \end{align}
 
 \subsubsection{A set of random variables}
@@ -134,7 +141,8 @@ If $x_i,x_j$ are independent, $p(x_i,x_j) = p(x_i)\,p(x_j)$. Expectation is line
 
 \subsubsection{Covariance}
 \begin{align}
-\sigma_{ij}^2 = \E\big((x_i-m_i)(x_j-m_j)\big) = \E(x_i x_j) - \E(x_i)\,\E(x_j).
+\sigma_{ij}^2 &= \E\big((x_i-m_i)(x_j-m_j)\big) \\
+&= \E(x_i x_j) - \E(x_i)\,\E(x_j).
 \end{align}
 When $\sigma_{ij}=0$ we have $\E(x_i x_j) = \E(x_i)\,\E(x_j)$ and $x_i,x_j$ are \emph{uncorrelated}.
 
@@ -150,13 +158,14 @@ When $\sigma_{ij}=0$ we have $\E(x_i x_j) = \E(x_i)\,\E(x_j)$ and $x_i,x_j$ are 
 \subsubsection{Random vector}
 Let $\vect{x} = [x_1,\dots,x_n]\trans$, where all elements are random variables, with mean $\E(\vect{x})\triangleq\vect{m}_x$ and covariance
 \begin{align}
-\vect{P} = \E\big((\vect{x}-\vect{m}_x)(\vect{x}-\vect{m}_x)\trans\big) = \E(\vect{x}\vect{x}\trans) - \E(\vect{x})\,\E(\vect{x}\trans),
+\vect{P} &= \E\big((\vect{x}-\vect{m}_x)(\vect{x}-\vect{m}_x)\trans\big) \\
+&= \E(\vect{x}\vect{x}\trans) - \E(\vect{x})\,\E(\vect{x}\trans),
 \end{align}
 with entries
 \begin{align}
-P_{ii} = \E\big((x_i-m_i)^2\big) = \int_{-\infty}^{+\infty}(x_i-m_i)^2 p(x_i)\,\mathrm{d}x_i,
-\qquad
-P_{ij} = \E\big((x_i-m_i)(x_j-m_j)\big).
+P_{ii} &= \E\big((x_i-m_i)^2\big) \\
+&= \int_{-\infty}^{+\infty}(x_i-m_i)^2 p(x_i)\,\mathrm{d}x_i, \\
+P_{ij} &= \E\big((x_i-m_i)(x_j-m_j)\big).
 \end{align}
 Since $P_{ij}=P_{ji}$, the covariance $\vect{P}$ is a symmetric matrix; it is also positive (semi-)definite.
 
@@ -170,9 +179,9 @@ where $|\vect{P}|$ is the determinant of $\vect{P}$, $\vect{m}_x=\E(\vect{x})$, 
 \textbf{Homework.}
 Let $\vect{x}=[x_1,\dots,x_n]\trans$ with $p(\vect{x})=\mathcal{N}(\vect{m}_x,\vect{P}_{xx})$. Define
 \begin{align*}
-q = (\vect{x}-\vect{m}_x)\trans \vect{P}_{xx}^{-1}(\vect{x}-\vect{m}_x),
-\qquad
-\vect{y} = \vect{P}_{xx}^{-1/2}(\vect{x}-\vect{m}_x), \quad q = \vect{y}\trans\vect{y} = \sum_i y_i^2.
+q &= (\vect{x}-\vect{m}_x)\trans \vect{P}_{xx}^{-1}(\vect{x}-\vect{m}_x), \\
+\vect{y} &= \vect{P}_{xx}^{-1/2}(\vect{x}-\vect{m}_x), \\
+q &= \vect{y}\trans\vect{y} = \sum_i y_i^2.
 \end{align*}
 What are the mean and covariance of $q$?
 \end{quote}
@@ -201,7 +210,8 @@ Linearizing about $\hat{\vect{x}}$ with $\vect{z} = \vect{h}(\vect{x}) + \vect{n
 \end{align}
 Setting the gradient to zero gives the normal equations $\vect{H}\trans\vect{P}^{-1}\vect{H}\,\tilde{\vect{x}} = \vect{H}\trans\vect{P}^{-1}\tilde{\vect{z}}$, hence
 \begin{empheq}[box=\fbox]{align}
-\vect{x}^{\oplus} = \hat{\vect{x}} + \tilde{\vect{x}} = \hat{\vect{x}} + (\vect{H}\trans\vect{P}^{-1}\vect{H})^{-1}\vect{H}\trans\vect{P}^{-1}\tilde{\vect{z}}.
+\vect{x}^{\oplus} &= \hat{\vect{x}} + \tilde{\vect{x}} \\
+&= \hat{\vect{x}} + (\vect{H}\trans\vect{P}^{-1}\vect{H})^{-1}\vect{H}\trans\vect{P}^{-1}\tilde{\vect{z}}.
 \end{empheq}
 This is the classical weighted least-squares solution.
 
@@ -221,11 +231,13 @@ Nonlinear least-squares problems are solved iteratively, e.g. Gauss--Newton (GN)
 
 A linear (continuous-time) state-space system is
 \begin{align}
-\dot{\vect{x}} = \vect{A}\vect{x} + \vect{B}\vect{u}, \qquad \vect{y} = \vect{C}\vect{x} + \vect{D}\vect{u},
+\dot{\vect{x}} &= \vect{A}\vect{x} + \vect{B}\vect{u}, \\
+\vect{y} &= \vect{C}\vect{x} + \vect{D}\vect{u},
 \end{align}
 where $\vect{x}$ is the state, $\vect{u}$ the input, and $\vect{y}$ the output. Its discrete-time counterpart is
 \begin{align}
-\vect{x}_{k+1} = \vect{A}'\vect{x}_k + \vect{B}'\vect{u}_k, \qquad \vect{y}_{k+1} = \vect{C}'\vect{x}_{k+1} + \vect{D}'\vect{u}_{k+1}.
+\vect{x}_{k+1} &= \vect{A}'\vect{x}_k + \vect{B}'\vect{u}_k, \\
+\vect{y}_{k+1} &= \vect{C}'\vect{x}_{k+1} + \vect{D}'\vect{u}_{k+1}.
 \end{align}
 If $\vect{A},\vect{B},\vect{C},\vect{D}$ are constant, the system is \emph{linear time-invariant} (LTI); if they depend on time, it is \emph{linear time-variant} (LTV).
 
@@ -233,19 +245,22 @@ If $\vect{A},\vect{B},\vect{C},\vect{D}$ are constant, the system is \emph{linea
 Consider $\dot{\vect{x}} = \vect{A}\vect{x}$ with $\vect{x}(t_0)=\vect{x}_0$ and $\vect{y} = \vect{C}\vect{x}$. From $\dot{\vect{x}} - \vect{A}\vect{x} = \vect{0}$,
 \begin{align}
 \frac{\mathrm{d}}{\mathrm{d}t}\big(e^{-\vect{A}t}\vect{x}\big)
-= e^{-\vect{A}t}\dot{\vect{x}} + e^{-\vect{A}t}(-\vect{A})\vect{x}
-= e^{-\vect{A}t}\big(\dot{\vect{x}} - \vect{A}\vect{x}\big) = \vect{0}.
+&= e^{-\vect{A}t}\dot{\vect{x}} + e^{-\vect{A}t}(-\vect{A})\vect{x} \\
+&= e^{-\vect{A}t}\big(\dot{\vect{x}} - \vect{A}\vect{x}\big) \\
+&= \vect{0}.
 \end{align}
 Integrating from $0$ to $t$ gives $e^{-\vect{A}t}\vect{x}(t) - \vect{x}(t_0) = \vect{0}$, so
 \begin{align}
-\vect{x}(t) = e^{\vect{A}t}\vect{x}_0 = \vect{\Phi}(t,0)\,\vect{x}_0, \qquad \vect{\Phi}(t,0) = e^{\vect{A}t},
+\vect{x}(t) &= e^{\vect{A}t}\vect{x}_0 \\
+&= \vect{\Phi}(t,0)\,\vect{x}_0, \\
+\vect{\Phi}(t,0) &= e^{\vect{A}t},
 \end{align}
 where $\vect{\Phi}(t,0)$ is the \emph{state transition matrix}, and $\vect{y} = \vect{C}\,\vect{\Phi}(t,0)\,\vect{x}_0$.
 
 \subsubsection{Properties of the state transition matrix}
 \begin{align}
-\vect{\Phi}(t_2,t_0) = \vect{\Phi}(t_2,t_1)\,\vect{\Phi}(t_1,t_0), \qquad
-\frac{\mathrm{d}}{\mathrm{d}t}\vect{\Phi}(t,0) = \vect{A}\,\vect{\Phi}(t,0).
+\vect{\Phi}(t_2,t_0) &= \vect{\Phi}(t_2,t_1)\,\vect{\Phi}(t_1,t_0), \\
+\frac{\mathrm{d}}{\mathrm{d}t}\vect{\Phi}(t,0) &= \vect{A}\,\vect{\Phi}(t,0).
 \end{align}
 The second follows from $\dot{\vect{x}} = \dot{\vect{\Phi}}(t,0)\vect{x}_0 = \vect{A}\vect{x} = \vect{A}\,\vect{\Phi}(t,0)\vect{x}_0$.
 
@@ -262,8 +277,8 @@ which relates the measured outputs to the initial state (an observability-type r
 For the complete system $\dot{\vect{x}} = \vect{A}(t)\vect{x} + \vect{B}(t)\vect{u}(t)$, write $\dot{\vect{x}} - \vect{A}(t)\vect{x} = \vect{B}(t)\vect{u}(t)$ and use the integrating factor $e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}$:
 \begin{align}
 \frac{\mathrm{d}}{\mathrm{d}t}\Big(e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}\vect{x}\Big)
-= e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}\big(\dot{\vect{x}} - \vect{A}(t)\vect{x}\big)
-= e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}\vect{B}(t)\vect{u}(t).
+&= e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}\big(\dot{\vect{x}} - \vect{A}(t)\vect{x}\big) \\
+&= e^{-\int_0^t \vect{A}(\tau)\mathrm{d}\tau}\vect{B}(t)\vect{u}(t).
 \end{align}
 Integrating,
 \begin{align}
@@ -319,7 +334,9 @@ Since $\sigma_x^2\ge 0$, we have $\E(\mathrm{x}^2)\ge \big(\E(\mathrm{x})\big)^2
 \end{align}
 Using the marginalization $\int p(x_i,x_j)\,\mathrm{d}x_i = p(x_j)$ (and symmetrically), together with $\iint p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j = 1$,
 \begin{align}
-m_i\!\iint x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j = m_i\!\int x_j\, p(x_j)\,\mathrm{d}x_j = m_i m_j,
+m_i\!\iint x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j
+&= m_i\!\int x_j\, p(x_j)\,\mathrm{d}x_j \\
+&= m_i m_j,
 \end{align}
 and likewise for the other term, so
 \begin{align}
@@ -341,7 +358,9 @@ so $\sigma_{ij}=0$.
 
 \emph{(2) Uncorrelated $\not\Rightarrow$ independent.} Uncorrelatedness gives only
 \begin{align}
-\E(x_i x_j) - \E(x_i)\E(x_j) = \iint x_i x_j\,\big(p(x_i,x_j) - p(x_i)p(x_j)\big)\,\mathrm{d}x_i\mathrm{d}x_j = 0,
+\E(x_i x_j) - \E(x_i)\E(x_j)
+&= \iint x_i x_j\,\big(p(x_i,x_j) - p(x_i)p(x_j)\big)\,\mathrm{d}x_i\mathrm{d}x_j \\
+&= 0,
 \end{align}
 which does \emph{not} force $p(x_i,x_j) = p(x_i)p(x_j)$ in general. Hence uncorrelated does not imply independent.
 
@@ -365,23 +384,30 @@ If $\sigma_{ij}=\sigma_{ji}=0$, then $\vect{P}_{xx}$ is diagonal and $p(x_i,x_j)
 \textbf{Solution.} Factor $\vect{P}_{xx} = \vect{L}\vect{L}\trans$ (Cholesky), so $\vect{P}_{xx}^{-1} = \vect{L}^{-\top}\vect{L}^{-1}$, and define the whitened variable $\vect{y} = \vect{L}^{-1}(\vect{x}-\vect{m}_x)$. Then
 \begin{align}
 q &= (\vect{x}-\vect{m}_x)\trans \vect{L}^{-\top}\vect{L}^{-1}(\vect{x}-\vect{m}_x) \\
-  &= \vect{y}\trans\vect{y} = \sum_{i=1}^n y_i^2.
+&= \vect{y}\trans\vect{y} \\
+&= \sum_{i=1}^n y_i^2.
 \end{align}
 The whitened variable has zero mean and identity covariance,
 \begin{align}
-\vect{m}_y &= \E(\vect{y}) = \vect{L}^{-1}\big(\E(\vect{x}) - \vect{m}_x\big) = \vect{0}, \\
+\vect{m}_y &= \E(\vect{y}) \\
+&= \vect{L}^{-1}\big(\E(\vect{x}) - \vect{m}_x\big) \\
+&= \vect{0}, \\
 \vect{P}_{yy} &= \E(\vect{y}\vect{y}\trans) \\
 &= \vect{L}^{-1}\,\E\big((\vect{x}-\vect{m}_x)(\vect{x}-\vect{m}_x)\trans\big)\,\vect{L}^{-\top} \\
 &= \vect{L}^{-1}\vect{P}_{xx}\vect{L}^{-\top} \\
-&= \vect{L}^{-1}\vect{L}\vect{L}\trans\vect{L}^{-\top} = \vect{I}_n,
+&= \vect{L}^{-1}\vect{L}\vect{L}\trans\vect{L}^{-\top} \\
+&= \vect{I}_n,
 \end{align}
 so $y_i\sim\mathcal{N}(0,1)$ are independent. Therefore the mean of $q$ is
 \begin{align}
-\E(q) = \E(\vect{y}\trans\vect{y}) = \sum_{i=1}^n \E(y_i^2) = n.
+\E(q) &= \E(\vect{y}\trans\vect{y}) \\
+&= \sum_{i=1}^n \E(y_i^2) \\
+&= n.
 \end{align}
 For the variance, with $\E(y_i^2)=1$ the cross terms vanish by independence, giving
 \begin{align}
-\sigma_{qq}^2 &= \E\big((q - n)^2\big) = \E\Big(\big(\textstyle\sum_i (y_i^2-1)\big)^2\Big) \\
+\sigma_{qq}^2 &= \E\big((q - n)^2\big) \\
+&= \E\Big(\big(\textstyle\sum_i (y_i^2-1)\big)^2\Big) \\
 &= \sum_i \E\big((y_i^2-1)^2\big) \\
 &= \sum_i \big(\E(y_i^4) - 2\E(y_i^2) + 1\big).
 \end{align}
@@ -390,7 +416,8 @@ The fourth moment of a standard normal follows from integration by parts (with $
 \E(y_i^4) &= \int_{-\infty}^{+\infty} y_i^4\, p(y_i)\,\mathrm{d}y_i \\
 &= \underbrace{\big[-y_i^3 p(y_i)\big]_{-\infty}^{+\infty}}_{=\,0}
 + \int_{-\infty}^{+\infty} 3 y_i^2\, p(y_i)\,\mathrm{d}y_i \\
-&= 3\,\E(y_i^2) = 3.
+&= 3\,\E(y_i^2) \\
+&= 3.
 \end{align}
 Hence each term equals $3 - 2 + 1 = 2$, and
 \begin{align}
