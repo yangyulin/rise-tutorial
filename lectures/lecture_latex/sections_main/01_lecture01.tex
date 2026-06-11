@@ -332,7 +332,12 @@ Since $\sigma_x^2\ge 0$, we have $\E(\mathrm{x}^2)\ge \big(\E(\mathrm{x})\big)^2
 &\quad - m_i\!\iint x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j
  + m_i m_j\!\iint p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j.
 \end{align}
-Using the marginalization $\int p(x_i,x_j)\,\mathrm{d}x_i = p(x_j)$ (and symmetrically), together with $\iint p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j = 1$,
+Using the marginalization identities (and symmetrically for $x_j$)
+\begin{align}
+\int p(x_i,x_j)\,\mathrm{d}x_i = p(x_j), \qquad
+\iint p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j = 1,
+\end{align}
+we get
 \begin{align}
 m_i\!\iint x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j
 &= m_i\!\int x_j\, p(x_j)\,\mathrm{d}x_j \\

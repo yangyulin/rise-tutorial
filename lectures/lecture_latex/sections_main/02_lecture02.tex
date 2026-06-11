@@ -285,7 +285,7 @@ Since this holds for all $\vect{R}\vect{v}$, we conclude $\skewsym{\vect{R}\vect
 \end{align}
 \textbf{(12)} Given instead relative rotations ${}^{C_1}_{C_2}\vect{R} = {}^{C}_{I}\vect{R}\,{}^{I_1}_{I_2}\vect{R}\,{}^{C}_{I}\vect{R}\trans$, recover ${}^{C}_{I}\vect{R}$ from two such pairs.
 \begin{quote}
-\textbf{Discussion.} For (11)/(12): What is the minimum number of data pairs needed? What requirements must the pairs satisfy? What if more than the minimum is available?
+\textbf{(13) Discussion.} For (11)/(12): What is the minimum number of data pairs needed? What requirements must the pairs satisfy? What if more than the minimum is available?
 \end{quote}
 \textbf{(14) Averaging noisy rotations.} Given $n$ measurements $\vect{R}_{m_i} = \vect{R}\,\exp(\skewsym{\vect{n}_i})$ with $\vect{n}_i\sim\mathcal{N}(\vect{0}_{3\times1},\vect{P}_i)$, estimate $\vect{R}$ and its covariance.
 
@@ -338,7 +338,7 @@ It \emph{simplifies} estimation: the core idea is to use a smooth manifold to mo
   \coordinate (P) at (55:1.5);
   \draw[red,very thick] ($(P)+(145:1.25)$) -- ($(P)+(-35:1.25)$);
   \fill (P) circle (1.2pt);
-  \node[red,align=center] at ($(P)+(-35:1.55)$) {tangent space\\(error state)};
+  \node[red,align=center,anchor=west] at ($(P)+(-35:1.4)$) {tangent space\\(error state)};
   \node at (0,-1.85) {smooth manifold};
 \end{tikzpicture}
 \caption{A smooth manifold (here a circle/sphere) avoids the wrap-around of a raw angle; the red tangent line is the local vector space used to model derivatives and error states for optimization.}
@@ -440,7 +440,11 @@ in $SO(3)+\Reals^3$, the rotation interpolates on the manifold and the position 
 &= \begin{bmatrix}\vect{R}&\vect{p}\\\vect{0}&1\end{bmatrix}\begin{bmatrix}\skewsym{\vect{\omega}} & \vect{v}\\\vect{0}&0\end{bmatrix} \\
 &= \begin{bmatrix}\vect{R}\skewsym{\vect{\omega}} & \vect{R}\vect{v}\\\vect{0}&0\end{bmatrix},
 \end{align}
-where $\vect{v}$ is the body velocity. For $SO(3)+\Reals^3$ the same computation with $\vect{T} = \begin{bmatrix}\vect{R}\exp(\skewsym{\delta\vect{\theta}}) & \vect{p}+\delta\vect{p}\\\vect{0}&1\end{bmatrix}$ gives
+where $\vect{v}$ is the body velocity. For $SO(3)+\Reals^3$ the same computation with
+\begin{align}
+\vect{T} = \begin{bmatrix}\vect{R}\exp(\skewsym{\delta\vect{\theta}}) & \vect{p}+\delta\vect{p}\\\vect{0}&1\end{bmatrix}
+\end{align}
+gives
 \begin{align}
 \frac{\mathrm{d}\vect{T}}{\mathrm{d}t} = \begin{bmatrix}\vect{R}\skewsym{\vect{\omega}} & {}^{G}\vect{v}\\\vect{0}&0\end{bmatrix},
 \end{align}
