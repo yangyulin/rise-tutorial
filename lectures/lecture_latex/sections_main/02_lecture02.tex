@@ -127,20 +127,22 @@ Let $\vect{k}$ be the unit rotation axis and $\theta$ the rotation angle, with $
 \end{align}
 The skew operator on a unit vector satisfies the cyclic power identities
 \begin{align}
-\skewsym{\vect{k}}^{2} = \vect{k}\vect{k}\trans - \vect{I}_3, \quad
-\skewsym{\vect{k}}^{3} = -\skewsym{\vect{k}}, \quad
-\skewsym{\vect{k}}^{4} = -\skewsym{\vect{k}}^{2}, \quad
-\skewsym{\vect{k}}^{5} = \skewsym{\vect{k}}, \quad
-\skewsym{\vect{k}}^{6} = \skewsym{\vect{k}}^{2}, \quad
-\skewsym{\vect{k}}^{7} = -\skewsym{\vect{k}}.
+\skewsym{\vect{k}}^{2} &= \vect{k}\vect{k}\trans - \vect{I}_3, &
+\skewsym{\vect{k}}^{3} &= -\skewsym{\vect{k}}, &
+\skewsym{\vect{k}}^{4} &= -\skewsym{\vect{k}}^{2}, \\
+\skewsym{\vect{k}}^{5} &= \skewsym{\vect{k}}, &
+\skewsym{\vect{k}}^{6} &= \skewsym{\vect{k}}^{2}, &
+\skewsym{\vect{k}}^{7} &= -\skewsym{\vect{k}}.
 \end{align}
 Substituting $\skewsym{\vect{\theta}} = \theta\skewsym{\vect{k}}$ into the exponential series term by term,
 \begin{align}
 \Exp(\vect{\theta}) = \exp(\theta\skewsym{\vect{k}})
-&= \vect{I} + \theta\skewsym{\vect{k}} + \tfrac{\theta^2}{2!}\skewsym{\vect{k}}^2 + \tfrac{\theta^3}{3!}\skewsym{\vect{k}}^3 + \tfrac{\theta^4}{4!}\skewsym{\vect{k}}^4 + \tfrac{\theta^5}{5!}\skewsym{\vect{k}}^5 + \tfrac{\theta^6}{6!}\skewsym{\vect{k}}^6 + \tfrac{\theta^7}{7!}\skewsym{\vect{k}}^7 + \cdots \notag\\
-&= \vect{I} + \theta\skewsym{\vect{k}} + \tfrac{\theta^2}{2!}\skewsym{\vect{k}}^2 - \tfrac{\theta^3}{3!}\skewsym{\vect{k}} - \tfrac{\theta^4}{4!}\skewsym{\vect{k}}^2 + \tfrac{\theta^5}{5!}\skewsym{\vect{k}} + \tfrac{\theta^6}{6!}\skewsym{\vect{k}}^2 - \tfrac{\theta^7}{7!}\skewsym{\vect{k}} + \cdots \notag\\
-&= \vect{I} + \underbrace{\big(\theta - \tfrac{\theta^3}{3!} + \tfrac{\theta^5}{5!} - \tfrac{\theta^7}{7!} + \cdots\big)}_{\sin\theta}\skewsym{\vect{k}}
- + \underbrace{\big(\tfrac{\theta^2}{2!} - \tfrac{\theta^4}{4!} + \tfrac{\theta^6}{6!} - \cdots\big)}_{1-\cos\theta}\skewsym{\vect{k}}^2,
+&= \vect{I} + \theta\skewsym{\vect{k}} + \tfrac{\theta^2}{2!}\skewsym{\vect{k}}^2 + \tfrac{\theta^3}{3!}\skewsym{\vect{k}}^3 + \tfrac{\theta^4}{4!}\skewsym{\vect{k}}^4 \notag\\
+&\quad + \tfrac{\theta^5}{5!}\skewsym{\vect{k}}^5 + \tfrac{\theta^6}{6!}\skewsym{\vect{k}}^6 + \tfrac{\theta^7}{7!}\skewsym{\vect{k}}^7 + \cdots \notag\\
+&= \vect{I} + \theta\skewsym{\vect{k}} + \tfrac{\theta^2}{2!}\skewsym{\vect{k}}^2 - \tfrac{\theta^3}{3!}\skewsym{\vect{k}} - \tfrac{\theta^4}{4!}\skewsym{\vect{k}}^2 \notag\\
+&\quad + \tfrac{\theta^5}{5!}\skewsym{\vect{k}} + \tfrac{\theta^6}{6!}\skewsym{\vect{k}}^2 - \tfrac{\theta^7}{7!}\skewsym{\vect{k}} + \cdots \notag\\
+&= \vect{I} + \underbrace{\big(\theta - \tfrac{\theta^3}{3!} + \tfrac{\theta^5}{5!} - \tfrac{\theta^7}{7!} + \cdots\big)}_{\sin\theta}\skewsym{\vect{k}} \notag\\
+&\quad + \underbrace{\big(\tfrac{\theta^2}{2!} - \tfrac{\theta^4}{4!} + \tfrac{\theta^6}{6!} - \cdots\big)}_{1-\cos\theta}\skewsym{\vect{k}}^2,
 \end{align}
 which gives \textbf{Rodrigues' rotation formula}
 \begin{empheq}[box=\fbox]{align}
