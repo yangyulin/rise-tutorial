@@ -22,7 +22,7 @@ This course is designed to cover the in-depth math knowledge essential for resea
 |:-:|---|---|:-:|
 | 1 | Basics: probability, linear algebra, linear systems                          | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
 | 2 | Rotation, Lie / quaternion, translation, SE(3), SE<sub>2</sub>(3)            | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 3 | Camera model, triangulation, calibration, point / line / plane               | Yulin Yang | — |
+| 3 | Camera model, triangulation, calibration, point / line / plane               | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
 | 4 | Bundle adjustment, vision-based navigation, P3P / PnP, Schur complement       | Yulin Yang | — |
 | 5 | IMU model, IMU integration                                                   | Yulin Yang | — |
 | 6 | Kalman filter and batch least squares, marginalization, null space           | Yulin Yang | — |
