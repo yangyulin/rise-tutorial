@@ -380,17 +380,18 @@ the closest point from the plane to the origin.
 \centering
 \begin{tikzpicture}[>=stealth,scale=1.0]
   \draw[->] (0,0) -- (3.2,0) node[right] {$x$};
-  \draw[->] (0,0) -- (0,2.6) node[above] {$y$};
+  \draw[->] (0,0) -- (0,3.1) node[above] {$y$};
   \fill (0,0) circle (1.2pt);
   % plane (a line in 2D)
   \draw[thick] (1.0,2.4) -- (3.0,1.0);
-  % foot point P_pi and normal n_pi
-  \coordinate (O) at (0,0);
-  \coordinate (P) at (2.0,1.7);
-  \draw[dashed] (O) -- (P);
-  \node[below right] at (1.0,0.85) {$d_\pi$};
-  \fill (P) circle (1.2pt); \node[right] at (2.05,1.62) {$\vect{P}_\pi$};
-  \draw[->,thick] (P) -- ($(P)+(0.62,0.88)$) node[above] {$\vect{n}_\pi$};
+  % P_pi = foot of the perpendicular from the origin; d_pi and n_pi are collinear (both normal to the plane)
+  \coordinate (P) at (1.456,2.081);
+  \draw[dashed] (0,0) -- (P);
+  \node[below right] at (0.60,0.92) {$d_\pi$};
+  \fill (P) circle (1.2pt); \node[above right] at (P) {$\vect{P}_\pi$};
+  \draw[->,thick] (P) -- ($(P)+(0.544,0.778)$) node[above] {$\vect{n}_\pi$};
+  % right-angle mark: d_pi is perpendicular to the plane
+  \draw ($(P)+(-0.103,-0.147)$) -- ($(P)+(0.044,-0.250)$) -- ($(P)+(0.147,-0.103)$);
 \end{tikzpicture}
 \caption{plane: $\vect{n}_\pi$, $d_\pi$, foot $\vect{P}_\pi$}
 \label{fig:lec03-plane}
@@ -398,23 +399,33 @@ the closest point from the plane to the origin.
 \hfill
 \begin{subfigure}[b]{0.50\textwidth}
 \centering
-\begin{tikzpicture}[>=stealth,scale=1.0]
-  % plane
-  \draw[thick] (1.9,2.7) -- (3.7,1.15);
-  \coordinate (P) at (2.86,1.88);
-  \fill (P) circle (1.3pt); \node[above right] at (P) {$\vect{P}_\pi$};
-  \draw[->,thick] (P) -- ($(P)+(0.55,0.64)$) node[above] {$\vect{n}$};
+\begin{tikzpicture}[>=stealth,scale=0.95]
+  % plane (a line); outward normal points up-right at 45 deg
+  \coordinate (Pa) at (5.2,1.5);
+  \coordinate (Pb) at (2.8,3.9);
+  \draw[thick] (Pa) -- (Pb);
+  % a marked point on the plane carrying the normal
+  \coordinate (Pn) at (3.0,3.75);
+  \fill (Pn) circle (1.2pt); \node[left] at (Pn) {$\vect{P}_\pi$};
+  \draw[->,thick] (Pn) -- ($(Pn)+(0.6,0.6)$) node[above right] {$\vect{n}$};
   % camera frame {C} (small triad)
-  \fill (0,0) circle (1.2pt);
-  \draw[->] (0,0) -- (0.55,0.30); \draw[->] (0,0) -- (-0.18,0.55);
-  \node[below] at (0,-0.05) {$\{C\}$};
-  \draw[dashed] (0,0) -- (P); \node[above left] at (1.50,1.02) {${}^{C}d_\pi$};
-  % IMU frame {I} (small green triad, rigidly attached)
-  \fill[green!55!black] (1.65,0.30) circle (1.2pt);
-  \draw[->,green!55!black] (1.65,0.30) -- (2.15,0.62);
-  \draw[->,green!55!black] (1.65,0.30) -- (1.45,0.82);
-  \node[green!55!black,below] at (1.72,0.06) {$\{I\}$};
-  \draw[dotted,thick] (1.65,0.30) -- (P); \node[below right] at (2.22,1.06) {${}^{I}d_\pi$};
+  \coordinate (C) at (0.8,1.0);
+  \fill (C) circle (1.2pt);
+  \draw[->] (C) -- ($(C)+(0.55,0.22)$); \draw[->] (C) -- ($(C)+(-0.15,0.5)$);
+  \node[below] at (C) {$\{C\}$};
+  % IMU frame {I} (green triad, rigidly attached)
+  \coordinate (I) at (2.1,0.65);
+  \fill[green!55!black] (I) circle (1.2pt);
+  \draw[->,green!55!black] (I) -- ($(I)+(0.55,0.22)$); \draw[->,green!55!black] (I) -- ($(I)+(-0.15,0.5)$);
+  \node[green!55!black,below] at (I) {$\{I\}$};
+  % perpendicular distances to the plane (parallel, along the normal, distinct feet)
+  \coordinate (Fc) at (3.249,3.449);
+  \coordinate (Fi) at (4.049,2.649);
+  \draw[dashed] (C) -- (Fc); \node[above left] at (1.95,2.35) {${}^{C}d_\pi$};
+  \draw[dotted,thick] (I) -- (Fi); \node[below right] at (3.35,1.80) {${}^{I}d_\pi$};
+  % right-angle marks at the feet
+  \draw ($(Fc)+(-0.113,-0.113)$) -- ($(Fc)+(-0.226,0)$) -- ($(Fc)+(-0.113,0.113)$);
+  \draw ($(Fi)+(-0.113,-0.113)$) -- ($(Fi)+(-0.226,0)$) -- ($(Fi)+(-0.113,0.113)$);
 \end{tikzpicture}
 \caption{transfer the plane $\{C\}\to\{I\}$}
 \label{fig:lec03-planetransfer}
@@ -446,25 +457,25 @@ How do we represent a 3D line (Fig.~\ref{fig:lec03-line3d})? For a line $L$: $\v
 \centering
 \begin{tikzpicture}[>=stealth,scale=1.2]
   % 3D axes
-  \draw[->] (0,0) -- (0,2.4) node[above] {$z$};
-  \draw[->] (0,0) -- (2.6,0.2) node[right] {$y$};
-  \draw[->] (0,0) -- (-1.2,-0.9) node[below left] {$x$};
+  \draw[->] (0,0) -- (0,2.7) node[above] {$z$};
+  \draw[->] (0,0) -- (2.8,0.2) node[right] {$y$};
+  \draw[->] (0,0) -- (-1.3,-0.95) node[below left] {$x$};
   \fill (0,0) circle (1.2pt);
-  % plane through line and origin (faint triangle)
-  \coordinate (A) at (0.55,1.55);
-  \coordinate (B) at (2.05,1.95);
-  \draw[gray!55] (0,0) -- (A) -- (B) -- cycle;
+  % plane through the line and the origin (faint triangle)
+  \coordinate (A) at (0.40,1.95);
+  \coordinate (B) at (2.45,1.60);
+  \draw[gray!45] (0,0) -- (A) -- (B) -- cycle;
   % the line L (red)
   \draw[red,very thick] (A) -- (B);
-  \coordinate (M) at (1.30,1.75);
-  % direction v_e (along the line)
-  \draw[->,thick,blue] (M) -- ($(M)+(0.85,0.23)$) node[right] {$\vect{v}_e$};
-  % normal n_e (out of the plane)
-  \draw[->,thick,blue] (M) -- ($(M)+(0.35,0.95)$) node[above] {$\vect{n}_e$};
-  % third axis <n_e>x v_e
-  \draw[->,thick,blue] (M) -- ($(M)+(-0.65,-0.55)$) node[left] {\footnotesize $\skewsym{\vect{n}_e}\vect{v}_e$};
-  % distance d_L from origin to line
-  \draw[dashed] (0,0) -- (M); \node[below right] at (0.55,0.80) {$d_L$};
+  \node[above left,black] at (0.62,1.92) {$L$};
+  % anchor M = closest point of the line to the origin (foot of d_L)
+  \coordinate (M) at (1.22,1.81);
+  % orthonormal frame {n_e, v_e, <n_e>x v_e} at M
+  \draw[->,thick,blue] (M) -- ($(M)+(1.00,-0.17)$) node[right] {$\vect{v}_e$};            % along the line
+  \draw[->,thick,blue] (M) -- ($(M)+(0.30,0.98)$) node[above] {$\vect{n}_e$};               % plane normal
+  \draw[->,thick,blue] (M) -- ($(M)+(-0.80,-0.42)$) node[below left] {\footnotesize $\skewsym{\vect{n}_e}\vect{v}_e$};
+  % perpendicular distance d_L from origin to the line
+  \draw[dashed] (0,0) -- (M); \node[right] at (0.50,0.78) {$d_L$};
 \end{tikzpicture}
 \caption{3D line $L$: direction $\vect{v}_e$, plane normal $\vect{n}_e$, third axis $\skewsym{\vect{n}_e}\vect{v}_e$, and perpendicular distance $d_L$ from the origin.}
 \label{fig:lec03-line3d}
@@ -509,17 +520,19 @@ so the 2D image line is
 \centering
 \begin{tikzpicture}[>=stealth,scale=1.0]
   \fill (0,0) circle (1.4pt); \node[below left] at (0,0) {$\{C\}$};
+  % the 3D line L and the two sight rays from {C} to its endpoints
+  \coordinate (A) at (1.6,2.4);
+  \coordinate (B) at (3.1,2.6);
+  \draw[gray!55] (0,0) -- (A); \draw[gray!55] (0,0) -- (B);
+  \draw[red,very thick] (A) -- (B) node[above right,black] {$L$};
+  % normal of the plane through {C} and L
+  \draw[->,thick] (2.35,2.5) -- (2.78,3.18) node[above] {$\vect{n}_e$};
   % image plane
-  \draw[blue,thick] (0.9,0.3) rectangle (2.3,1.5);
-  % plane through line and origin (triangle)
-  \draw[gray!55] (0,0) -- (1.3,2.1) -- (2.7,2.4) -- cycle;
-  % the line L on the far plane (red)
-  \draw[red,very thick] (1.3,2.1) -- (2.7,2.4);
-  % its projection onto the image plane (red dotted)
-  \draw[red,dotted,thick] (1.1,0.6) -- (2.2,1.05);
-  % normal n_e
-  \draw[->,thick] (2.0,2.25) -- (2.45,2.95) node[above] {$\vect{n}_e$};
-  \node[red] at (3.0,2.3) {$L$};
+  \draw[blue,thick] (0.6,0.8) rectangle (1.8,1.65);
+  % projected image line l = where the (C,L) plane meets the image plane
+  \fill[red] (0.80,1.20) circle (1.1pt); \fill[red] (1.48,1.24) circle (1.1pt);
+  \draw[red,dotted,very thick] (0.70,1.185) -- (1.62,1.26);
+  \node[red] at (1.30,0.98) {\footnotesize $\vect{l}$};
 \end{tikzpicture}
 \caption{project 3D line $\to$ image line $\vect{l}=\vect{K}^{-\top}\vect{n}_e$}
 \label{fig:lec03-lineproj}
