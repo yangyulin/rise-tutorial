@@ -9,3 +9,5 @@ rise_notes.synctex.gz
 rise_notes.toc
 rise_notes-blx.bib
 # rise_notes.pdf is tracked in this lecture so the rendered notes are viewable on GitHub
+rise_notes.fdb_latexmk
+rise_notes.fls
