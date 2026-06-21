@@ -14,18 +14,20 @@
   \draw[->,thick] (0,0) -- (0,-0.9) node[below] {$y$};
   \node[above left=-2pt] at (0,0) {$\{C\}$};
   \fill (0,0) circle (1.5pt);
-  % Optical ray from the camera centre through the image plane to the feature
-  \draw[thin,gray!70] (0,0) -- (1.05,0.70);
-  % Image plane (blue, tilted parallelogram) carrying the pixel measurement z_c
-  \draw[blue,thick] (1.05,0.70) -- (2.05,1.02) -- (1.85,1.72) -- (0.85,1.40) -- cycle;
-  \fill[blue] (1.50,1.18) circle (1.3pt);
-  \node[blue,right=1pt] at (1.52,1.12) {$\vect{z}_c$};
-  \node[above] at (1.00,1.66) {\footnotesize Image plane};
+  % Single optical ray {C} --(z_c)-- P_f: the pixel z_c is where the sight ray
+  % pierces the image plane, so {C}, z_c, and P_f are collinear.
+  \coordinate (lc3zc) at (1.515,0.90);   % = 0.30 * (5.05,3.00), on the ray
+  \draw[thin,gray!70] (0,0) -- (lc3zc);
+  \draw[dashed] (lc3zc) -- (5.05,3.00);
+  % Image plane (blue, tilted parallelogram) centred on z_c, pierced by the ray
+  \draw[blue,thick] (0.766,1.505) -- (1.426,1.705) -- (2.264,0.295) -- (1.604,0.095) -- cycle;
+  \fill[blue] (lc3zc) circle (1.3pt);
+  \node[blue,right=1pt] at (1.66,0.99) {$\vect{z}_c$};
+  \node[left] at (0.55,1.78) {\footnotesize Image plane};
   % Feature point P_f
   \fill (5.05,3.00) circle (1.6pt);
   \node[above right] at (5.05,3.00) {$\vect{P}_f$};
-  % C-frame sight line to the feature: ^C p_f
-  \draw[dashed] (1.55,1.20) -- (5.05,3.00);
+  % C-frame sight line label: ^C p_f
   \node[above left] at (3.55,2.45) {${}^{C}\vect{p}_f$};
   % Global frame {G}
   \draw[->,thick] (6.20,0) -- (6.20,1.10) node[above] {$z$};
