@@ -520,21 +520,27 @@ so the 2D image line is
 \centering
 \begin{subfigure}[b]{0.46\textwidth}
 \centering
-\begin{tikzpicture}[>=stealth,scale=1.0]
-  \fill (0,0) circle (1.4pt); \node[below left] at (0,0) {$\{C\}$};
-  % the 3D line L and the two sight rays from {C} to its endpoints
-  \coordinate (A) at (1.6,2.4);
-  \coordinate (B) at (3.1,2.6);
-  \draw[gray!55] (0,0) -- (A); \draw[gray!55] (0,0) -- (B);
-  \draw[red,very thick] (A) -- (B) node[above right,black] {$L$};
-  % normal of the plane through {C} and L
-  \draw[->,thick] (2.35,2.5) -- (2.78,3.18) node[above] {$\vect{n}_e$};
-  % image plane
-  \draw[blue,thick] (0.6,0.8) rectangle (1.8,1.65);
-  % projected image line l = where the (C,L) plane meets the image plane
-  \fill[red] (0.80,1.20) circle (1.1pt); \fill[red] (1.48,1.24) circle (1.1pt);
-  \draw[red,dotted,very thick] (0.70,1.185) -- (1.62,1.26);
-  \node[red] at (1.30,0.98) {\footnotesize $\vect{l}$};
+\begin{tikzpicture}[>=stealth,scale=1.05]
+  % camera centre {C}
+  \coordinate (O) at (0,0.35);
+  \fill[red] (O) circle (1.4pt); \node[below] at (O) {$\{C\}$};
+  % image plane (tilted parallelogram)
+  \draw[blue,thick] (1.25,0.40) -- (2.25,0.72) -- (2.45,2.05) -- (1.45,1.73) -- cycle;
+  % sight rays {C} -> image plane -> 3D line L (so {C}, l-point, L-point are collinear)
+  \coordinate (la) at (1.90,1.01); \coordinate (lb) at (1.75,1.64);
+  \coordinate (LA) at (3.90,1.70); \coordinate (LB) at (3.20,2.70);
+  \draw[red] (O) -- (la); \draw[red] (O) -- (lb);
+  \draw[red,dotted,thick] (la) -- (LA); \draw[red,dotted,thick] (lb) -- (LB);
+  % projected image line l (the intersection of the (C,L) plane with the image plane)
+  \draw[red,very thick] (la) -- (lb);
+  \node[red,left=1pt] at (1.78,1.30) {\footnotesize $\vect{l}$};
+  % the 3D line L
+  \draw[red,very thick] (LA) -- (LB);
+  \node[black,below right] at (LA) {$L$};
+  % normal n_e of the interpretation plane (perpendicular to L)
+  \coordinate (M) at (3.55,2.20);
+  \draw[->,thick] (M) -- ($(M)+(0.74,0.52)$) node[above] {$\vect{n}_e$};
+  \draw ($(M)+(0.139,0.097)$) -- ($(M)+(0.042,0.236)$) -- ($(M)+(-0.097,0.139)$);
 \end{tikzpicture}
 \caption{project 3D line $\to$ image line $\vect{l}=\vect{K}^{-\top}\vect{n}_e$}
 \label{fig:lec03-lineproj}
@@ -542,21 +548,31 @@ so the 2D image line is
 \hfill
 \begin{subfigure}[b]{0.50\textwidth}
 \centering
-\begin{tikzpicture}[>=stealth,scale=1.0]
-  \fill (0,0) circle (1.4pt); \node[below] at (0,0) {$\{C_1\}$};
-  \fill (5.0,0) circle (1.4pt); \node[below] at (5.0,0) {$\{C_2\}$};
-  % image planes
-  \draw[blue,thick] (0.8,0.6) rectangle (1.7,1.6);
-  \draw[blue,thick] (3.3,0.6) rectangle (4.2,1.6);
-  % 3D line viewed from both (red), shared direction v_e
-  \draw[red,very thick] (1.1,1.9) -- (3.9,1.9);
-  \draw[->,thick,blue] (2.3,1.9) -- (3.0,1.9) node[above] {$\vect{v}_e$};
-  % per-image normals
-  \draw[->,thick] (1.25,1.1) -- (1.25,1.85) node[above] {\footnotesize ${}^{C_1}\vect{n}_e$};
-  \draw[->,thick] (3.75,1.1) -- (3.75,1.85) node[above] {\footnotesize ${}^{C_2}\vect{n}_e$};
-  % rays from the camera centres
-  \draw[red,dotted] (0,0) -- (1.1,1.9); \draw[red,dotted] (0,0) -- (1.7,1.55);
-  \draw[red,dotted] (5.0,0) -- (3.9,1.9); \draw[red,dotted] (5.0,0) -- (3.3,1.55);
+\begin{tikzpicture}[>=stealth,scale=0.92]
+  % camera centres
+  \coordinate (C1) at (0,0); \fill[red] (C1) circle (1.4pt); \node[below] at (C1) {$\{C_1\}$};
+  \coordinate (C2) at (7.0,0); \fill[red] (C2) circle (1.4pt); \node[below] at (C2) {$\{C_2\}$};
+  % the single shared 3D line L (centre) with direction v_e
+  \coordinate (La) at (3.42,2.30); \coordinate (Lb) at (3.58,3.00);
+  \draw[red,very thick] (La) -- (Lb);
+  \node[black,below] at (3.46,2.22) {$L$};
+  \draw[->,thick,blue] (3.50,2.62) -- (3.64,3.25) node[above] {$\vect{v}_e$};
+  % per-camera interpretation-plane normals (n_e perpendicular to the plane edge), with right-angle marks
+  \draw (2.74,2.50) -- (3.14,2.66);                                   % left plane edge
+  \draw[->,thick] (2.94,2.58) -- ($(2.94,2.58)+(-0.19,0.52)$) node[above left] {\footnotesize ${}^{C_1}\vect{n}_e$};
+  \draw ($(2.94,2.58)+(0.150,0.056)$) -- ($(2.94,2.58)+(0.094,0.206)$) -- ($(2.94,2.58)+(-0.056,0.150)$);
+  \draw (3.86,2.66) -- (4.26,2.50);                                   % right plane edge
+  \draw[->,thick] (4.06,2.58) -- ($(4.06,2.58)+(0.19,0.52)$) node[above right] {\footnotesize ${}^{C_2}\vect{n}_e$};
+  \draw ($(4.06,2.58)+(-0.150,0.056)$) -- ($(4.06,2.58)+(-0.094,0.206)$) -- ($(4.06,2.58)+(0.056,0.150)$);
+  % image planes (tilted) near each camera
+  \draw[blue,thick] (1.05,0.55) -- (1.70,0.78) -- (1.55,1.60) -- (0.90,1.37) -- cycle;
+  \draw[blue,thick] (5.30,0.78) -- (5.95,0.55) -- (6.10,1.37) -- (5.45,1.60) -- cycle;
+  % sight rays {C1} -> image plane -> L, with the projected image line (blue) on the plane
+  \draw[red,dotted] (C1) -- (La); \draw[red,dotted] (C1) -- (Lb);
+  \draw[blue,very thick] (1.40,0.93) -- (1.22,1.04);
+  % sight rays {C2} -> image plane -> L
+  \draw[red,dotted] (C2) -- (La); \draw[red,dotted] (C2) -- (Lb);
+  \draw[blue,very thick] (5.62,0.86) -- (5.80,1.04);
 \end{tikzpicture}
 \caption{transfer a line $\{C_1\}\to\{C_2\}$}
 \label{fig:lec03-linetransfer}
