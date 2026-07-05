@@ -369,7 +369,71 @@ This is easy and simple, but it might lose some accuracy for fast rotation and l
 \Delta\vect{v} &= \int_{t_k}^{t_{k+1}} {}^{I_k}_{I_\tau}\vect{R}\,{}^{I_\tau}\vect{a}\,d\tau
 = \int_{t_k}^{t_{k+1}} \Exp\big({}^{I_k}\vect{\omega}\,\delta\tau\big)\,{}^{I_k}\vect{a}\,d\tau,
 \end{align}
-which admit closed-form (analytic) solutions. We now use this form for the detailed mean and covariance propagation.
+which admit closed-form (analytic) solutions.
+
+\paragraph{(4) Two ways to solve for $\hat{\vect{x}}_{k+1}$ and $\vect{P}_{k+1}$.} We can use different ways to solve for $\hat{\vect{x}}_{k+1}$ and $\vect{P}_{k+1}$.
+
+\emph{Way 1 --- discretize, then linearize.} Integrate the nonlinear ODE first, then linearize the integrated function (the route taken in this lecture):
+\begin{align}
+\dot{\vect{x}} = \vect{f}(\vect{x},\vect{n}_I)
+\;\;\to\;\;
+\vect{x}_{k+1} = \vect{f}_{\mathrm{int}}(\vect{x}_k,\vect{n}_k)
+\;\;\to\;\;
+\begin{cases}
+\hat{\vect{x}}_{k+1} = \vect{f}_{\mathrm{int}}(\hat{\vect{x}}_k,\vect{0}), \\[2pt]
+\tilde{\vect{x}}_{k+1} = \vect{\Phi}_{(k+1,k)}\,\tilde{\vect{x}}_k + \vect{G}_k\,\vect{n}_{kd}.
+\end{cases}
+\end{align}
+
+\emph{Way 2 --- linearize, then integrate.} Linearize the continuous ODE first to get the continuous error-state equation, then integrate it:
+\begin{align}
+\dot{\vect{x}} = \vect{f}(\vect{x},\vect{n}_I)
+\;\;\Rightarrow\;\;
+\dot{\tilde{\vect{x}}} = \vect{F}\,\tilde{\vect{x}} + \vect{J}\,\vect{n}_I,
+\end{align}
+whose solution over $[t_k,t_{k+1}]$ is
+\begin{align}
+\tilde{\vect{x}}_{k+1} = \vect{\Phi}_{(k+1,k)}\,\tilde{\vect{x}}_k + \int_{t_k}^{t_{k+1}} \vect{\Phi}_{(k+1,\tau)}\,\vect{J}(\tau)\,\vect{n}_I\,d\tau,
+\qquad
+\vect{\Phi}_{(k+1,k)} = \exp\!\left(\int_{t_k}^{t_{k+1}} \vect{F}\,dt\right).
+\label{eq:lec05-way2}
+\end{align}
+Different systems treat this state-transition matrix differently:
+\begin{itemize}[noitemsep,topsep=2pt]
+\item \textbf{VINS-Mono}~\cite{Qin2017TRO}: take $\vect{F}$ constant and $\delta t \to 0$, so
+$\vect{\Phi}_{(k+1,k)} = \exp\big(\int_{t_k}^{t_{k+1}}\vect{F}\,dt\big) \approx \vect{I} + \vect{F}\,\delta t$;
+\item \textbf{OC-VINS} (Joel Hesch)~\cite{Hesch2013TRO} / \textbf{CPI} (Kevin/Patrick)~\cite{Eckenhoff2019IJRR} / \textbf{ACI$^2$} (Yulin/Chuchu)~\cite{Yang2020ACI2}: keep
+$\vect{\Phi}_{(k+1,k)} = \exp\big(\int_{t_k}^{t_{k+1}}\vect{F}\,dt\big)$, evaluated with ${}^{I}\vect{\omega}_m$, ${}^{I}\vect{a}_m$ constant in $[t_k,t_{k+1}]$.
+\end{itemize}
+How to address the noise term of \eqref{eq:lec05-way2},
+\begin{align}
+\vect{n}_{\mathrm{int}} \triangleq \int_{t_k}^{t_{k+1}} \vect{\Phi}_{(k+1,\tau)}\,\vect{J}(\tau)\,\vect{n}_I\,d\tau\,?
+\end{align}
+\begin{enumerate}[label=(\arabic*),noitemsep,topsep=2pt]
+\item Pull the \emph{discrete noise} $\vect{n}_{Id}$ out of the integral:
+\begin{align}
+\vect{n}_{\mathrm{int}} &= \int_{t_k}^{t_{k+1}} \vect{\Phi}_{(k+1,\tau)}\,\vect{J}(\tau)\,d\tau\cdot\vect{n}_{Id}, \\
+\Rightarrow\;
+\text{Cov}(\vect{n}_{\mathrm{int}}) &= \int_{t_k}^{t_{k+1}} \vect{\Phi}_{(k+1,\tau)}\vect{J}(\tau)\,d\tau
+\cdot \vect{Q}_{Id} \cdot
+\left(\int_{t_k}^{t_{k+1}} \vect{\Phi}_{(k+1,\tau)}\vect{J}(\tau)\,d\tau\right)^{\!\top}\!.
+\end{align}
+\item Keep the noise inside the integral:
+\begin{align}
+\text{Cov}(\vect{n}_{\mathrm{int}})
+&= \E\left(\int_{t_k}^{t_{k+1}} \vect{\Phi}_{(k+1,\tau)}\,\vect{J}(\tau)\,\vect{n}_{Id}\,\vect{n}_{Id}\trans\,\vect{J}\trans(\tau)\,\vect{\Phi}_{(k+1,\tau)}\trans\,d\tau\right) \\
+&= \int_{t_k}^{t_{k+1}} \vect{\Phi}_{(k+1,\tau)}\,\vect{J}(\tau)\,\vect{Q}_{Id}\,\vect{J}\trans(\tau)\,\vect{\Phi}_{(k+1,\tau)}\trans\,d\tau.
+\end{align}
+\end{enumerate}
+Either way, the \emph{linearization} itself can be carried out with different error parametrizations, all 15~DoF for $\vect{x}_I$:
+\begin{empheq}[box=\fbox]{align}
+\begin{cases}
+SO(3) + \mathbb{R}^3 + \mathbb{R}^3 + \mathbb{R}^3 + \mathbb{R}^3 &\Rightarrow\; \text{15 DoF for } \vect{x}_I, \\
+SE_2(3) + \mathbb{R}^3 + \mathbb{R}^3 &\Rightarrow\; \text{15 DoF for } \vect{x}_I, \\
+SE(3) + \mathbb{R}^3 + \mathbb{R}^3 + \mathbb{R}^3 &\Rightarrow\; \text{15 DoF for } \vect{x}_I.
+\end{cases}
+\end{empheq}
+We now use the analytic form from (3) for the detailed mean and covariance propagation, working out the first two parametrizations: $SO(3)+\mathbb{R}^{12}$ in \S\ref{sec:lec05-so3prop} and $SE_2(3)+\mathbb{R}^{6}$ in the final subsection.
 
 % =====================================================================
 \subsection{Mean and covariance propagation with \texorpdfstring{$SO(3)+\mathbb{R}^{3}$}{SO(3)+R3} errors}
