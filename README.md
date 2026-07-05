@@ -24,7 +24,7 @@ This course is designed to cover the in-depth math knowledge essential for resea
 | 2 | Rotation, Lie / quaternion, translation, SE(3), SE<sub>2</sub>(3)            | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
 | 3 | Camera model, triangulation, calibration, point / line / plane               | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
 | 4 | Information vs. covariance, marginalization & Schur complement, VO/SLAM pipeline, estimator design, EKF from MAP | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 5 | IMU model, IMU integration                                                   | Yulin Yang | — |
+| 5 | IMU model & noise discretization, IMU integration / preintegration (discrete, ACI²/CPI), mean & covariance propagation on SO(3) and SE<sub>2</sub>(3) | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
 | 6 | Kalman filter and batch least squares, marginalization, null space           | Yulin Yang | — |
 | 7 | State formulation (global-centric, invariant, robocentric, equivariant…)     | Chuchu Chen | — |
 | 8 | Kalman-filter-based VINS, optimization-based, observability analysis         | Chuchu Chen | — |
