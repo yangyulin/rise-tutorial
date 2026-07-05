@@ -206,7 +206,7 @@ which is equivalent to the weighted least-squares problem
 Linearizing about $\hat{\vect{x}}$ with $\vect{z} = \vect{h}(\vect{x}) + \vect{n} = \vect{h}(\hat{\vect{x}}) + \vect{H}(\vect{x}-\hat{\vect{x}}) + \vect{n}$, and defining the residual $\tilde{\vect{z}} = \vect{z} - \vect{h}(\hat{\vect{x}})$ and error $\tilde{\vect{x}} = \vect{x} - \hat{\vect{x}}$,
 \begin{align}
 \min_{\tilde{\vect{x}}}\; (\tilde{\vect{z}} - \vect{H}\tilde{\vect{x}})\trans \vect{P}^{-1}(\tilde{\vect{z}} - \vect{H}\tilde{\vect{x}})
-= \min_{\tilde{\vect{x}}}\big(\tilde{\vect{z}}\trans\tilde{\vect{z}} - 2\,\tilde{\vect{z}}\trans\vect{P}^{-1}\vect{H}\tilde{\vect{x}} + \tilde{\vect{x}}\trans \vect{H}\trans\vect{P}^{-1}\vect{H}\tilde{\vect{x}}\big).
+= \min_{\tilde{\vect{x}}}\big(\tilde{\vect{z}}\trans\vect{P}^{-1}\tilde{\vect{z}} - 2\,\tilde{\vect{z}}\trans\vect{P}^{-1}\vect{H}\tilde{\vect{x}} + \tilde{\vect{x}}\trans \vect{H}\trans\vect{P}^{-1}\vect{H}\tilde{\vect{x}}\big).
 \end{align}
 Setting the gradient to zero gives the normal equations $\vect{H}\trans\vect{P}^{-1}\vect{H}\,\tilde{\vect{x}} = \vect{H}\trans\vect{P}^{-1}\tilde{\vect{z}}$, hence
 \begin{empheq}[box=\fbox]{align}
