@@ -18,18 +18,18 @@ This course is designed to cover the in-depth math knowledge essential for resea
 
 ## Outline
 
-| # | Topic | Instructor | Notes |
-|:-:|---|---|:-:|
-| 1 | Basics: probability, linear algebra, linear systems                          | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 2 | Rotation, Lie / quaternion, translation, SE(3), SE<sub>2</sub>(3)            | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 3 | Camera model, triangulation, calibration, point / line / plane               | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 4 | Information vs. covariance, marginalization & Schur complement, VO/SLAM pipeline, estimator design, EKF from MAP | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 5 | IMU model & noise discretization, IMU integration / preintegration (discrete, ACI²/CPI), mean & covariance propagation on SO(3) and SE<sub>2</sub>(3) | Yulin Yang | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 6 | Kalman filter and batch least squares, marginalization, null space           | Yulin Yang | — |
-| 7 | State formulation (global-centric, invariant, robocentric, equivariant…)     | Chuchu Chen | — |
-| 8 | Kalman-filter-based VINS, optimization-based, observability analysis         | Chuchu Chen | — |
-| 9 | IMU pre-integration-based VINS, multi-IMU                                    | Yulin Yang | — |
-| 10 | Learning-based SLAM / Dense Mapping                                         | Xingxing Zuo | — |
+| # | Topic | Instructor | Status | Notes |
+|:-:|---|---|:-:|:-:|
+| 1 | Basics: probability, estimator, linear system                                | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 2 | 3D geometry: rotation, Lie group (SE(3), SE<sub>2</sub>(3))                  | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 3 | Visual SLAM I: camera model, point / line / plane                            | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 4 | Visual SLAM II: information, marginalization and pipeline                    | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 5 | IMU model and integration                                                    | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 6 | Kalman filter (KF) and observability analysis, KF-based VINS                 | Yulin Yang | next | — |
+| 7 | IMU pre-integration based VINS, multi-visual-inertial                        | Yulin Yang | todo | — |
+| 8 | State formulation (global-centric, invariant, robocentric, equivariant…)     | Chuchu Chen | todo | — |
+| 9 | Graph marginalization and sparsification, C-KLAM                             | Chuchu Chen | todo | — |
+| 10 | Learning-based SLAM / Dense Mapping                                         | Xingxing Zuo | todo | — |
 
 ## Reference Reading
 
