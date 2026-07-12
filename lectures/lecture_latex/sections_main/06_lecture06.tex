@@ -287,29 +287,72 @@ and hence
 \label{sec:lec06-discussion}
 
 \begin{enumerate}[label=(\arabic*),topsep=2pt,itemsep=2pt]
-\item The EKF is a \emph{special form} of the MLE/MAP estimator.
-\item The EKF is the way to solve the problem \emph{incrementally}.
+\item We need to \emph{linearize} the nonlinear motion and measurement models --- the KF is actually a \emph{linear} estimator. We derived it based on MLE/MAP (nonlinear least squares); the Gaussian assumption is the foundation.
+\item The EKF is the way to solve the MLE/MAP \emph{incrementally}; (nonlinear) least squares solve it in \emph{batch}.
 \item The VINS system has exactly the structure of \eqref{eq:lec06-system}, repeated over time:
 \begin{align}
 \left.
 \begin{cases}
-\vect{x}_k \sim \mathcal{N}(\hat{\vect{x}}_k, \vect{P}_k) & \to\; \text{prior}, \\[2pt]
-\vect{x}_{k+1} = \vect{f}(\vect{x}_k) + \vect{w}_k & \to\; \text{motion, IMU}, \\[2pt]
-\vect{z}_{k+1} = \vect{h}(\vect{x}_{k+1}) + \vect{n}_{k+1} & \to\; \text{measurements, vision}
+\vect{x}_k \sim \mathcal{N}(\hat{\vect{x}}_k, \vect{P}_k) & \to\; \text{prior of the IMU state}, \\[2pt]
+\vect{x}_{k+1} = \vect{f}(\vect{x}_k) + \vect{w}_k & \to\; \text{IMU integration model}, \\[2pt]
+\vect{z}_{k+1} = \vect{h}(\vect{x}_{k+1}) + \vect{n}_{k+1} & \to\; \text{vision measurements}
 \end{cases}
-\right\} \;\; \text{VINS}.
+\right\} \;\; \text{VINS},
 \label{eq:lec06-vins}
 \end{align}
+the visual-inertial navigation system (when used for odometry: VIO, visual-inertial odometry).
 \item The two models are the ones we have built in the previous lectures:
 \begin{itemize}[noitemsep,topsep=2pt]
-\item IMU motion model (Lecture~5): $\dot{\vect{x}} = \vect{f}(\vect{x}, \vect{n}_I) \;\Rightarrow\; \vect{x}_{k+1} = \vect{f}_{\mathrm{int}}(\vect{x}_k, \vect{n}_{Id})$;
+\item IMU model (Lecture~5): $\dot{\vect{x}} = \vect{f}(\vect{x}, \vect{n}_I) \;\Rightarrow\; \vect{x}_{k+1} = \vect{f}_{\mathrm{int}}(\vect{x}_k, \vect{n}_{Id})$;
 \item vision model (Lectures~3--4): $\vect{z}_c = \vect{h}_c(\vect{x}) + \vect{n}_c$.
 \end{itemize}
-\item \textbf{Initialization:} in order to run the EKF, we need the prior $\vect{x}_k \sim \mathcal{N}(\hat{\vect{x}}_k, \vect{P}_k)$. For the IMU state (Lecture~5)
+\item The Kalman gain can be written in equivalent forms --- by \eqref{eq:lec06-gain-equiv},
+\begin{align}
+\vect{K} = \vect{P}_{1|0}\vect{H}\trans\vect{S}_1^{-1}
+= \vect{P}_{1|0}\vect{H}\trans\big(\vect{H}\vect{P}_{1|0}\vect{H}\trans + \vect{R}\big)^{-1}
+= \big(\vect{P}_{1|0}^{-1} + \vect{H}\trans\vect{R}^{-1}\vect{H}\big)^{-1}\vect{H}\trans\vect{R}^{-1},
+\label{eq:lec06-gain-forms}
+\end{align}
+where $\vect{P}_{1|0}$ is the \emph{propagated covariance} of $\vect{x}_1$; $\vect{S}_1$ is the \emph{residual covariance} (of $\tilde{\vect{z}}_1$); $\vect{R}$ is the measurement noise; and
+$\vect{P}_{1|0}^{-1} + \vect{H}\trans\vect{R}^{-1}\vect{H} = \vect{\Sigma}_{1|1} = \vect{P}_{1|1}^{-1}$ is the posterior information matrix.
+\item The covariance update can likewise be written in equivalent forms:
+\begin{align}
+\vect{P}_{1|1}
+= \vect{P}_{1|0} - \vect{P}_{1|0}\vect{H}\trans\underbrace{\big(\vect{H}\vect{P}_{1|0}\vect{H}\trans + \vect{R}\big)^{-1}}_{\vect{S}_1^{-1}}\vect{H}\vect{P}_{1|0}
+= \vect{P}_{1|0} - \vect{K}\vect{S}_1\vect{K}\trans.
+\end{align}
+Moreover, substituting the linearized measurement into the state update,
+\begin{align}
+\hat{\vect{x}}_{1|1} = \hat{\vect{x}}_{1|0} + \tilde{\vect{x}}_1
+= \hat{\vect{x}}_{1|0} + \vect{K}\,\tilde{\vect{z}}_1
+= \hat{\vect{x}}_{1|0} + \vect{K}\big(\vect{H}\tilde{\vect{x}}_{1|0} + \vect{n}_1\big),
+\end{align}
+the posterior covariance follows step by step:
+\begin{align}
+\vect{P}_{1|1}
+&= \E\Big(\big(\vect{x} - \hat{\vect{x}}_{1|1}\big)\big(\vect{x} - \hat{\vect{x}}_{1|1}\big)\trans\Big) \\
+&= \E\Big(\big[\underbrace{\vect{x} - \hat{\vect{x}}_{1|0}}_{\tilde{\vect{x}}_{1|0}} - \vect{K}\big(\vect{H}\tilde{\vect{x}}_{1|0} + \vect{n}_1\big)\big]
+\big[\vect{x} - \hat{\vect{x}}_{1|0} - \vect{K}\big(\vect{H}\tilde{\vect{x}}_{1|0} + \vect{n}_1\big)\big]\trans\Big) \\
+&= \E\Big(\big[(\vect{I} - \vect{K}\vect{H})\,\tilde{\vect{x}}_{1|0} - \vect{K}\vect{n}_1\big]
+\big[(\vect{I} - \vect{K}\vect{H})\,\tilde{\vect{x}}_{1|0} - \vect{K}\vect{n}_1\big]\trans\Big),
+\end{align}
+hence
+\begin{empheq}[box=\fbox]{align}
+\vect{P}_{1|1} = (\vect{I} - \vect{K}\vect{H})\,\vect{P}_{1|0}\,(\vect{I} - \vect{K}\vect{H})\trans + \vect{K}\vect{R}\vect{K}\trans
+\qquad \text{(Joseph form)}.
+\label{eq:lec06-joseph}
+\end{empheq}
+\item \textbf{A practical problem for the KF: initialization.} To run the filter we need the prior
+\begin{align}
+\vect{x}_k \sim \mathcal{N}(\hat{\vect{x}}_k, \vect{P}_k)
+\quad\Rightarrow\quad
+\text{how to get } \hat{\vect{x}}_k,\, \vect{P}_k\,?
+\end{align}
+For the IMU state (Lecture~5)
 \begin{align}
 \vect{x}_I = \big\{ {}^{G}_{I}\vect{R},\; {}^{G}\vect{p}_I,\; {}^{G}\vect{v}_I,\; \vect{b}_g,\; \vect{b}_a \big\},
 \end{align}
-we need to estimate ${}^{G}\vect{v}_I$, $\vect{b}_g$, $\vect{b}_a$ to start the estimator.
+this is the subject of the next subsection.
 \end{enumerate}
 
 % =====================================================================
@@ -348,6 +391,17 @@ Consider three consecutive images and the IMU between them (Fig.~\ref{fig:lec06-
 \caption{Visual-inertial initialization: the relative camera poses from the visual SLAM pipeline (top, green) are aligned with the IMU integration over the same intervals (bottom, red wavy links) through the camera--IMU extrinsics.}
 \label{fig:lec06-init}
 \end{figure}
+
+From these, we want to \textbf{initialize}:
+\begin{empheq}[box=\fbox]{align}
+\begin{cases}
+\text{(1)} & {}^{I_1}\vect{g} \\[2pt]
+\text{(2)} & {}^{I_1}\vect{v}_{I_1},\; {}^{I_1}\vect{v}_{I_2},\; {}^{I_1}\vect{v}_{I_3},\; \ldots \\[2pt]
+\text{(3)} & s \quad (\text{mono camera}) \\[2pt]
+\text{(4)} & \vect{b}_g,\; \vect{b}_a
+\end{cases}
+\label{eq:lec06-init-targets}
+\end{empheq}
 
 \paragraph{From vision.} Using the visual SLAM pipeline (Lectures~3--4), we obtain the relative camera poses
 \begin{align}
@@ -453,10 +507,17 @@ s \\ {}^{I_k}\vect{g} \\ {}^{I_k}\vect{v}_{I_k} \\ {}^{I_k}\vect{v}_{I_{k+1}} \\
 \label{eq:lec06-linsys}
 \end{empheq}
 \endgroup
-Solving this linear system recovers the scale, the gravity direction in $\{I_k\}$ (hence the initial orientation up to yaw), and the velocities --- the quantities we needed to start the estimator.
+Solving this linear system recovers targets (1)--(3) of \eqref{eq:lec06-init-targets}: the scale, the gravity direction in $\{I_k\}$ (hence the initial orientation up to yaw), and the velocities.
 
-\paragraph{How many frames do we need?} Each image pair contributes one position and one velocity constraint ($6$ equations); each new frame adds one velocity unknown ($3$):
+\paragraph{How many frames do we need?} The system \eqref{eq:lec06-linsys} has $12$ constraints and $13$ unknowns. In general, every pair of consecutive frames gives $6$ constraints ($3$ position + $3$ velocity), so $n$ frames give $6(n-1)$, while we totally need to solve $1 + 3 + 3n$ unknowns ($s$, gravity, and $n$ velocities):
 \begin{itemize}[noitemsep,topsep=2pt]
-\item \textbf{if no scale $s$} (e.g., stereo, where the vision translation is metric): with $3$ frames, $12$ equations vs.\ $12$ unknowns (${}^{I_k}\vect{g}$ + three velocities) $\Rightarrow$ we need at least $3$ frames;
-\item \textbf{if scale $s$}: with $3$ frames, $12$ equations vs.\ $13$ unknowns $\Rightarrow$ we need at least $4$ frames.
+\item \textbf{if $s$ is known} (stereo camera): $3$ frames are good to solve the initialization;
+\item \textbf{if $s$ is unknown} (mono camera):
+\begin{align}
+6(n-1) - (4 + 3n) > 0
+\;\;\Rightarrow\;\;
+n > \tfrac{10}{3}
+\;\;\Rightarrow\;\;
+n = 4 \;\text{frames minimum ($3$ intervals)}.
+\end{align}
 \end{itemize}
