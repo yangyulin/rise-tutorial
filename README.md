@@ -25,7 +25,7 @@ This course is designed to cover the in-depth math knowledge essential for resea
 | 3 | Visual SLAM I: camera model, point / line / plane                            | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
 | 4 | Visual SLAM II: information, marginalization and pipeline                    | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
 | 5 | IMU model and integration                                                    | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 6 | Kalman filter (KF) and observability analysis, KF-based VINS                 | Yulin Yang | next | — |
+| 6 | Kalman filter (KF) and observability analysis, KF-based VINS                 | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
 | 7 | IMU pre-integration based VINS, multi-visual-inertial                        | Yulin Yang | todo | — |
 | 8 | State formulation (global-centric, invariant, robocentric, equivariant…)     | Chuchu Chen | todo | — |
 | 9 | Graph marginalization and sparsification, C-KLAM                             | Chuchu Chen | todo | — |
