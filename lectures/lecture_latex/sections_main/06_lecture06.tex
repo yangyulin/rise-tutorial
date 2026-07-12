@@ -342,6 +342,13 @@ hence
 \qquad \text{(Joseph form)}.
 \label{eq:lec06-joseph}
 \end{empheq}
+\item \textbf{If the system is linear, the KF and (weighted) least squares are exactly the same.}
+With a linear motion model $\vect{x}_1 = \vect{F}\vect{x}_0 + \vect{w}_0$ and a linear measurement model $\vect{z}_1 = \vect{H}\vect{x}_1 + \vect{n}_1$, the cost \eqref{eq:lec06-map-cost} is exactly quadratic: there is no linearization step, and $\vect{r}_x = \hat{\vect{x}}_1 - \vect{F}\hat{\vect{x}}_0 = \vect{0}$ holds by construction, so the ``as $\vect{r}_x \to \vect{0}$'' caveat disappears. The incremental solution (\S\ref{sec:lec06-incremental}) and the batch solution (\S\ref{sec:lec06-batch}) are then two orderings of the \emph{same} Gaussian elimination on the \emph{same} information system, and they agree \emph{exactly}: the KF posterior $\mathcal{N}(\hat{\vect{x}}_{1|1}, \vect{P}_{1|1})$ equals the batch MAP estimate of $\vect{x}_1$ with its marginal covariance. Moreover, the posterior is Gaussian, so its mean equals its mode: the MAP, MMSE, and KF estimates all coincide. Two qualifications:
+\begin{itemize}[noitemsep,topsep=2pt]
+\item the equivalence is with the \emph{weighted} least squares \eqref{eq:lec06-map-cost} --- including the prior and motion terms, with the inverse covariances $\vect{P}_0^{-1}$, $\vect{Q}_0^{-1}$, $\vect{R}^{-1}$ as weights; ordinary unweighted least squares (or dropping the prior) solves a different problem;
+\item batch over a whole trajectory $\vect{x}_0, \ldots, \vect{x}_N$ conditions every state on \emph{all} measurements --- it is a \emph{smoother}. It matches the KF at the \emph{final} state $\vect{x}_N$; at the intermediate states it returns the smoothed estimates, which differ from (and improve on) the filtered ones.
+\end{itemize}
+Once $\vect{f}$, $\vect{h}$ are nonlinear, the equivalence breaks: the EKF takes a \emph{single} Gauss--Newton step, linearized at the predicted estimate, and immediately marginalizes --- the linearization points are frozen and can never be revisited --- while batch nonlinear least squares re-linearizes all states and iterates. Both the accuracy gap and the consistency gap of the EKF trace back to these frozen linearization points.
 \item \textbf{A practical problem for the KF: initialization.} To run the filter we need the prior
 \begin{align}
 \vect{x}_k \sim \mathcal{N}(\hat{\vect{x}}_k, \vect{P}_k)
