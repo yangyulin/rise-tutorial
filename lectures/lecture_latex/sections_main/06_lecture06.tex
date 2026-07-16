@@ -159,10 +159,12 @@ Hence
 Interpreting $\tilde{\vect{x}}_1 = -\vect{r}_x$:
 \begin{align}
 \begin{cases}
-\text{if } \vect{r}_x = \vect{0}, & \hat{\vect{x}}_{1|0} = \vect{f}(\hat{\vect{x}}_0), \\
-\text{if } \vect{r}_x \neq \vect{0}, & \hat{\vect{x}}_{1|0} = \vect{f}(\hat{\vect{x}}_0) - \vect{r}_x.
+\text{if } \vect{r}_x = \vect{0}, & \hat{\vect{x}}_{1|0} = \hat{\vect{x}}_1 = \vect{f}(\hat{\vect{x}}_0), \\
+\text{if } \vect{r}_x \neq \vect{0}, & \hat{\vect{x}}_{1|0} = \hat{\vect{x}}_1 - \vect{r}_x
+= \hat{\vect{x}}_1 - \big(\hat{\vect{x}}_1 - \vect{f}(\hat{\vect{x}}_0)\big) = \vect{f}(\hat{\vect{x}}_0).
 \end{cases}
 \end{align}
+Either way the propagated mean is $\vect{f}(\hat{\vect{x}}_0)$.
 
 \paragraph{Step 2: + update.} Since step~1 left $\tilde{\vect{x}}_1$ with mean $-\vect{r}_x$ and covariance $\vect{P}_{1|0}$, the remaining problem is
 \begin{align}
