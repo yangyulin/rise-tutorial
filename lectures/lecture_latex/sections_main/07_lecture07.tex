@@ -1,0 +1,165 @@
+\section{Lecture 7: IMU Preintegration, Optimization-Based VINS, and Multi-IMU Fusion}
+\label{sec:lecture07}
+
+\paragraph{Topics.} (1) preintegration; (2) optimization-based VINS with the IMU factor; (3) multi-IMU fusion.
+
+% NOTE: partial transcription — the handwritten notes (Lecture 7.pdf, 5pp, 2026-07-19)
+% cover topic (1) up to the relinearization idea; the lecture continues next session.
+
+% Tighten matrix column spacing as in Lecture 6.
+\setlength{\arraycolsep}{3.5pt}
+
+% =====================================================================
+\subsection{Preintegration}
+\label{sec:lec07-preint}
+
+Recall the IMU kinematics $\dot{\vect{x}}_I = \vect{f}(\vect{x}_I, \vect{n}_I)$ (Lecture~5). Integrating over one IMU interval gives
+\begin{align}
+\vect{x}_{k+1} = \vect{f}_{\mathrm{int}}(\vect{x}_k, \vect{n}_I)
+\qquad\leftarrow\;\text{1 measurement: } k \to k+1,
+\end{align}
+while integrating across \emph{multiple} IMU measurements up to $t_j$ gives
+\begin{align}
+\vect{x}_j = \vect{f}_{\mathrm{int}}(\vect{x}_k, \vect{n}_I)
+\qquad\leftarrow\;\text{multiple measurements: } k \to j.
+\label{eq:lec07-multi-int}
+\end{align}
+By the exact integration results of Lecture~5, \eqref{eq:lec07-multi-int} can be described as (with $\delta t_k \triangleq t_j - t_k$)
+\begin{align}
+\begin{cases}
+{}^{G}_{I_j}\vect{R} = {}^{G}_{I_k}\vect{R}\cdot\Delta\vect{R}, \\[2pt]
+{}^{G}\vect{p}_{I_j} = {}^{G}\vect{p}_{I_k} + {}^{G}\vect{v}_{I_k}\,\delta t_k + {}^{G}_{I_k}\vect{R}\,\Delta\vect{p} + \frac{1}{2}{}^{G}\vect{g}\,\delta t_k^2, \\[2pt]
+{}^{G}\vect{v}_{I_j} = {}^{G}\vect{v}_{I_k} + {}^{G}_{I_k}\vect{R}\,\Delta\vect{v} + {}^{G}\vect{g}\,\delta t_k, \\[2pt]
+\vect{b}_{g_j} = \vect{b}_{g_k} + \Delta\vect{b}_g, \\[2pt]
+\vect{b}_{a_j} = \vect{b}_{a_k} + \Delta\vect{b}_a.
+\end{cases}
+\label{eq:lec07-int-kj}
+\end{align}
+It is clear that $\Delta\vect{R}, \Delta\vect{p}$ and $\Delta\vect{v}$ are \emph{integration terms}; we can then reorganize the measurements:
+\begin{align}
+\Delta\vect{R} &\triangleq \Delta\vect{R}(\vect{b}_g, \vect{n}_I)
+\triangleq {}^{I_k}_{I_j}\vect{R}
+&&= \underbrace{{}^{G}_{I_k}\vect{R}\trans\,{}^{G}_{I_j}\vect{R}}_{\displaystyle \vect{h}_R(\vect{x}_k, \vect{x}_j)}, \\
+\Delta\vect{p} &\triangleq \Delta\vect{p}(\vect{b}_a, \vect{b}_g, \vect{n}_I)
+\triangleq \int_{t_k}^{t_j}\!\!\int_{t_k}^{\tau} {}^{I_k}_{I_s}\vect{R}\;{}^{I_s}\vect{a}\,ds\,d\tau
+&&= \underbrace{{}^{G}_{I_k}\vect{R}\trans\Big({}^{G}\vect{p}_{I_j} - {}^{G}\vect{p}_{I_k} - {}^{G}\vect{v}_{I_k}\,\delta t_k - \tfrac{1}{2}{}^{G}\vect{g}\,\delta t_k^2\Big)}_{\displaystyle \vect{h}_p(\vect{x}_k, \vect{x}_j)}, \\
+\Delta\vect{v} &\triangleq \Delta\vect{v}(\vect{b}_a, \vect{b}_g, \vect{n}_I)
+\triangleq \int_{t_k}^{t_j} {}^{I_k}_{I_\tau}\vect{R}\;{}^{I_\tau}\vect{a}\,d\tau
+&&= \underbrace{{}^{G}_{I_k}\vect{R}\trans\Big({}^{G}\vect{v}_{I_j} - {}^{G}\vect{v}_{I_k} - {}^{G}\vect{g}\,\delta t_k\Big)}_{\displaystyle \vect{h}_v(\vect{x}_k, \vect{x}_j)}, \\
+\Delta\vect{b}_g &\triangleq \Delta\vect{b}_g(\vect{n}_I)
+\triangleq \int_{t_k}^{t_j} \vect{n}_{wg}\,d\tau
+&&= \vect{b}_{g_j} - \vect{b}_{g_k}, \\
+\Delta\vect{b}_a &\triangleq \Delta\vect{b}_a(\vect{n}_I)
+\triangleq \int_{t_k}^{t_j} \vect{n}_{wa}\,d\tau
+&&= \vect{b}_{a_j} - \vect{b}_{a_k}.
+\end{align}
+Two sides of the same equations:
+\begin{itemize}[noitemsep,topsep=2pt]
+\item \textbf{Left-hand side:} the measurements from the IMU (relates to the IMU biases and noises);
+\item \textbf{Right-hand side:} the nonlinear functions containing the states $\vect{x}$:
+\begin{align}
+\begin{cases}
+\Delta\vect{R}(\vect{b}_g, \vect{n}_I) = \vect{h}_R(\vect{x}_k, \vect{x}_j), \\
+\Delta\vect{p}(\vect{b}_a, \vect{b}_g, \vect{n}_I) = \vect{h}_p(\vect{x}_k, \vect{x}_j), \\
+\Delta\vect{v}(\vect{b}_a, \vect{b}_g, \vect{n}_I) = \vect{h}_v(\vect{x}_k, \vect{x}_j), \\
+\Delta\vect{b}_g(\vect{n}_I) = \vect{b}_{g_j} - \vect{b}_{g_k}, \\
+\Delta\vect{b}_a(\vect{n}_I) = \vect{b}_{a_j} - \vect{b}_{a_k}
+\end{cases}
+\;\;\Rightarrow\;\;
+\text{the IMU measurements, no assumption yet.}
+\end{align}
+\end{itemize}
+
+\paragraph{Linearizing about the bias estimates.} Give an estimate of $\hat{\vect{b}}_g$ and $\hat{\vect{b}}_a$; then, to first order,
+\begin{align}
+\Delta\vect{R}(\vect{b}_g, \vect{n}_I)
+&\approx \Delta\vect{R}(\hat{\vect{b}}_g, \vect{0})\cdot\Exp\big(\vect{H}_g^R\,\tilde{\vect{b}}_g + \vect{H}_n^R\,\vect{n}_I\big) \notag \\
+\Rightarrow\quad
+\Delta\vect{R}(\hat{\vect{b}}_g, \vect{0})
+&= \vect{h}_R(\vect{x}_k, \vect{x}_j)\cdot\Exp\big(-\vect{H}_g^R\,\tilde{\vect{b}}_g - \vect{H}_n^R\,\vect{n}_I\big);
+\end{align}
+similarly,
+\begin{align}
+\Delta\vect{p}(\vect{b}_g, \vect{b}_a, \vect{n}_I)
+&\approx \Delta\vect{p}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
++ \vect{H}_g^p\,\tilde{\vect{b}}_g + \vect{H}_a^p\,\tilde{\vect{b}}_a + \vect{H}_n^p\,\vect{n}_I \notag \\
+\Rightarrow\quad
+\Delta\vect{p}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
+&= \vect{h}_p(\vect{x}_k, \vect{x}_j)
+- \vect{H}_g^p\,\tilde{\vect{b}}_g - \vect{H}_a^p\,\tilde{\vect{b}}_a - \vect{H}_n^p\,\vect{n}_I, \\[4pt]
+\Delta\vect{v}(\vect{b}_g, \vect{b}_a, \vect{n}_I)
+&\approx \Delta\vect{v}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
++ \vect{H}_g^v\,\tilde{\vect{b}}_g + \vect{H}_a^v\,\tilde{\vect{b}}_a + \vect{H}_n^v\,\vect{n}_I \notag \\
+\Rightarrow\quad
+\Delta\vect{v}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
+&= \vect{h}_v(\vect{x}_k, \vect{x}_j)
+- \vect{H}_g^v\,\tilde{\vect{b}}_g - \vect{H}_a^v\,\tilde{\vect{b}}_a - \vect{H}_n^v\,\vect{n}_I.
+\end{align}
+Then, for the biases, we get
+\begin{align}
+\Delta\vect{b}_g(\vect{n}_I) = \vect{0} + \int_{t_k}^{t_j} \vect{n}_{wg}\,dt = \vect{0} + \vect{n}_{wgd}\,\delta t,
+\qquad
+\Delta\vect{b}_a(\vect{n}_I) = \vect{0} + \int_{t_k}^{t_j} \vect{n}_{wa}\,dt = \vect{0} + \vect{n}_{wad}\,\delta t,
+\end{align}
+with $\delta t = t_j - t_k$ and $\vect{n}_{wgd}, \vect{n}_{wad}$ the discrete noises. Hence \textbf{the cleaner IMU measurement} is:
+\begin{empheq}[box=\fbox]{align}
+\Delta\vect{R}(\hat{\vect{b}}_g, \vect{0})
+&= \vect{h}_R(\vect{x}_k, \vect{x}_j)\cdot\Exp\big(-\vect{H}_g^R\,\tilde{\vect{b}}_g - \vect{H}_n^R\,\vect{n}_I\big), \notag \\
+\Delta\vect{p}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
+&= \vect{h}_p(\vect{x}_k, \vect{x}_j) - \vect{H}_g^p\,\tilde{\vect{b}}_g - \vect{H}_a^p\,\tilde{\vect{b}}_a - \vect{H}_n^p\,\vect{n}_I, \notag \\
+\Delta\vect{v}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
+&= \vect{h}_v(\vect{x}_k, \vect{x}_j) - \vect{H}_g^v\,\tilde{\vect{b}}_g - \vect{H}_a^v\,\tilde{\vect{b}}_a - \vect{H}_n^v\,\vect{n}_I, \notag \\
+\vect{0} &= \vect{b}_{g_j} - \vect{b}_{g_k} - \vect{n}_{wgd}\,\delta t, \notag \\
+\vect{0} &= \vect{b}_{a_j} - \vect{b}_{a_k} - \vect{n}_{wad}\,\delta t. \notag
+\end{empheq}
+Stacking the left-hand sides as the \emph{preintegrated measurement} $\vect{z}_I$, with $\vect{n}_{ij} \triangleq \vect{n}_I \sim \mathcal{N}(\vect{0}, \vect{R}_{ij})$:
+\begin{align}
+\vect{z}_I = \vect{h}(\vect{x}_k, \vect{x}_j, \vect{n}_I)
+\;\;&\Rightarrow\;\;
+\vect{z}_I = \underbrace{\vect{h}(\hat{\vect{x}}_k, \hat{\vect{x}}_j, \vect{0})}_{\hat{\vect{z}}_I}
++ \vect{H}_k\,\tilde{\vect{x}}_k + \vect{H}_j\,\tilde{\vect{x}}_j + \vect{G}_I\,\vect{n}_{ij} \notag \\
+&\Rightarrow\;\;
+\tilde{\vect{z}}_I = \vect{H}_k\,\tilde{\vect{x}}_k + \vect{H}_j\,\tilde{\vect{x}}_j + \vect{G}_I\,\vect{n}_{ij}.
+\label{eq:lec07-imu-factor}
+\end{align}
+
+\paragraph{Why would we like this change?} Because we want to find this format:
+\begin{align}
+\vect{z}_I = \vect{h}(\vect{x}_k, \vect{x}_j, \vect{n}_{ij})
+\;\;\to\;\;
+\tilde{\vect{z}}_I = \vect{H}_k\,\tilde{\vect{x}}_k + \vect{H}_j\,\tilde{\vect{x}}_j + \vect{G}_I\,\vect{n}_{ij};
+\end{align}
+then we can have a \emph{cost term}
+\begin{align}
+\norm{\vect{z}_I - \vect{h}(\vect{x}_k, \vect{x}_j, \vect{0})}^2_{\vect{G}_I\vect{R}_{ij}\vect{G}_I\trans}
+\;\;\Rightarrow\;\;
+\norm{\tilde{\vect{z}}_I - \vect{H}_k\,\tilde{\vect{x}}_k - \vect{H}_j\,\tilde{\vect{x}}_j}^2_{\vect{G}_I\vect{R}_{ij}\vect{G}_I\trans}.
+\end{align}
+This cost term can be used in BA / least squares together with the vision factors easily.
+
+But there is a \textbf{caveat} for the above formulation:
+\begin{enumerate}[noitemsep,topsep=2pt]
+\item for the least squares / MLE, we have multiple iterations;
+\item for multi-iterations, $\hat{\vect{b}}_g$ is changing; then $\Delta\vect{p}, \Delta\vect{R}, \Delta\vect{v}$ and $\vect{G}_I, \vect{R}_{ij}$ will change;
+\item if so, for every iteration we need to recompute $\vect{z}_I$ and $\vect{G}_I, \vect{R}_{ij}$;
+\item if we have a high-frequency IMU and a lot of such IMU costs in the MLE, it will cause substantial computations.
+\end{enumerate}
+
+\paragraph{How to solve this?} Consider a measurement $\vect{z} = \vect{h}(\vect{x}_A, \vect{x}_B) + \vect{n}$, and let $\hat{\vect{x}}_B^0$ be a \emph{fixed} linearization point for $\vect{x}_B$ while $\hat{\vect{x}}_B$ is the current estimate. Then
+\begin{align}
+\vect{x}_B = \hat{\vect{x}}_B + \tilde{\vect{x}}_B
+= \hat{\vect{x}}_B^0 + \big(\hat{\vect{x}}_B - \hat{\vect{x}}_B^0\big) + \tilde{\vect{x}}_B
+= \hat{\vect{x}}_B^0 + \Delta\vect{x}_B + \tilde{\vect{x}}_B.
+\end{align}
+Linearizing about $\hat{\vect{x}}_B^0$ (so the error w.r.t.\ the fixed point is $\Delta\vect{x}_B + \tilde{\vect{x}}_B$),
+\begin{align}
+\tilde{\vect{z}} &= \vect{H}_A\,\tilde{\vect{x}}_A + \vect{H}_B^0\big(\Delta\vect{x}_B + \tilde{\vect{x}}_B\big) + \vect{n}
+= \vect{H}_A\,\tilde{\vect{x}}_A + \vect{H}_B^0\,\tilde{\vect{x}}_B + \vect{H}_B^0\,\Delta\vect{x}_B + \vect{n} \notag \\
+\Rightarrow\quad
+&\underbrace{\tilde{\vect{z}}}_{\text{unchanged}} - \boxed{\vect{H}_B^0\,\Delta\vect{x}_B}
+= \vect{H}_A\,\tilde{\vect{x}}_A + \underbrace{\vect{H}_B^0\,\tilde{\vect{x}}_B}_{\text{unchanged}} + \underbrace{\vect{n}}_{\text{unchanged}},
+\end{align}
+where across iterations \emph{only the boxed term $\vect{H}_B^0\,\Delta\vect{x}_B$ changes} --- a small computation: the Jacobians (and hence the preintegrated terms and noise mapping) stay at the fixed linearization point, and only the correction $\Delta\vect{x}_B$ is updated.
+
+\vspace{6pt}
+\noindent\emph{(To be continued: applying this relinearization idea to the preintegration factor, optimization-based VINS with the IMU factor, and multi-IMU fusion.)}

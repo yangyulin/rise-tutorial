@@ -1,7 +1,7 @@
 \section{Lecture 6: Kalman Filter, Observability Analysis, and KF-Based VINS}
 \label{sec:lecture06}
 
-\paragraph{Topics.} (1) the MAP problem behind the Kalman filter; (2) linearization of the MAP problem; (3) Solution 1: solve it incrementally --- the (E)KF; (4) Solution 2: solve it by batch; (5) discussion: the EKF, MLE/MAP, and the VINS system; (6) visual-inertial initialization.
+\paragraph{Topics.} (1) the MAP problem behind the Kalman filter; (2) linearization of the MAP problem; (3) Solution 1: solve it incrementally --- the (E)KF; (4) Solution 2: solve it by batch; (5) discussion: the EKF, MLE/MAP, and the VINS system; (6) visual-inertial initialization; (7) the EKF summary for the VINS; (8) observability analysis.
 
 % Tighten matrix column spacing for the block-matrix algebra in this lecture.
 \setlength{\arraycolsep}{3.5pt}
@@ -530,3 +530,271 @@ n > \tfrac{10}{3}
 n = 4 \;\text{frames minimum ($3$ intervals)}.
 \end{align}
 \end{itemize}
+
+% =====================================================================
+\subsection{The EKF summary for the VINS}
+\label{sec:lec06-ekf-vins}
+
+We now put the pieces together: the EKF for the VINS system, fusing \textbf{IMU + vision}.
+
+\paragraph{The state vector.} For simplicity, take the $15$-DoF IMU state plus one 3D feature:
+\begin{align}
+\vect{x} = \begin{bmatrix} \vect{x}_I \\ \vect{x}_f \end{bmatrix}
+= \begin{bmatrix}
+{}^{G}_{I}\vect{\theta} \\ {}^{G}\vect{p}_I \\ {}^{G}\vect{v}_I \\ \vect{b}_g \\ \vect{b}_a \\ {}^{G}\vect{p}_f
+\end{bmatrix},
+\end{align}
+each block $3\times1$: the first five blocks are $\vect{x}_I$, the $15$-DoF IMU state on $SO(3) + \Reals^3 + \Reals^3 + \Reals^3 + \Reals^3$, and the last is the feature ($3$ per 3D feature).
+
+\paragraph{The error state.} With $\vect{x} = \hat{\vect{x}} \boxplus \tilde{\vect{x}}$,
+\begin{align}
+\tilde{\vect{x}} = \begin{bmatrix}
+\delta\vect{\theta} \\ {}^{G}\tilde{\vect{p}}_I \\ {}^{G}\tilde{\vect{v}}_I \\ \tilde{\vect{b}}_g \\ \tilde{\vect{b}}_a \\ {}^{G}\tilde{\vect{p}}_f
+\end{bmatrix},
+\qquad
+\hat{\vect{x}} = \begin{bmatrix}
+{}^{G}_{I}\hat{\vect{\theta}} \\ {}^{G}\hat{\vect{p}}_I \\ {}^{G}\hat{\vect{v}}_I \\ \hat{\vect{b}}_g \\ \hat{\vect{b}}_a \\ {}^{G}\hat{\vect{p}}_f
+\end{bmatrix},
+\end{align}
+where the rotation error is \emph{multiplicative},
+\begin{empheq}[box=\fbox]{align}
+{}^{G}_{I}\vect{R} = {}^{G}_{I}\hat{\vect{R}}\cdot\delta\vect{R}
+\triangleq \Exp\big({}^{G}_{I}\hat{\vect{\theta}}\big)\cdot\Exp(\delta\vect{\theta}),
+\label{eq:lec06-rot-error}
+\end{empheq}
+and the rest are additive: ${}^{G}\vect{p}_I = {}^{G}\hat{\vect{p}}_I + {}^{G}\tilde{\vect{p}}_I$, ${}^{G}\vect{v}_I = {}^{G}\hat{\vect{v}}_I + {}^{G}\tilde{\vect{v}}_I$, $\vect{b}_g = \hat{\vect{b}}_g + \tilde{\vect{b}}_g$, $\vect{b}_a = \hat{\vect{b}}_a + \tilde{\vect{b}}_a$, ${}^{G}\vect{p}_f = {}^{G}\hat{\vect{p}}_f + {}^{G}\tilde{\vect{p}}_f$. Two remarks:
+\begin{enumerate}[noitemsep,topsep=2pt]
+\item From $\Exp\big({}^{G}_{I}\vect{\theta}\big) = \Exp\big({}^{G}_{I}\hat{\vect{\theta}}\big)\cdot\Exp(\delta\vect{\theta})$ and the right Jacobian (Lecture~2), ${}^{G}_{I}\vect{\theta} = {}^{G}_{I}\hat{\vect{\theta}} + \vect{J}_r\big({}^{G}_{I}\hat{\vect{\theta}}\big)\,\delta\vect{\theta}$, so the boxplus reads, in column form,
+\begin{align}
+\vect{x} = \hat{\vect{x}} \boxplus \tilde{\vect{x}}
+\;\;\Rightarrow\;\;
+\begin{bmatrix}
+{}^{G}_{I}\vect{\theta} \\ {}^{G}\vect{p}_I \\ {}^{G}\vect{v}_I \\ \vect{b}_g \\ \vect{b}_a \\ {}^{G}\vect{p}_f
+\end{bmatrix}
+=
+\begin{bmatrix}
+{}^{G}_{I}\hat{\vect{\theta}} \\ {}^{G}\hat{\vect{p}}_I \\ {}^{G}\hat{\vect{v}}_I \\ \hat{\vect{b}}_g \\ \hat{\vect{b}}_a \\ {}^{G}\hat{\vect{p}}_f
+\end{bmatrix}
+\boxplus
+\begin{bmatrix}
+\delta\vect{\theta} \\ {}^{G}\tilde{\vect{p}}_I \\ {}^{G}\tilde{\vect{v}}_I \\ \tilde{\vect{b}}_g \\ \tilde{\vect{b}}_a \\ {}^{G}\tilde{\vect{p}}_f
+\end{bmatrix}
+=
+\begin{bmatrix}
+{}^{G}_{I}\hat{\vect{\theta}} + \vect{J}_r\big({}^{G}_{I}\hat{\vect{\theta}}\big)\,\delta\vect{\theta} \\
+{}^{G}\hat{\vect{p}}_I + {}^{G}\tilde{\vect{p}}_I \\
+{}^{G}\hat{\vect{v}}_I + {}^{G}\tilde{\vect{v}}_I \\
+\hat{\vect{b}}_g + \tilde{\vect{b}}_g \\
+\hat{\vect{b}}_a + \tilde{\vect{b}}_a \\
+{}^{G}\hat{\vect{p}}_f + {}^{G}\tilde{\vect{p}}_f
+\end{bmatrix}.
+\end{align}
+\item In quaternion form (Lecture~2), the same multiplicative error is
+${}^{G}_{I}\bar{q} = {}^{G}_{I}\hat{\bar{q}} \otimes \delta\bar{q}$ with
+$\delta\bar{q} = \begin{bmatrix} 1 \\ \frac{1}{2}\delta\vect{\theta} \end{bmatrix}$ (to first order).
+\end{enumerate}
+
+\paragraph{The IMU (motion) model.} From Lecture~5, $\vect{\omega}_m = \vect{\omega} + \vect{b}_g + \vect{n}_g$ and $\vect{a}_m = \vect{a} + \vect{b}_a + \vect{n}_a$, so the IMU dynamics (appending the static feature) are
+\begin{align}
+\left.
+\begin{aligned}
+{}^{G}_{I}\dot{\vect{R}} &= {}^{G}_{I}\vect{R}\,\skewsym{\vect{\omega}_m - \vect{b}_g - \vect{n}_g} \\
+{}^{G}\dot{\vect{p}}_I &= {}^{G}\vect{v}_I \\
+{}^{G}\dot{\vect{v}}_I &= {}^{G}_{I}\vect{R}\,(\vect{a}_m - \vect{b}_a - \vect{n}_a) + {}^{G}\vect{g},
+\qquad {}^{G}\vect{g} = \begin{bmatrix} 0 \\ 0 \\ -9.81 \end{bmatrix} \\
+\dot{\vect{b}}_g &= \vect{n}_{wg} \\
+\dot{\vect{b}}_a &= \vect{n}_{wa} \\
+{}^{G}\dot{\vect{p}}_f &= \vect{0}_{3\times1}
+\end{aligned}
+\;\right\}
+\;\;\Rightarrow\;\;
+\begin{aligned}
+\dot{\vect{x}} &= \vect{f}(\vect{x}, \vect{n}_I) \\
+&\Downarrow \\
+\vect{x}_{k+1} &= \vect{f}_{\mathrm{int}}(\vect{x}_k, \vect{n}_{I_k}),
+\end{aligned}
+\end{align}
+where $\vect{f}_{\mathrm{int}}(\cdot)$ is the integration of $\vect{f}(\cdot)$ over $[t_k, t_{k+1}]$ (Lecture~5).
+
+\paragraph{The vision (measurement) model.} From Lecture~3, $\vect{z}_c = \vect{h}_c(\vect{x}) + \vect{n}_c$ with
+\begin{align}
+\vect{z}_c = \begin{bmatrix} c_x/c_z \\ c_y/c_z \end{bmatrix},
+\qquad
+{}^{C}\vect{p}_f = \begin{bmatrix} c_x \\ c_y \\ c_z \end{bmatrix}
+&= {}^{G}_{C}\vect{R}\trans\big({}^{G}\vect{p}_f - {}^{G}\vect{p}_C\big) \notag \\
+&= \big({}^{G}_{I}\vect{R}\,{}^{I}_{C}\vect{R}\big)\trans\Big({}^{G}\vect{p}_f - \big({}^{G}_{I}\vect{R}\,{}^{I}\vect{p}_C + {}^{G}\vect{p}_I\big)\Big) \\
+&= {}^{I}_{C}\vect{R}\trans\,{}^{G}_{I}\vect{R}\trans\big({}^{G}\vect{p}_f - {}^{G}\vect{p}_I - {}^{G}_{I}\vect{R}\,{}^{I}\vect{p}_C\big) \\
+&= {}^{I}_{C}\vect{R}\trans\,{}^{G}_{I}\vect{R}\trans\big({}^{G}\vect{p}_f - {}^{G}\vect{p}_I\big) - {}^{I}_{C}\vect{R}\trans\,{}^{I}\vect{p}_C \\
+&= {}^{I}_{C}\vect{R}\trans\,{}^{G}_{I}\vect{R}\trans\big({}^{G}\vect{p}_f - {}^{G}\vect{p}_I\big) + {}^{C}\vect{p}_I.
+\end{align}
+
+\paragraph{EKF--VINS: propagation.} Given the prior information $\vect{x}_k \sim \mathcal{N}(\hat{\vect{x}}_k, \vect{P}_{k|k})$ and the motion model $\vect{x}_{k+1} = \vect{f}_{\mathrm{int}}(\vect{x}_k, \vect{n}_{I_k})$,
+\begin{align}
+\hat{\vect{x}}_{k+1|k} = \vect{f}_{\mathrm{int}}(\hat{\vect{x}}_k, \vect{0}),
+\qquad
+\tilde{\vect{x}}_{k+1} = \vect{\Phi}_{(k+1,k)}\,\tilde{\vect{x}}_k + \vect{G}_k\,\vect{n}_{Id_k},
+\end{align}
+\begin{empheq}[box=\fbox]{align}
+\vect{P}_{k+1|k} = \vect{\Phi}_{(k+1,k)}\,\vect{P}_{k|k}\,\vect{\Phi}_{(k+1,k)}\trans + \vect{G}_k\,\vect{R}_{Id}\,\vect{G}_k\trans,
+\end{empheq}
+where $\vect{\Phi}_{(k+1,k)}$, $\vect{G}_k$, and the integrals $\vect{\Xi}_{1,2,3,4}$ are exactly those of Lecture~5, \eqref{eq:lec05-Phi-so3}--\eqref{eq:lec05-G-so3}. Written with the propagated estimates (equivalent to \eqref{eq:lec05-Phi-so3} via $\skewsym{\vect{R}\vect{a}}\vect{R} = \vect{R}\skewsym{\vect{a}}$), and appending $\vect{I}_3$ for the static feature block,
+\begingroup
+\small
+\setlength{\arraycolsep}{2pt}
+\begin{align}
+\vect{\Phi}_{(k+1,k)} =
+\begin{bmatrix}
+{}^{G}_{I_{k+1|k}}\hat{\vect{R}}\trans\,{}^{G}_{I_k}\hat{\vect{R}} & \vect{0}_3 & \vect{0}_3 & \underbrace{-\vect{J}_r\big({}^{I_k}\hat{\vect{\omega}}\,\delta t_k\big)\,\delta t_k}_{\vect{\Phi}_{14}} & \vect{0}_3 \\
+-\skewsym{{}^{G}\hat{\vect{p}}_{I_{k+1|k}} - {}^{G}\hat{\vect{p}}_{I_k} - {}^{G}\hat{\vect{v}}_{I_k}\delta t_k - \frac{1}{2}{}^{G}\vect{g}\,\delta t_k^2}\,{}^{G}_{I_k}\hat{\vect{R}} & \vect{I}_3 & \vect{I}_3\,\delta t_k & \underbrace{{}^{G}_{I_k}\hat{\vect{R}}\,\vect{\Xi}_4}_{\vect{\Phi}_{24}} & \underbrace{-{}^{G}_{I_k}\hat{\vect{R}}\,\vect{\Xi}_2}_{\vect{\Phi}_{25}} \\
+-\skewsym{{}^{G}\hat{\vect{v}}_{I_{k+1|k}} - {}^{G}\hat{\vect{v}}_{I_k} - {}^{G}\vect{g}\,\delta t_k}\,{}^{G}_{I_k}\hat{\vect{R}} & \vect{0}_3 & \vect{I}_3 & {}^{G}_{I_k}\hat{\vect{R}}\,\vect{\Xi}_3 & -{}^{G}_{I_k}\hat{\vect{R}}\,\vect{\Xi}_1 \\
+\vect{0}_3 & \vect{0}_3 & \vect{0}_3 & \vect{I}_3 & \vect{0}_3 \\
+\vect{0}_3 & \vect{0}_3 & \vect{0}_3 & \vect{0}_3 & \vect{I}_3
+\end{bmatrix},
+\label{eq:lec06-Phi-vins}
+\end{align}
+\endgroup
+where the marked blocks $\vect{\Phi}_{14}, \vect{\Phi}_{24}, \vect{\Phi}_{25}$ will be used in the observability analysis below.
+
+\paragraph{EKF--VINS: update.} With the vision measurement $\vect{z}_c = \vect{h}_c(\vect{x}) + \vect{n}_c$, $\vect{n}_c \sim \mathcal{N}(\vect{0}, \vect{R})$:
+\begin{align}
+\hat{\vect{z}}_c = \vect{h}_c\big(\hat{\vect{x}}_{k+1|k}\big),
+\qquad
+\tilde{\vect{z}}_c = \vect{z}_c - \hat{\vect{z}}_c = \vect{H}\,\tilde{\vect{x}}_{k+1} + \vect{n}_c,
+\qquad
+\vect{S}_{k+1} = \vect{H}\,\vect{P}_{k+1|k}\,\vect{H}\trans + \vect{R}_{k+1},
+\end{align}
+where, by the chain rule through ${}^{C}\tilde{\vect{p}}_f$,
+\begin{align}
+\vect{H} = \frac{\partial\tilde{\vect{z}}_c}{\partial{}^{C}\tilde{\vect{p}}_f}
+\cdot \frac{\partial{}^{C}\tilde{\vect{p}}_f}{\partial\tilde{\vect{x}}},
+\qquad
+\frac{\partial\tilde{\vect{z}}_c}{\partial{}^{C}\tilde{\vect{p}}_f}
+= \begin{bmatrix}
+\frac{1}{\hat{c}_z} & 0 & -\frac{\hat{c}_x}{\hat{c}_z^2} \\[2pt]
+0 & \frac{1}{\hat{c}_z} & -\frac{\hat{c}_y}{\hat{c}_z^2}
+\end{bmatrix},
+\end{align}
+\begingroup
+\small
+\setlength{\arraycolsep}{3pt}
+\begin{align}
+\frac{\partial{}^{C}\tilde{\vect{p}}_f}{\partial\tilde{\vect{x}}}
+= \begin{bmatrix}
+{}^{I}_{C}\hat{\vect{R}}\trans\skewsym{{}^{G}_{I}\hat{\vect{R}}\trans\big({}^{G}\hat{\vect{p}}_f - {}^{G}\hat{\vect{p}}_I\big)} &
+-{}^{I}_{C}\hat{\vect{R}}\trans\,{}^{G}_{I}\hat{\vect{R}}\trans &
+\vect{0}_3 & \vect{0}_3 & \vect{0}_3 &
+{}^{I}_{C}\hat{\vect{R}}\trans\,{}^{G}_{I}\hat{\vect{R}}\trans
+\end{bmatrix}.
+\label{eq:lec06-H-vins}
+\end{align}
+\endgroup
+Then the Kalman gain and the update:
+\begin{align}
+\vect{K} &= \vect{P}_{k+1|k}\,\vect{H}\trans\,\vect{S}_{k+1}^{-1}
+= \vect{P}_{k+1|k}\,\vect{H}\trans\big(\vect{H}\vect{P}_{k+1|k}\vect{H}\trans + \vect{R}_{k+1}\big)^{-1}, \\[2pt]
+\hat{\vect{x}}_{k+1|k+1} &= \hat{\vect{x}}_{k+1|k} \boxplus \tilde{\vect{x}}_{k+1}
+= \hat{\vect{x}}_{k+1|k} \boxplus \vect{K}\,\tilde{\vect{z}}_c, \\[2pt]
+\vect{P}_{k+1|k+1} &= \vect{P}_{k+1|k} - \vect{P}_{k+1|k}\,\vect{H}\trans\,\vect{S}_{k+1}^{-1}\,\vect{H}\,\vect{P}_{k+1|k}.
+\end{align}
+
+\paragraph{Beyond the basic EKF.} The above is the basic idea of the EKF; a family of VINS estimators refines it:
+\begin{enumerate}[noitemsep,topsep=2pt]
+\item sliding-window filter;
+\item iterative EKF;
+\item square-root inverse filter;
+\item square-root filter;
+\item Schmidt filter;
+\item invariant EKF;
+\item equivariant filter.
+\end{enumerate}
+
+% =====================================================================
+\subsection{Observability analysis}
+\label{sec:lec06-observability}
+
+\emph{Observability} describes whether the system can recover its initial state based on all the history measurements. Assuming no noise, the error-state system evolves as
+\begin{align}
+t_1:&\quad \tilde{\vect{z}}_1 = \vect{H}_1\,\tilde{\vect{x}}_1, \notag \\
+t_2:&\quad \tilde{\vect{x}}_2 = \vect{\Phi}_{(2,1)}\,\tilde{\vect{x}}_1,
+\quad \tilde{\vect{z}}_2 = \vect{H}_2\,\tilde{\vect{x}}_2
+\;\;\Rightarrow\;\; \tilde{\vect{z}}_2 = \vect{H}_2\,\vect{\Phi}_{(2,1)}\,\tilde{\vect{x}}_1, \notag \\
+t_3:&\quad \tilde{\vect{x}}_3 = \vect{\Phi}_{(3,2)}\,\tilde{\vect{x}}_2,
+\quad \tilde{\vect{z}}_3 = \vect{H}_3\,\tilde{\vect{x}}_3
+\;\;\Rightarrow\;\; \tilde{\vect{z}}_3 = \vect{H}_3\,\vect{\Phi}_{(3,2)}\,\vect{\Phi}_{(2,1)}\,\tilde{\vect{x}}_1
+\triangleq \vect{H}_3\,\vect{\Phi}_{(3,1)}\,\tilde{\vect{x}}_1, \notag \\
+&\quad\vdots \notag \\
+t_k:&\quad \tilde{\vect{x}}_k = \vect{\Phi}_{(k,k-1)}\,\tilde{\vect{x}}_{k-1},
+\quad \tilde{\vect{z}}_k = \vect{H}_k\,\tilde{\vect{x}}_k
+\;\;\Rightarrow\;\; \tilde{\vect{z}}_k = \vect{H}_k\,\vect{\Phi}_{(k,k-1)}\cdots\vect{\Phi}_{(2,1)}\,\tilde{\vect{x}}_1
+= \vect{H}_k\,\vect{\Phi}_{(k,1)}\,\tilde{\vect{x}}_1.
+\end{align}
+Hence, stacking all the measurements,
+\begin{align}
+\begin{bmatrix}
+\tilde{\vect{z}}_1 \\ \tilde{\vect{z}}_2 \\ \tilde{\vect{z}}_3 \\ \vdots \\ \tilde{\vect{z}}_k
+\end{bmatrix}
+=
+\begin{bmatrix}
+\vect{H}_1 \\
+\vect{H}_2\,\vect{\Phi}_{(2,1)} \\
+\vect{H}_3\,\vect{\Phi}_{(3,1)} \\
+\vdots \\
+\vect{H}_k\,\vect{\Phi}_{(k,1)}
+\end{bmatrix}
+\tilde{\vect{x}}_1,
+\qquad
+\vect{\Theta} \triangleq
+\begin{bmatrix}
+\vect{H}_1 \\
+\vect{H}_2\,\vect{\Phi}_{(2,1)} \\
+\vect{H}_3\,\vect{\Phi}_{(3,1)} \\
+\vdots \\
+\vect{H}_k\,\vect{\Phi}_{(k,1)}
+\end{bmatrix}
+\triangleq
+\begin{bmatrix}
+\vect{M}_1 \\ \vect{M}_2 \\ \vect{M}_3 \\ \vdots \\ \vect{M}_k
+\end{bmatrix}
+\quad\leftarrow\;\text{the \emph{observability matrix}}.
+\end{align}
+
+\paragraph{The block rows.} Let us study $\vect{M}_k \triangleq \vect{H}_k\,\vect{\Phi}_{(k,1)}$. Using $\vect{H}_k$ from \eqref{eq:lec06-H-vins} and the accumulated state transition $\vect{\Phi}_{(k,1)}$ from \eqref{eq:lec06-Phi-vins},
+\begin{align}
+\vect{M}_k
+= \frac{\partial\tilde{\vect{z}}_c}{\partial{}^{C}\tilde{\vect{p}}_f}\,
+{}^{I}_{C}\hat{\vect{R}}\trans\,{}^{G}_{I_k}\hat{\vect{R}}\trans
+\begin{bmatrix}
+\vect{\Gamma}_1 & \vect{\Gamma}_2 & \vect{\Gamma}_3 & \vect{\Gamma}_4 & \vect{\Gamma}_5 & \vect{\Gamma}_6
+\end{bmatrix},
+\end{align}
+with (writing $\delta t_k \triangleq t_k - t_1$ for the accumulated interval)
+\begin{align}
+\vect{\Gamma}_1 &= \skewsym{{}^{G}\vect{p}_f - {}^{G}\hat{\vect{p}}_{I_1} - {}^{G}\hat{\vect{v}}_{I_1}\,\delta t_k - \tfrac{1}{2}{}^{G}\vect{g}\,\delta t_k^2}\;{}^{G}_{I_1}\hat{\vect{R}}, \\
+\vect{\Gamma}_2 &= -\vect{I}_3,
+\qquad
+\vect{\Gamma}_3 = -\vect{I}_3\,\delta t_k, \\
+\vect{\Gamma}_4 &= \skewsym{{}^{G}\vect{p}_f - {}^{G}\vect{p}_{I_k}}\,{}^{G}_{I_k}\hat{\vect{R}}\,\vect{\Phi}_{14} - \vect{\Phi}_{24},
+\qquad
+\vect{\Gamma}_5 = -\vect{\Phi}_{25},
+\qquad
+\vect{\Gamma}_6 = \vect{I}_3,
+\end{align}
+where $\vect{\Phi}_{14}, \vect{\Phi}_{24}, \vect{\Phi}_{25}$ are the marked blocks of $\vect{\Phi}_{(k,1)}$ (see \eqref{eq:lec06-Phi-vins}).
+
+\paragraph{The unobservable directions.} We can easily find $\vect{N}$ such that $\vect{M}_k\,\vect{N} = \vect{0}$ for all $k$:
+\begin{align}
+\vect{N} =
+\begin{bmatrix}
+{}^{G}_{I_1}\hat{\vect{R}}\trans\,{}^{G}\vect{g} & \vect{0}_3 \\
+-\skewsym{{}^{G}\vect{p}_{I_1}}\,{}^{G}\vect{g} & \vect{I}_3 \\
+-\skewsym{{}^{G}\vect{v}_{I_1}}\,{}^{G}\vect{g} & \vect{0}_3 \\
+\vect{0}_{3\times1} & \vect{0}_3 \\
+\vect{0}_{3\times1} & \vect{0}_3 \\
+-\skewsym{{}^{G}\vect{p}_f}\,{}^{G}\vect{g} & \vect{I}_3
+\end{bmatrix},
+\end{align}
+an $18\times4$ matrix (the first column is $18\times1$, the second block $18\times3$). Hence the VINS has \textbf{4-DoF unobservable directions}:
+\begin{empheq}[box=\fbox]{align}
+&\text{1 DoF relates to the global yaw (rotation about gravity),} \notag \\
+&\text{3 DoF relate to the global translation.} \notag
+\end{empheq}
