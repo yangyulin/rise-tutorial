@@ -1,10 +1,10 @@
-\section{Lecture 7: IMU Preintegration, Optimization-Based VINS, and Multi-IMU Fusion}
+\section{Lecture 7: IMU Preintegration, Optimization-Based VINS, and Multi-Visual-Inertial Systems}
 \label{sec:lecture07}
 
-\paragraph{Topics.} (1) preintegration; (2) optimization-based VINS with the IMU factor; (3) multi-IMU fusion.
+\paragraph{Topics.} (1) preintegration; (2) optimization-based VINS (graph VINS) with the IMU factor; (3) multi-visual-inertial systems (asynchronous multi-camera and multi-IMU).
 
-% NOTE: partial transcription — the handwritten notes (Lecture 7.pdf, 5pp, 2026-07-19)
-% cover topic (1) up to the relinearization idea; the lecture continues next session.
+% Sources: Lecture 7.pdf (5pp, 2026-07-19) -> Sec. 7.1;
+%          Lecture 7 Continue.pdf (9pp, 2026-07-25) -> Secs. 7.2-7.6.
 
 % Tighten matrix column spacing as in Lecture 6.
 \setlength{\arraycolsep}{3.5pt}
@@ -145,21 +145,457 @@ But there is a \textbf{caveat} for the above formulation:
 \item if we have a high-frequency IMU and a lot of such IMU costs in the MLE, it will cause substantial computations.
 \end{enumerate}
 
-\paragraph{How to solve this?} Consider a measurement $\vect{z} = \vect{h}(\vect{x}_A, \vect{x}_B) + \vect{n}$, and let $\hat{\vect{x}}_B^0$ be a \emph{fixed} linearization point for $\vect{x}_B$ while $\hat{\vect{x}}_B$ is the current estimate. Then
+\paragraph{How to solve this?} The question is: \emph{what is the way to only integrate once and avoid repeated integration?} Consider a generic measurement $\vect{z} = \vect{h}(\vect{x}_A, \vect{x}_B) + \vect{n}$, and let $\hat{\vect{x}}_B^0$ be a \emph{fixed} linearization point for $\vect{x}_B$ --- the \emph{initial} estimate --- while $\hat{\vect{x}}_B$ is the current estimate. Writing the error with respect to the fixed point,
 \begin{align}
-\vect{x}_B = \hat{\vect{x}}_B + \tilde{\vect{x}}_B
-= \hat{\vect{x}}_B^0 + \big(\hat{\vect{x}}_B - \hat{\vect{x}}_B^0\big) + \tilde{\vect{x}}_B
-= \hat{\vect{x}}_B^0 + \Delta\vect{x}_B + \tilde{\vect{x}}_B.
+\tilde{\vect{x}}_B^0 \triangleq \vect{x}_B - \hat{\vect{x}}_B^0
+= \big(\vect{x}_B - \hat{\vect{x}}_B\big) + \big(\hat{\vect{x}}_B - \hat{\vect{x}}_B^0\big)
+= \tilde{\vect{x}}_B + \Delta\hat{\vect{x}}_B,
+\qquad \Delta\hat{\vect{x}}_B \triangleq \hat{\vect{x}}_B - \hat{\vect{x}}_B^0.
+\label{eq:lec07-fixedlin-split}
 \end{align}
-Linearizing about $\hat{\vect{x}}_B^0$ (so the error w.r.t.\ the fixed point is $\Delta\vect{x}_B + \tilde{\vect{x}}_B$),
+Linearizing about $\hat{\vect{x}}_B^0$ --- so that $\vect{H}_B^0$ is evaluated at the initial estimate and never re-evaluated ---
 \begin{align}
-\tilde{\vect{z}} &= \vect{H}_A\,\tilde{\vect{x}}_A + \vect{H}_B^0\big(\Delta\vect{x}_B + \tilde{\vect{x}}_B\big) + \vect{n}
-= \vect{H}_A\,\tilde{\vect{x}}_A + \vect{H}_B^0\,\tilde{\vect{x}}_B + \vect{H}_B^0\,\Delta\vect{x}_B + \vect{n} \notag \\
+\tilde{\vect{z}} &= \vect{H}_A\,\tilde{\vect{x}}_A + \vect{H}_B^0\,\tilde{\vect{x}}_B^0 + \vect{n}
+= \vect{H}_A\,\tilde{\vect{x}}_A + \vect{H}_B^0\,\tilde{\vect{x}}_B + \vect{H}_B^0\,\Delta\hat{\vect{x}}_B + \vect{n} \notag \\
 \Rightarrow\quad
-&\underbrace{\tilde{\vect{z}}}_{\text{unchanged}} - \boxed{\vect{H}_B^0\,\Delta\vect{x}_B}
+&\underbrace{\tilde{\vect{z}}}_{\text{unchanged}} - \boxed{\vect{H}_B^0\,\Delta\hat{\vect{x}}_B}
 = \vect{H}_A\,\tilde{\vect{x}}_A + \underbrace{\vect{H}_B^0\,\tilde{\vect{x}}_B}_{\text{unchanged}} + \underbrace{\vect{n}}_{\text{unchanged}},
+\label{eq:lec07-fixedlin}
 \end{align}
-where across iterations \emph{only the boxed term $\vect{H}_B^0\,\Delta\vect{x}_B$ changes} --- a small computation: the Jacobians (and hence the preintegrated terms and noise mapping) stay at the fixed linearization point, and only the correction $\Delta\vect{x}_B$ is updated.
+where across iterations \emph{only the boxed term $\vect{H}_B^0\,\Delta\hat{\vect{x}}_B$ changes} --- a small computation: the Jacobians (and hence the preintegrated terms and noise mapping) stay at the fixed linearization point, and only the correction $\Delta\hat{\vect{x}}_B$ is updated.
 
-\vspace{6pt}
-\noindent\emph{(To be continued: applying this relinearization idea to the preintegration factor, optimization-based VINS with the IMU factor, and multi-IMU fusion.)}
+% =====================================================================
+\subsection{Preintegration with a Fixed Bias Linearization Point}
+\label{sec:lec07-fixedbias}
+
+\paragraph{The abstracted IMU function.} Recall from \eqref{eq:lec07-int-kj} the integration from time $k$ to time $j$, with $\delta t = t_j - t_k$, and note that the integrands are driven by the bias-corrected inertial readings
+\begin{align}
+{}^{I}\vect{a} = {}^{I}\vect{a}_m - \vect{b}_a - \vect{n}_a,
+\qquad
+{}^{I}\vect{\omega} = {}^{I}\vect{\omega}_m - \vect{b}_g - \vect{n}_g,
+\end{align}
+so that $\Delta\vect{R}, \Delta\vect{p}, \Delta\vect{v}$ are the \emph{integration terms} and $\Delta\vect{b}_g, \Delta\vect{b}_a$ the integrated random walks. As discussed above, when the resulting cost is used inside a least-squares problem, $\Delta\vect{R}, \Delta\vect{p}$ and $\Delta\vect{v}$ would need to be re-integrated at every iteration of Gauss--Newton or LM.
+
+\paragraph{Applying the fixed linearization point.} Take $\hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0$ as the fixed (initial) bias linearization point and collect the biases into
+\begin{align}
+\vect{x}_b \triangleq \begin{bmatrix} \vect{b}_g \\ \vect{b}_a \end{bmatrix},
+\qquad
+\Delta\hat{\vect{x}}_b \triangleq \begin{bmatrix} \hat{\vect{b}}_g - \hat{\vect{b}}_g^0 \\[2pt] \hat{\vect{b}}_a - \hat{\vect{b}}_a^0 \end{bmatrix},
+\qquad
+\Delta\hat{\vect{x}}_{b_g} \triangleq \hat{\vect{b}}_g - \hat{\vect{b}}_g^0 .
+\label{eq:lec07-dxb}
+\end{align}
+For the rotation, splitting $\tilde{\vect{b}}_g^0 = \Delta\hat{\vect{x}}_{b_g} + \tilde{\vect{b}}_g$ exactly as in \eqref{eq:lec07-fixedlin-split},
+\begin{align}
+\Delta\vect{R}(\vect{b}_g, \vect{n}_I)
+&= \Delta\vect{R}\big(\hat{\vect{b}}_g^0 + \tilde{\vect{b}}_g^0,\, \vect{n}_I\big)
+\;\approx\; \Delta\vect{R}(\hat{\vect{b}}_g^0, \vect{0})\cdot\Exp\big(\vect{H}_g^R\,\tilde{\vect{b}}_g^0 + \vect{H}_n^R\,\vect{n}_I\big) \notag \\
+&= \Delta\vect{R}(\hat{\vect{b}}_g^0, \vect{0})\cdot\Exp\big(\vect{H}_g^R\,\Delta\hat{\vect{x}}_{b_g} + \vect{H}_g^R\,\tilde{\vect{b}}_g + \vect{H}_n^R\,\vect{n}_I\big)
+\;=\; \vect{h}_R(\vect{x}_k, \vect{x}_j) \notag \\
+\Rightarrow\quad
+\Delta\vect{R}(\hat{\vect{b}}_g^0, \vect{0})
+&= \vect{h}_R(\vect{x}_k, \vect{x}_j)\cdot\Exp\big(-\vect{H}_g^R\,\Delta\hat{\vect{x}}_{b_g} - \vect{H}_g^R\,\tilde{\vect{b}}_g - \vect{H}_n^R\,\vect{n}_I\big).
+\end{align}
+Likewise for position and velocity, now with the stacked bias Jacobians $\vect{H}_b^p, \vect{H}_b^v$ acting on $\vect{x}_b$:
+\begin{align}
+\Delta\vect{p}(\vect{b}_g, \vect{b}_a, \vect{n}_I)
+&= \Delta\vect{p}(\hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0, \vect{0})
++ \vect{H}_b^p\,\Delta\hat{\vect{x}}_b + \vect{H}_b^p\,\tilde{\vect{x}}_b + \vect{H}_n^p\,\vect{n}_I
+\;=\; \vect{h}_p(\vect{x}_k, \vect{x}_j) \notag \\
+\Rightarrow\quad
+\Delta\vect{p}(\hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0, \vect{0})
+&= \vect{h}_p(\vect{x}_k, \vect{x}_j) - \vect{H}_b^p\,\Delta\hat{\vect{x}}_b - \vect{H}_b^p\,\tilde{\vect{x}}_b - \vect{H}_n^p\,\vect{n}_I, \\[4pt]
+\Delta\vect{v}(\vect{b}_g, \vect{b}_a, \vect{n}_I)
+&= \Delta\vect{v}(\hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0, \vect{0})
++ \vect{H}_b^v\,\Delta\hat{\vect{x}}_b + \vect{H}_b^v\,\tilde{\vect{x}}_b + \vect{H}_n^v\,\vect{n}_I
+\;=\; \vect{h}_v(\vect{x}_k, \vect{x}_j) \notag \\
+\Rightarrow\quad
+\Delta\vect{v}(\hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0, \vect{0})
+&= \vect{h}_v(\vect{x}_k, \vect{x}_j) - \vect{H}_b^v\,\Delta\hat{\vect{x}}_b - \vect{H}_b^v\,\tilde{\vect{x}}_b - \vect{H}_n^v\,\vect{n}_I.
+\end{align}
+
+\paragraph{The final IMU measurement.} Stacking the five rows gives the preintegrated measurement, where the boxed terms are the only ones that change from iteration to iteration:
+\begin{align}
+\begin{bmatrix}
+\Delta\vect{R}(\hat{\vect{b}}_g^0, \vect{0}) \\[3pt]
+\Delta\vect{p}(\hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0, \vect{0}) \\[3pt]
+\Delta\vect{v}(\hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0, \vect{0}) \\[3pt]
+\Delta\vect{b}_g \\[3pt]
+\Delta\vect{b}_a
+\end{bmatrix}
+=
+\begin{bmatrix}
+\vect{h}_R(\vect{x}_k, \vect{x}_j)\cdot\Exp\big(-\boxed{\vect{H}_g^R\,\Delta\hat{\vect{x}}_{b_g}} - \vect{H}_g^R\,\tilde{\vect{b}}_g - \vect{H}_n^R\,\vect{n}_I\big) \\[3pt]
+\vect{h}_p(\vect{x}_k, \vect{x}_j) - \boxed{\vect{H}_b^p\,\Delta\hat{\vect{x}}_b} - \vect{H}_b^p\,\tilde{\vect{x}}_b - \vect{H}_n^p\,\vect{n}_I \\[3pt]
+\vect{h}_v(\vect{x}_k, \vect{x}_j) - \boxed{\vect{H}_b^v\,\Delta\hat{\vect{x}}_b} - \vect{H}_b^v\,\tilde{\vect{x}}_b - \vect{H}_n^v\,\vect{n}_I \\[3pt]
+\vect{b}_{g_j} - \vect{b}_{g_k} \\[3pt]
+\vect{b}_{a_j} - \vect{b}_{a_k}
+\end{bmatrix}
+\;\;\triangleq\;\;
+\vect{z}_I = \vect{h}_I(\vect{x}_k, \vect{x}_j, \vect{n}_I).
+\label{eq:lec07-zI}
+\end{align}
+The whole point is that
+\begin{itemize}[noitemsep,topsep=2pt]
+\item $\vect{z}_I$: we only need to \textbf{integrate once}, given $\hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0$;
+\item $\Delta\hat{\vect{x}}_b = \big[\,\hat{\vect{b}}_g - \hat{\vect{b}}_g^0;\ \hat{\vect{b}}_a - \hat{\vect{b}}_a^0\,\big]$ is the \textbf{bias linearization-change correction}, cheap to apply at each iteration.
+\end{itemize}
+
+\paragraph{The IMU factor.} We can now construct the IMU factor (IMU cost term)
+\begin{empheq}[box=\fbox]{align}
+C_I = \norm{\vect{z}_I - \vect{h}_I(\vect{x}_k, \vect{x}_j, \vect{0})}^2_{\vect{Q}_I},
+\qquad \vect{n}_I \sim \mathcal{N}(\vect{0}, \vect{Q}_I), \notag
+\end{empheq}
+where $\vect{z}_I$ is the IMU \emph{preintegrated measurement} and $\vect{n}_I$ the IMU \emph{preintegrated noise} with covariance $\vect{Q}_I$ (i.e.\ $\vect{Q}_I = \vect{G}_I\vect{R}_{ij}\vect{G}_I\trans$ in the notation of \eqref{eq:lec07-imu-factor}).
+
+% =====================================================================
+\subsection{Computing the Preintegration: Recursive Formulation}
+\label{sec:lec07-recursion}
+
+The remaining question is how to actually perform the IMU preintegration and obtain
+\begin{align}
+\vect{z}_I, \quad \vect{Q}_I, \quad \vect{H}_b^p, \quad \vect{H}_b^v, \quad \vect{H}_{b_g}^R .
+\end{align}
+There are many IMU readings between $k$ and $j$ (Fig.~\ref{fig:lec07-imutimeline}); the way to solve this is to use a \emph{recursive formulation} over the individual IMU intervals $i \in [k, j]$.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=stealth]
+  \draw[thick] (0,0) -- (10,0);
+  \foreach \x in {0,0.9,1.8,2.7,3.6,4.2,6.0,6.9,7.8,8.5,10} {
+    \draw[thick] (\x,-0.16) -- (\x,0.16);
+  }
+  \foreach \x/\lb in {0/0, 0.9/1, 1.8/2, 2.7/3, 6.0/i, 6.9/{i+1}} {
+    \node[above] at (\x,0.18) {\footnotesize $\lb$};
+  }
+  \node[above] at (4.9,0.18) {\footnotesize $\cdots$};
+  \node[above] at (9.2,0.18) {\footnotesize $\cdots$};
+  \node[below] at (0,-0.22) {$k$};
+  \node[below] at (10,-0.22) {$j$};
+\end{tikzpicture}
+\caption{IMU readings between $k$ and $j$: the preintegrated quantities are built up recursively over each IMU interval $i \to i+1$, $i \in [k,j]$.}
+\label{fig:lec07-imutimeline}
+\end{figure}
+
+\paragraph{Recursion.} Propagating the preintegrated terms one IMU interval at a time,
+\begin{align}
+\begin{cases}
+\Delta\vect{R}_{i+1} = \Delta\vect{R}_i \cdot \vect{R}_{i,i+1}, \\[2pt]
+\Delta\vect{p}_{i+1} = \Delta\vect{p}_i + \Delta\vect{v}_i\,\delta t_i + \Delta\vect{R}_i\,\vect{p}_{i,i+1}, \\[2pt]
+\Delta\vect{v}_{i+1} = \Delta\vect{v}_i + \Delta\vect{R}_i\,\vect{v}_{i,i+1}, \\[2pt]
+\Delta\vect{b}_{g,i+1} = \Delta\vect{b}_{g,i} + \int_{t_i}^{t_{i+1}} \vect{n}_{wg}\,dt, \\[2pt]
+\Delta\vect{b}_{a,i+1} = \Delta\vect{b}_{a,i} + \int_{t_i}^{t_{i+1}} \vect{n}_{wa}\,dt,
+\end{cases}
+\qquad
+\begin{cases}
+\vect{R}_{i,i+1} = \Exp\big(\hat{\vect{\omega}}_i\,\delta t\big), \\[2pt]
+\vect{p}_{i,i+1} = \displaystyle\int_{t_i}^{t_{i+1}}\!\!\int_{t_i}^{\tau} {}^{I_i}_{I_s}\vect{R}\;{}^{I_s}\vect{a}\;ds\,d\tau, \\[2pt]
+\vect{v}_{i,i+1} = \displaystyle\int_{t_i}^{t_{i+1}} {}^{I_i}_{I_\tau}\vect{R}\;{}^{I_\tau}\vect{a}\;d\tau,
+\end{cases}
+\label{eq:lec07-recursion}
+\end{align}
+which advances the preintegrated measurement $\vect{z}_{I,i} \to \vect{z}_{I,i+1}$. The interval quantities $\vect{p}_{i,i+1}, \vect{v}_{i,i+1}$ are evaluated either in closed form under the ACI$^2$ / CPI models~\cite{Yang2020ACI2,Eckenhoff2019IJRR} or a linear-in-time assumption on the readings, or numerically with RK4.
+
+\paragraph{Linearized error and covariance propagation.} If we linearize the recursion, the preintegrated error state and its covariance propagate as
+\begin{align}
+\tilde{\vect{z}}_{I,i+1} &= \vect{\Phi}_{(i+1,i)}\,\tilde{\vect{z}}_{I,i} + \boxed{\vect{\Phi}_b}\,\tilde{\vect{x}}_{b_k} + \vect{G}_i\,\vect{n}_{Id}, \\
+\vect{Q}_{I,i+1} &= \vect{\Phi}_{(i+1,i)}\,\vect{Q}_{I,i}\,\vect{\Phi}_{(i+1,i)}\trans + \vect{G}_i\,\vect{Q}_d\,\vect{G}_i\trans,
+\end{align}
+where $\vect{n}_{Id}$ is the discrete IMU noise
+\begin{align}
+\vect{n}_{Id} \sim \mathcal{N}\!\left(\vect{0},\;
+\begin{bmatrix}
+\sigma_g^2\vect{I}_3 & & & \\
+& \sigma_a^2\vect{I}_3 & & \\
+& & \sigma_{wg}^2\vect{I}_3 & \\
+& & & \sigma_{wa}^2\vect{I}_3
+\end{bmatrix}\frac{1}{\delta t}\right),
+\end{align}
+and the boxed $\vect{\Phi}_b$ is exactly the block that \textbf{contains the Jacobians} $\vect{H}_g^R, \vect{H}_b^p, \vect{H}_b^v$ needed in \eqref{eq:lec07-zI}. With this, the IMU preintegration factor is complete.
+
+% =====================================================================
+\subsection{Discussion}
+\label{sec:lec07-discussion}
+
+\begin{enumerate}[topsep=3pt]
+\item \textbf{The key idea} is to \emph{control the linearization of the biases}; the assumption behind it is that the biases are \emph{slowly varying}, so that $\Delta\hat{\vect{x}}_b$ stays small and the first-order correction remains valid.
+\item This preintegration idea can be applied to \textbf{any other temporal signal}, e.g.\ wheel encoders or rotor RPM.
+\item This preintegration keeps the linearization of the \emph{biases}, but it can be extended to \textbf{more parameters} --- e.g.\ the IMU intrinsics (scale / skew parameters).
+\item \textbf{How to use the IMU factor?} One must initialize the velocity and the biases (cf.\ the visual-inertial initialization of Lecture~6).
+\end{enumerate}
+
+% =====================================================================
+\subsection{Optimization-Based VINS (Graph VINS)}
+\label{sec:lec07-graphvins}
+
+A typical optimization-based VINS combines a prior, the IMU factor, and the camera factors:
+\begin{align}
+\begin{cases}
+\vect{x}_k \sim \mathcal{N}(\hat{\vect{x}}_k, \vect{P}_k), \\[2pt]
+\dot{\vect{x}} = \vect{f}(\vect{x}, \vect{n}_I) \;\to\; \vect{x}_{k+1} = \vect{f}_{\mathrm{int}}(\vect{x}_k, \vect{n}_{I_k})
+\;\;\Rightarrow\;\; \vect{z}_I = \vect{h}(\vect{x}_k, \vect{x}_{k+1}, \vect{n}_I), \\[2pt]
+\vect{z}_{k+1} = \vect{h}(\vect{x}_{k+1}) + \vect{n}_{k+1},
+\end{cases}
+\end{align}
+so that the cost is
+\begin{empheq}[box=\fbox]{align}
+C_{\mathrm{VINS}} = \underbrace{\norm{\vect{x}_k - \hat{\vect{x}}_k}^2_{\vect{P}_k}}_{\text{prior}}
++ \underbrace{\norm{\vect{z}_I - \vect{h}(\vect{x}_k, \vect{x}_{k+1}, \vect{0})}^2_{\vect{G}\vect{Q}\vect{G}\trans}}_{C_{\mathrm{IMU}}}
++ \underbrace{\norm{\vect{z}_{k+1} - \vect{h}(\vect{x}_{k+1})}^2_{\vect{R}_{k+1}}}_{C_{\mathrm{cam}}}. \notag
+\end{empheq}
+The corresponding factor graph is shown in Fig.~\ref{fig:lec07-vinsgraph}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=stealth,
+  pose/.style={draw,ellipse,minimum width=11mm,minimum height=7mm,inner sep=1pt},
+  feat/.style={draw,circle,minimum size=5mm,inner sep=0pt},
+  fac/.style={draw,rectangle,minimum size=2.8mm,inner sep=0pt}]
+  % poses
+  \node[pose] (xk)  at (0,0)   {\footnotesize $\vect{x}_k$};
+  \node[pose] (xk1) at (3.2,0) {\footnotesize $\vect{x}_{k+1}$};
+  \node[pose] (xk2) at (6.4,0) {\footnotesize $\vect{x}_{k+2}$};
+  % features
+  \node[feat] (f1) at (1.6,2.3) {};
+  \node[above] at (1.6,2.6) {\footnotesize ${}^{G}\vect{p}_{f_i}$};
+  \node[feat] (f2) at (4.8,2.3) {};
+  \node[above] at (4.8,2.6) {\footnotesize ${}^{G}\vect{p}_{f_{k+1}}$};
+  % camera factors
+  \draw (xk)  -- node[fac,fill=green!25,draw=green!50!black] {} (f1);
+  \draw (xk1) -- node[fac,fill=green!25,draw=green!50!black] {} (f1);
+  \draw (xk1) -- node[fac,fill=green!25,draw=green!50!black] {} (f2);
+  \draw (xk2) -- node[fac,fill=green!25,draw=green!50!black] {} (f2);
+  % imu factors
+  \draw (xk)  -- node[fac,fill=blue!25,draw=blue!60!black] {} (xk1);
+  \draw (xk1) -- node[fac,fill=blue!25,draw=blue!60!black] {} (xk2);
+  % dangling chain
+  \draw[dashed] (-1.4,0) -- (xk);
+  \draw[dashed] (xk2) -- (7.8,0);
+  % legend
+  \node[fac,fill=blue!25,draw=blue!60!black] at (8.9,1.0) {};
+  \node[right] at (9.1,1.0) {\footnotesize $C_{\mathrm{IMU}}$};
+  \node[fac,fill=green!25,draw=green!50!black] at (8.9,0.4) {};
+  \node[right] at (9.1,0.4) {\footnotesize $C_{\mathrm{cam}}$};
+\end{tikzpicture}
+\caption{Factor graph of an optimization-based VINS: pose/navigation states $\vect{x}_k$ are linked by IMU (preintegration) factors, and to the features ${}^{G}\vect{p}_{f}$ by camera factors.}
+\label{fig:lec07-vinsgraph}
+\end{figure}
+
+\noindent Two regimes follow directly from which factors are present:
+\begin{itemize}[noitemsep,topsep=2pt]
+\item purely $C_{\mathrm{cam}}$ $\;\to\;$ \textbf{BA} (bundle adjustment);
+\item $C_{\mathrm{IMU}} + C_{\mathrm{cam}}$ $\;\to\;$ \textbf{visual-inertial BA}, where the \emph{velocity} and the \emph{biases} are added to the states.
+\end{itemize}
+
+% =====================================================================
+\subsection{Multi-Visual-Inertial Systems}
+\label{sec:lec07-multivi}
+
+\subsubsection{Two asynchronous cameras}
+\label{sec:lec07-asynccam}
+
+Suppose we have two cameras whose exposures are \emph{not} synchronized, so that cam1 fires between the times at which the navigation states are defined (Fig.~\ref{fig:lec07-asynctime}). Its pose is obtained by \emph{pose interpolation}:
+\begin{align}
+{}^{G}_{C_1}\vect{T} = {}^{G}_{I_t}\vect{T}\cdot{}^{I}_{C_1}\vect{T},
+\end{align}
+where ${}^{G}_{I_t}\vect{T}$ is the pose interpolation between ${}^{G}_{I_{k+1}}\vect{T}$ and ${}^{G}_{I_{k+2}}\vect{T}$.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=stealth]
+  % three timelines
+  \foreach \y/\nm in {2.0/cam1, 1.0/cam0, 0/IMU0} {
+    \draw[thick] (0,\y) -- (9,\y);
+    \node[left] at (-0.15,\y) {\footnotesize \nm};
+  }
+  % IMU0 dense ticks
+  \foreach \x in {0.3,0.75,...,8.9} { \draw (\x,-0.13) -- (\x,0.13); }
+  % pose times k, k+1, k+2 on IMU0
+  \foreach \x/\lb in {1.65/k, 4.35/{k+1}, 7.05/{k+2}} {
+    \draw[very thick] (\x,-0.22) -- (\x,0.22);
+    \node[below] at (\x,-0.26) {\footnotesize $\lb$};
+  }
+  % cam0 ticks: synchronized with the pose times
+  \foreach \x in {1.65,4.35,7.05} {
+    \draw[very thick] (\x,0.85) -- (\x,1.15);
+    \draw[blue!60!black,dashed] (\x,0.85) -- (\x,0.15);
+  }
+  % cam1 ticks: offset (asynchronous)
+  \foreach \x in {2.55,5.25,7.95} { \draw[very thick] (\x,1.85) -- (\x,2.15); }
+  \draw[red!70!black,dotted,thick] (5.25,1.85) -- (5.25,-0.15);
+  \node[above right,red!70!black] at (5.25,2.15) {\footnotesize $t$};
+\end{tikzpicture}
+\caption{Asynchronous cameras. cam0 is triggered at the state times $k, k{+}1, k{+}2$; cam1 fires at an intermediate time $t$, so its pose must be interpolated between the two bracketing IMU poses.}
+\label{fig:lec07-asynctime}
+\end{figure}
+
+\noindent In the factor graph this shows up as a third factor type --- the \emph{interpolated camera factor} --- which, unlike an ordinary camera factor, depends on the \emph{two} bracketing navigation states through ${}^{G}_{I_t}\vect{T}$ (Fig.~\ref{fig:lec07-asyncgraph}).
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=stealth,
+  pose/.style={draw,ellipse,minimum width=11mm,minimum height=7mm,inner sep=1pt},
+  feat/.style={draw,circle,minimum size=5mm,inner sep=0pt},
+  fac/.style={draw,rectangle,minimum size=2.8mm,inner sep=0pt}]
+  \node[pose] (xk)  at (0,0)   {\footnotesize $\vect{x}_k$};
+  \node[pose] (xk1) at (3.2,0) {\footnotesize $\vect{x}_{k+1}$};
+  \node[pose] (xk2) at (6.4,0) {\footnotesize $\vect{x}_{k+2}$};
+  % cam0 features above
+  \node[feat] (f1) at (1.6,2.3) {};
+  \node[above] at (1.6,2.6) {\footnotesize ${}^{G}\vect{p}_{f_i}$};
+  \node[feat] (f2) at (4.8,2.3) {};
+  \node[above] at (4.8,2.6) {\footnotesize ${}^{G}\vect{p}_{f_{k+1}}$};
+  \draw (xk)  -- node[fac,fill=green!25,draw=green!50!black] {} (f1);
+  \draw (xk1) -- node[fac,fill=green!25,draw=green!50!black] {} (f1);
+  \draw (xk1) -- node[fac,fill=green!25,draw=green!50!black] {} (f2);
+  \draw (xk2) -- node[fac,fill=green!25,draw=green!50!black] {} (f2);
+  % imu factors
+  \draw (xk)  -- node[fac,fill=blue!25,draw=blue!60!black] {} (xk1);
+  \draw (xk1) -- node[fac,fill=blue!25,draw=blue!60!black] {} (xk2);
+  % cam1 feature below, seen through the interpolated pose
+  \node[feat] (f3) at (3.2,-2.3) {};
+  \node[below] at (3.2,-2.6) {\footnotesize ${}^{G}\vect{p}_{f_j}$};
+  \draw (xk1) -- node[fac,fill=red!30,draw=red!70!black] {} (f3);
+  \draw (xk2) -- node[fac,fill=red!30,draw=red!70!black] {} (f3);
+  \draw[dashed] (-1.4,0) -- (xk);
+  \draw[dashed] (xk2) -- (7.8,0);
+  % legend
+  \node[fac,fill=blue!25,draw=blue!60!black]   at (8.4,0.7) {};
+  \node[right] at (8.6,0.7) {\footnotesize IMU factor};
+  \node[fac,fill=green!25,draw=green!50!black] at (8.4,0.1) {};
+  \node[right] at (8.6,0.1) {\footnotesize cam factor};
+  \node[fac,fill=red!30,draw=red!70!black]     at (8.4,-0.5) {};
+  \node[right] at (8.6,-0.5) {\footnotesize interpolated cam factor};
+\end{tikzpicture}
+\caption{Factor graph with an asynchronous second camera: features seen by cam1 attach through \emph{interpolated} camera factors, which couple the two navigation states bracketing the exposure time.}
+\label{fig:lec07-asyncgraph}
+\end{figure}
+
+\subsubsection{Multiple IMUs}
+\label{sec:lec07-multiimu}
+
+Now suppose the platform carries more than one IMU, each running at its own rate (Fig.~\ref{fig:lec07-multiimutime}). There are two ways to handle the extra units.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=stealth]
+  \foreach \y/\nm in {2.0/cam0, 1.0/IMU0, 0/IMU1} {
+    \draw[thick] (0,\y) -- (7.6,\y);
+    \node[left] at (-0.15,\y) {\footnotesize \nm};
+  }
+  % IMU0 / IMU1 dense ticks (different rates / phases)
+  \foreach \x in {0.25,0.72,...,7.5} { \draw (\x,0.87) -- (\x,1.13); }
+  \foreach \x in {0.45,0.85,...,7.5} { \draw (\x,-0.13) -- (\x,0.13); }
+  % cam0 sample times
+  \foreach \x/\lb in {1.4/k, 3.6/{k+1}, 5.8/{k+2}} {
+    \draw[very thick] (\x,1.85) -- (\x,2.15);
+    \node[above] at (\x,2.18) {\footnotesize $\lb$};
+    \draw[blue!60!black,dashed] (\x,1.85) -- (\x,-0.15);
+  }
+  % sensor rig inset
+  \begin{scope}[shift={(8.7,0.35)}]
+    \draw (0,0) rectangle (2.1,1.5);
+    \draw (1.15,0.85) rectangle (1.8,1.3);  \node at (1.475,1.07) {\tiny cam0};
+    \draw (0.15,0.2) rectangle (0.85,0.65);  \node at (0.5,0.42) {\tiny IMU0};
+    \draw (1.1,0.2) rectangle (1.8,0.65);   \node at (1.45,0.42) {\tiny IMU1};
+  \end{scope}
+\end{tikzpicture}
+\caption{A multi-IMU rig: cam0 samples at the state times $k, k{+}1, k{+}2$ while IMU0 and IMU1 run asynchronously at their own rates.}
+\label{fig:lec07-multiimutime}
+\end{figure}
+
+\paragraph{Method 1: transfer the IMU readings from IMU1 onto IMU0.} Using the rigid extrinsics ${}^{I_0}\vect{p}_{I_1}$ and differentiating the rigid-body kinematics,
+\begin{align}
+{}^{G}\vect{p}_{I_1} &= {}^{G}\vect{p}_{I_0} + {}^{G}_{I_0}\vect{R}\;{}^{I_0}\vect{p}_{I_1}, \\
+{}^{G}\dot{\vect{p}}_{I_1} &= {}^{G}\dot{\vect{p}}_{I_0} + {}^{G}_{I_0}\dot{\vect{R}}\;{}^{I_0}\vect{p}_{I_1}, \\
+{}^{G}\vect{v}_{I_1} &= {}^{G}\vect{v}_{I_0} + {}^{G}_{I_0}\vect{R}\,\skewsym{{}^{I_0}\vect{\omega}}\;{}^{I_0}\vect{p}_{I_1}, \\
+{}^{G}\dot{\vect{v}}_{I_1} &= {}^{G}\dot{\vect{v}}_{I_0} + {}^{G}_{I_0}\dot{\vect{R}}\,\skewsym{{}^{I_0}\vect{\omega}}\;{}^{I_0}\vect{p}_{I_1}
++ {}^{G}_{I_0}\vect{R}\,\skewsym{{}^{I_0}\dot{\vect{\omega}}}\;{}^{I_0}\vect{p}_{I_1}, \\
+{}^{G}\vect{a}_{I_1} &= {}^{G}\vect{a}_{I_0}
++ {}^{G}_{I_0}\vect{R}\,\skewsym{{}^{I_0}\vect{\omega}}^2\;{}^{I_0}\vect{p}_{I_1}
++ {}^{G}_{I_0}\vect{R}\,\skewsym{{}^{I_0}\vect{\alpha}}\;{}^{I_0}\vect{p}_{I_1},
+\end{align}
+and hence, expressed in the second IMU's own frame,
+\begin{align}
+{}^{I_1}\vect{a}_{I_1} = {}^{I_1}_{I_0}\vect{R}\Big(
+{}^{I_0}\vect{a}_{I_0}
++ \skewsym{{}^{I_0}\vect{\omega}}^2\;{}^{I_0}\vect{p}_{I_1}
++ \underbrace{\skewsym{{}^{I_0}\vect{\alpha}}\;{}^{I_0}\vect{p}_{I_1}}_{\text{needs }\vect{\alpha}}
+\Big),
+\qquad \vect{\alpha} \triangleq \dot{\vect{\omega}} .
+\end{align}
+The caveat is explicit in the last term: the \textbf{angular acceleration} $\vect{\alpha}$ is needed to do the transfer, and it is not directly measured by a gyroscope.
+
+\paragraph{Method 2: keep IMU1 as its own state, tied by the rigid transform.} Instead of transferring readings, we relate the two states directly:
+\begin{align}
+\begin{cases}
+{}^{G}_{I_1}\vect{T} = {}^{G}_{I_0}\vect{T}\cdot{}^{I_0}_{I_1}\vect{T}, \\[2pt]
+{}^{G}\vect{v}_{I_1} = {}^{G}\vect{v}_{I_0} + {}^{G}_{I_0}\vect{R}\,\skewsym{{}^{I_0}\vect{\omega}}\;{}^{I_0}\vect{p}_{I_1}.
+\end{cases}
+\end{align}
+Based on the rigid transform we can therefore represent $\vect{x}_{\mathrm{IMU}_1}$ with $\vect{x}_{\mathrm{IMU}_0}$:
+\begin{align}
+\vect{x}_{\mathrm{IMU}_0} =
+\begin{bmatrix}
+{}^{G}_{I_0}\vect{R} \\ {}^{G}\vect{p}_{I_0} \\ {}^{G}\vect{v}_{I_0} \\ {}^{I_0}\vect{b}_g \\ {}^{I_0}\vect{b}_a
+\end{bmatrix},
+\qquad
+\vect{x}_{\mathrm{IMU}_1} =
+\begin{bmatrix}
+{}^{G}_{I_1}\vect{R} \\ {}^{G}\vect{p}_{I_1} \\ {}^{G}\vect{v}_{I_1} \\ {}^{I_1}\vect{b}_g \\ {}^{I_1}\vect{b}_a
+\end{bmatrix},
+\end{align}
+The pose block of $\vect{x}_{\mathrm{IMU}_1}$ is fully determined by $\vect{x}_{\mathrm{IMU}_0}$ and the extrinsics, so the only extra \emph{auxiliary} state that has to be kept per additional IMU is
+\begin{align}
+\vect{x}_{I_1} = \begin{bmatrix} {}^{G}\vect{v}_{I_1} \\ {}^{I_1}\vect{b}_g \\ {}^{I_1}\vect{b}_a \end{bmatrix}.
+\end{align}
+The resulting graph (Fig.~\ref{fig:lec07-multiimugraph}) has a \emph{base} IMU chain (IMU0) carrying the navigation states plus one \emph{auxiliary} IMU factor chain per additional unit~\cite{Eckenhoff2021MIMC}.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[>=stealth,
+  pose/.style={draw,ellipse,minimum width=11mm,minimum height=7mm,inner sep=1pt},
+  aux/.style={draw,ellipse,minimum width=11mm,minimum height=7mm,inner sep=1pt},
+  feat/.style={draw,circle,minimum size=5mm,inner sep=0pt},
+  fac/.style={draw,rectangle,minimum size=2.8mm,inner sep=0pt}]
+  % base chain (IMU0)
+  \node[pose] (xk)  at (0,0)   {\footnotesize $\vect{x}_k$};
+  \node[pose] (xk1) at (3.2,0) {\footnotesize $\vect{x}_{k+1}$};
+  \node[pose] (xk2) at (6.4,0) {\footnotesize $\vect{x}_{k+2}$};
+  \node[right] at (7.9,0) {\footnotesize IMU0};
+  \draw[dashed] (-1.4,0) -- (xk);
+  \draw[dashed] (xk2) -- (7.7,0);
+  % camera factors up to features
+  \node[feat] (f1) at (1.6,2.2) {};
+  \node[above] at (1.6,2.5) {\footnotesize ${}^{G}\vect{p}_{f_i}$};
+  \node[feat] (f2) at (4.8,2.2) {};
+  \node[above] at (4.8,2.5) {\footnotesize ${}^{G}\vect{p}_{f_{k+1}}$};
+  \draw (xk)  -- node[fac,fill=green!25,draw=green!50!black] {} (f1);
+  \draw (xk1) -- node[fac,fill=green!25,draw=green!50!black] {} (f1);
+  \draw (xk1) -- node[fac,fill=green!25,draw=green!50!black] {} (f2);
+  \draw (xk2) -- node[fac,fill=green!25,draw=green!50!black] {} (f2);
+  % base IMU factors
+  \draw (xk)  -- node[fac,fill=blue!25,draw=blue!60!black] {} (xk1);
+  \draw (xk1) -- node[fac,fill=blue!25,draw=blue!60!black] {} (xk2);
+  % auxiliary IMU1 states
+  \node[aux] (ak)  at (0,-2.6)   {\footnotesize $\vect{x}_{I_1,k}$};
+  \node[aux] (ak1) at (3.2,-2.6) {\footnotesize $\vect{x}_{I_1,k+1}$};
+  \node[aux] (ak2) at (6.4,-2.6) {\footnotesize $\vect{x}_{I_1,k+2}$};
+  \node[right,align=left] at (7.7,-2.6)
+    {\footnotesize $\begin{bmatrix}{}^{G}\vect{v}_{I_1}\\ {}^{I_1}\vect{b}_g\\ {}^{I_1}\vect{b}_a\end{bmatrix}$ IMU1};
+  % auxiliary IMU factors: each couples the two base poses and the two aux states of one interval
+  \node[fac,fill=yellow!55,draw=yellow!45!black] (y1) at (1.6,-1.3) {};
+  \draw (y1) -- (xk); \draw (y1) -- (xk1); \draw (y1) -- (ak); \draw (y1) -- (ak1);
+  \node[fac,fill=yellow!55,draw=yellow!45!black] (y2) at (4.8,-1.3) {};
+  \draw (y2) -- (xk1); \draw (y2) -- (xk2); \draw (y2) -- (ak1); \draw (y2) -- (ak2);
+  % legend (stacked: the labels are too wide to sit on one row)
+  \node[fac,fill=blue!25,draw=blue!60!black]     at (0.4,-3.9) {};
+  \node[right] at (0.6,-3.9) {\footnotesize base IMU factor: IMU0};
+  \node[fac,fill=yellow!55,draw=yellow!45!black] at (0.4,-4.4) {};
+  \node[right] at (0.6,-4.4) {\footnotesize auxiliary IMU factor: IMU1};
+  \node[fac,fill=green!25,draw=green!50!black]   at (0.4,-4.9) {};
+  \node[right] at (0.6,-4.9) {\footnotesize camera factor: cam0};
+\end{tikzpicture}
+\caption{Multi-IMU factor graph. IMU0 is the \emph{base} IMU whose preintegration factors link the navigation states $\vect{x}_k$; each additional IMU contributes an \emph{auxiliary} factor chain over its own velocity and biases, tied to the base states through the rigid extrinsics.}
+\label{fig:lec07-multiimugraph}
+\end{figure}
