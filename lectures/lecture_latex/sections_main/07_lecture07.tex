@@ -35,7 +35,14 @@ By the exact integration results of Lecture~5, \eqref{eq:lec07-multi-int} can be
 \end{cases}
 \label{eq:lec07-int-kj}
 \end{align}
-It is clear that $\Delta\vect{R}, \Delta\vect{p}$ and $\Delta\vect{v}$ are \emph{integration terms}; we can then reorganize the measurements:
+It is clear that $\Delta\vect{R}, \Delta\vect{p}$ and $\Delta\vect{v}$ are \emph{integration terms}, driven by the bias-corrected inertial readings
+\begin{align}
+{}^{I}\vect{a} = {}^{I}\vect{a}_m - \vect{b}_a - \vect{n}_a,
+\qquad
+{}^{I}\vect{\omega} = {}^{I}\vect{\omega}_m - \vect{b}_g - \vect{n}_g,
+\label{eq:lec07-imumodel}
+\end{align}
+while $\Delta\vect{b}_g, \Delta\vect{b}_a$ are the integrated random walks. We can then reorganize the measurements:
 \begin{align}
 \Delta\vect{R} &\triangleq \Delta\vect{R}(\vect{b}_g, \vect{n}_I)
 \triangleq {}^{I_k}_{I_j}\vect{R}
@@ -70,7 +77,16 @@ Two sides of the same equations:
 \end{align}
 \end{itemize}
 
-\paragraph{Linearizing about the bias estimates.} Give an estimate of $\hat{\vect{b}}_g$ and $\hat{\vect{b}}_a$; then, to first order,
+\paragraph{Linearizing about the bias estimates.} Give an estimate of $\hat{\vect{b}}_g$ and $\hat{\vect{b}}_a$. Since $\Delta\vect{p}$ and $\Delta\vect{v}$ depend on \emph{both} biases, it is convenient to collect them into a single bias state and to stack the corresponding Jacobians:
+\begin{align}
+\vect{x}_b \triangleq \begin{bmatrix} \vect{b}_g \\ \vect{b}_a \end{bmatrix},
+\qquad
+\vect{H}_b^p \triangleq \begin{bmatrix} \vect{H}_g^p & \vect{H}_a^p \end{bmatrix},
+\qquad
+\vect{H}_b^v \triangleq \begin{bmatrix} \vect{H}_g^v & \vect{H}_a^v \end{bmatrix},
+\label{eq:lec07-xb}
+\end{align}
+so that e.g.\ $\vect{H}_b^p\,\tilde{\vect{x}}_b = \vect{H}_g^p\,\tilde{\vect{b}}_g + \vect{H}_a^p\,\tilde{\vect{b}}_a$. ($\Delta\vect{R}$ depends on $\vect{b}_g$ only, so it keeps the single Jacobian $\vect{H}_g^R$.) To first order, then,
 \begin{align}
 \Delta\vect{R}(\vect{b}_g, \vect{n}_I)
 &\approx \Delta\vect{R}(\hat{\vect{b}}_g, \vect{0})\cdot\Exp\big(\vect{H}_g^R\,\tilde{\vect{b}}_g + \vect{H}_n^R\,\vect{n}_I\big) \notag \\
@@ -82,60 +98,60 @@ similarly,
 \begin{align}
 \Delta\vect{p}(\vect{b}_g, \vect{b}_a, \vect{n}_I)
 &\approx \Delta\vect{p}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
-+ \vect{H}_g^p\,\tilde{\vect{b}}_g + \vect{H}_a^p\,\tilde{\vect{b}}_a + \vect{H}_n^p\,\vect{n}_I \notag \\
++ \vect{H}_b^p\,\tilde{\vect{x}}_b + \vect{H}_n^p\,\vect{n}_I \notag \\
 \Rightarrow\quad
 \Delta\vect{p}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
 &= \vect{h}_p(\vect{x}_k, \vect{x}_j)
-- \vect{H}_g^p\,\tilde{\vect{b}}_g - \vect{H}_a^p\,\tilde{\vect{b}}_a - \vect{H}_n^p\,\vect{n}_I, \\[4pt]
+- \vect{H}_b^p\,\tilde{\vect{x}}_b - \vect{H}_n^p\,\vect{n}_I, \\[4pt]
 \Delta\vect{v}(\vect{b}_g, \vect{b}_a, \vect{n}_I)
 &\approx \Delta\vect{v}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
-+ \vect{H}_g^v\,\tilde{\vect{b}}_g + \vect{H}_a^v\,\tilde{\vect{b}}_a + \vect{H}_n^v\,\vect{n}_I \notag \\
++ \vect{H}_b^v\,\tilde{\vect{x}}_b + \vect{H}_n^v\,\vect{n}_I \notag \\
 \Rightarrow\quad
 \Delta\vect{v}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
 &= \vect{h}_v(\vect{x}_k, \vect{x}_j)
-- \vect{H}_g^v\,\tilde{\vect{b}}_g - \vect{H}_a^v\,\tilde{\vect{b}}_a - \vect{H}_n^v\,\vect{n}_I.
+- \vect{H}_b^v\,\tilde{\vect{x}}_b - \vect{H}_n^v\,\vect{n}_I.
 \end{align}
 Then, for the biases, we get
 \begin{align}
-\Delta\vect{b}_g(\vect{n}_I) = \vect{0} + \int_{t_k}^{t_j} \vect{n}_{wg}\,dt = \vect{0} + \vect{n}_{wgd}\,\delta t,
+\Delta\vect{b}_g(\vect{n}_I) = \vect{0} + \int_{t_k}^{t_j} \vect{n}_{wg}\,dt = \vect{0} + \vect{n}_{wgd}\,\delta t_k,
 \qquad
-\Delta\vect{b}_a(\vect{n}_I) = \vect{0} + \int_{t_k}^{t_j} \vect{n}_{wa}\,dt = \vect{0} + \vect{n}_{wad}\,\delta t,
+\Delta\vect{b}_a(\vect{n}_I) = \vect{0} + \int_{t_k}^{t_j} \vect{n}_{wa}\,dt = \vect{0} + \vect{n}_{wad}\,\delta t_k,
 \end{align}
-with $\delta t = t_j - t_k$ and $\vect{n}_{wgd}, \vect{n}_{wad}$ the discrete noises. Hence \textbf{the cleaner IMU measurement} is:
+with $\vect{n}_{wgd}, \vect{n}_{wad}$ the discrete noises. Hence \textbf{the cleaner IMU measurement} is:
 \begin{empheq}[box=\fbox]{align}
 \Delta\vect{R}(\hat{\vect{b}}_g, \vect{0})
 &= \vect{h}_R(\vect{x}_k, \vect{x}_j)\cdot\Exp\big(-\vect{H}_g^R\,\tilde{\vect{b}}_g - \vect{H}_n^R\,\vect{n}_I\big), \notag \\
 \Delta\vect{p}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
-&= \vect{h}_p(\vect{x}_k, \vect{x}_j) - \vect{H}_g^p\,\tilde{\vect{b}}_g - \vect{H}_a^p\,\tilde{\vect{b}}_a - \vect{H}_n^p\,\vect{n}_I, \notag \\
+&= \vect{h}_p(\vect{x}_k, \vect{x}_j) - \vect{H}_b^p\,\tilde{\vect{x}}_b - \vect{H}_n^p\,\vect{n}_I, \notag \\
 \Delta\vect{v}(\hat{\vect{b}}_g, \hat{\vect{b}}_a, \vect{0})
-&= \vect{h}_v(\vect{x}_k, \vect{x}_j) - \vect{H}_g^v\,\tilde{\vect{b}}_g - \vect{H}_a^v\,\tilde{\vect{b}}_a - \vect{H}_n^v\,\vect{n}_I, \notag \\
-\vect{0} &= \vect{b}_{g_j} - \vect{b}_{g_k} - \vect{n}_{wgd}\,\delta t, \notag \\
-\vect{0} &= \vect{b}_{a_j} - \vect{b}_{a_k} - \vect{n}_{wad}\,\delta t. \notag
+&= \vect{h}_v(\vect{x}_k, \vect{x}_j) - \vect{H}_b^v\,\tilde{\vect{x}}_b - \vect{H}_n^v\,\vect{n}_I, \notag \\
+\vect{0} &= \vect{b}_{g_j} - \vect{b}_{g_k} - \vect{n}_{wgd}\,\delta t_k, \notag \\
+\vect{0} &= \vect{b}_{a_j} - \vect{b}_{a_k} - \vect{n}_{wad}\,\delta t_k. \notag
+\label{eq:lec07-cleaner}
 \end{empheq}
-Stacking the left-hand sides as the \emph{preintegrated measurement} $\vect{z}_I$, with $\vect{n}_{ij} \triangleq \vect{n}_I \sim \mathcal{N}(\vect{0}, \vect{R}_{ij})$:
+Stacking the left-hand sides as the \emph{preintegrated measurement} $\vect{z}_I$, with $\vect{n}_I \sim \mathcal{N}(\vect{0}, \vect{R}_{ij})$:
 \begin{align}
-\vect{z}_I = \vect{h}(\vect{x}_k, \vect{x}_j, \vect{n}_I)
+\vect{z}_I = \vect{h}_I(\vect{x}_k, \vect{x}_j, \vect{n}_I)
 \;\;&\Rightarrow\;\;
-\vect{z}_I = \underbrace{\vect{h}(\hat{\vect{x}}_k, \hat{\vect{x}}_j, \vect{0})}_{\hat{\vect{z}}_I}
-+ \vect{H}_k\,\tilde{\vect{x}}_k + \vect{H}_j\,\tilde{\vect{x}}_j + \vect{G}_I\,\vect{n}_{ij} \notag \\
+\vect{z}_I = \underbrace{\vect{h}_I(\hat{\vect{x}}_k, \hat{\vect{x}}_j, \vect{0})}_{\hat{\vect{z}}_I}
++ \vect{H}_k\,\tilde{\vect{x}}_k + \vect{H}_j\,\tilde{\vect{x}}_j + \vect{G}_I\,\vect{n}_I \notag \\
 &\Rightarrow\;\;
-\tilde{\vect{z}}_I = \vect{H}_k\,\tilde{\vect{x}}_k + \vect{H}_j\,\tilde{\vect{x}}_j + \vect{G}_I\,\vect{n}_{ij}.
+\tilde{\vect{z}}_I = \vect{H}_k\,\tilde{\vect{x}}_k + \vect{H}_j\,\tilde{\vect{x}}_j + \vect{G}_I\,\vect{n}_I.
 \label{eq:lec07-imu-factor}
 \end{align}
 
-\paragraph{Why would we like this change?} Because we want to find this format:
+\paragraph{Why would we like this change?} Because this is exactly the format a least-squares solver wants: a residual that is linear in the state errors. Writing the covariance of the preintegrated measurement as
 \begin{align}
-\vect{z}_I = \vect{h}(\vect{x}_k, \vect{x}_j, \vect{n}_{ij})
-\;\;\to\;\;
-\tilde{\vect{z}}_I = \vect{H}_k\,\tilde{\vect{x}}_k + \vect{H}_j\,\tilde{\vect{x}}_j + \vect{G}_I\,\vect{n}_{ij};
+\vect{Q}_I \triangleq \vect{G}_I\,\vect{R}_{ij}\,\vect{G}_I\trans,
+\label{eq:lec07-QI}
 \end{align}
-then we can have a \emph{cost term}
+we can form a \emph{cost term}
 \begin{align}
-\norm{\vect{z}_I - \vect{h}(\vect{x}_k, \vect{x}_j, \vect{0})}^2_{\vect{G}_I\vect{R}_{ij}\vect{G}_I\trans}
+\norm{\vect{z}_I - \vect{h}_I(\vect{x}_k, \vect{x}_j, \vect{0})}^2_{\vect{Q}_I}
 \;\;\Rightarrow\;\;
-\norm{\tilde{\vect{z}}_I - \vect{H}_k\,\tilde{\vect{x}}_k - \vect{H}_j\,\tilde{\vect{x}}_j}^2_{\vect{G}_I\vect{R}_{ij}\vect{G}_I\trans}.
+\norm{\tilde{\vect{z}}_I - \vect{H}_k\,\tilde{\vect{x}}_k - \vect{H}_j\,\tilde{\vect{x}}_j}^2_{\vect{Q}_I},
 \end{align}
-This cost term can be used in BA / least squares together with the vision factors easily.
+which can be used in BA / least squares together with the vision factors easily.
 
 But there is a \textbf{caveat} for the above formulation:
 \begin{enumerate}[noitemsep,topsep=2pt]
@@ -168,18 +184,10 @@ where across iterations \emph{only the boxed term $\vect{H}_B^0\,\Delta\hat{\vec
 \subsection{Preintegration with a Fixed Bias Linearization Point}
 \label{sec:lec07-fixedbias}
 
-\paragraph{The abstracted IMU function.} Recall from \eqref{eq:lec07-int-kj} the integration from time $k$ to time $j$, with $\delta t = t_j - t_k$, and note that the integrands are driven by the bias-corrected inertial readings
-\begin{align}
-{}^{I}\vect{a} = {}^{I}\vect{a}_m - \vect{b}_a - \vect{n}_a,
-\qquad
-{}^{I}\vect{\omega} = {}^{I}\vect{\omega}_m - \vect{b}_g - \vect{n}_g,
-\end{align}
-so that $\Delta\vect{R}, \Delta\vect{p}, \Delta\vect{v}$ are the \emph{integration terms} and $\Delta\vect{b}_g, \Delta\vect{b}_a$ the integrated random walks. As discussed above, when the resulting cost is used inside a least-squares problem, $\Delta\vect{R}, \Delta\vect{p}$ and $\Delta\vect{v}$ would need to be re-integrated at every iteration of Gauss--Newton or LM.
+Everything is now in place: the only change from \S\ref{sec:lec07-preint} is \emph{where} the bias Jacobians are evaluated. Instead of linearizing about the \emph{current} estimates $\hat{\vect{b}}_g, \hat{\vect{b}}_a$ --- which move at every Gauss--Newton / LM iteration and therefore force a re-integration --- we linearize about the \emph{fixed initial} estimates $\hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0$ and pay for it with one extra correction term per row, exactly as in \eqref{eq:lec07-fixedlin}.
 
-\paragraph{Applying the fixed linearization point.} Take $\hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0$ as the fixed (initial) bias linearization point and collect the biases into
+\paragraph{Applying the fixed linearization point.} Using the bias state $\vect{x}_b$ of \eqref{eq:lec07-xb}, define the corrections
 \begin{align}
-\vect{x}_b \triangleq \begin{bmatrix} \vect{b}_g \\ \vect{b}_a \end{bmatrix},
-\qquad
 \Delta\hat{\vect{x}}_b \triangleq \begin{bmatrix} \hat{\vect{b}}_g - \hat{\vect{b}}_g^0 \\[2pt] \hat{\vect{b}}_a - \hat{\vect{b}}_a^0 \end{bmatrix},
 \qquad
 \Delta\hat{\vect{x}}_{b_g} \triangleq \hat{\vect{b}}_g - \hat{\vect{b}}_g^0 .
@@ -196,7 +204,7 @@ For the rotation, splitting $\tilde{\vect{b}}_g^0 = \Delta\hat{\vect{x}}_{b_g} +
 \Delta\vect{R}(\hat{\vect{b}}_g^0, \vect{0})
 &= \vect{h}_R(\vect{x}_k, \vect{x}_j)\cdot\Exp\big(-\vect{H}_g^R\,\Delta\hat{\vect{x}}_{b_g} - \vect{H}_g^R\,\tilde{\vect{b}}_g - \vect{H}_n^R\,\vect{n}_I\big).
 \end{align}
-Likewise for position and velocity, now with the stacked bias Jacobians $\vect{H}_b^p, \vect{H}_b^v$ acting on $\vect{x}_b$:
+Likewise for position and velocity, with the same stacked Jacobians $\vect{H}_b^p, \vect{H}_b^v$ of \eqref{eq:lec07-xb} now evaluated at the fixed point:
 \begin{align}
 \Delta\vect{p}(\vect{b}_g, \vect{b}_a, \vect{n}_I)
 &= \Delta\vect{p}(\hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0, \vect{0})
@@ -214,7 +222,7 @@ Likewise for position and velocity, now with the stacked bias Jacobians $\vect{H
 &= \vect{h}_v(\vect{x}_k, \vect{x}_j) - \vect{H}_b^v\,\Delta\hat{\vect{x}}_b - \vect{H}_b^v\,\tilde{\vect{x}}_b - \vect{H}_n^v\,\vect{n}_I.
 \end{align}
 
-\paragraph{The final IMU measurement.} Stacking the five rows gives the preintegrated measurement, where the boxed terms are the only ones that change from iteration to iteration:
+\paragraph{The final IMU measurement.} Stacking the five rows gives the preintegrated measurement. This is row-for-row the ``cleaner IMU measurement'' box of \S\ref{sec:lec07-preint}, with $\hat{\vect{b}}_g, \hat{\vect{b}}_a \to \hat{\vect{b}}_g^0, \hat{\vect{b}}_a^0$ and one extra $\vect{H}\,\Delta\hat{\vect{x}}$ term per row --- and those boxed terms are the \emph{only} ones that change from iteration to iteration:
 \begin{align}
 \begin{bmatrix}
 \Delta\vect{R}(\hat{\vect{b}}_g^0, \vect{0}) \\[3pt]
@@ -243,10 +251,9 @@ The whole point is that
 
 \paragraph{The IMU factor.} We can now construct the IMU factor (IMU cost term)
 \begin{empheq}[box=\fbox]{align}
-C_I = \norm{\vect{z}_I - \vect{h}_I(\vect{x}_k, \vect{x}_j, \vect{0})}^2_{\vect{Q}_I},
-\qquad \vect{n}_I \sim \mathcal{N}(\vect{0}, \vect{Q}_I), \notag
+C_I = \norm{\vect{z}_I - \vect{h}_I(\vect{x}_k, \vect{x}_j, \vect{0})}^2_{\vect{Q}_I}, \notag
 \end{empheq}
-where $\vect{z}_I$ is the IMU \emph{preintegrated measurement} and $\vect{n}_I$ the IMU \emph{preintegrated noise} with covariance $\vect{Q}_I$ (i.e.\ $\vect{Q}_I = \vect{G}_I\vect{R}_{ij}\vect{G}_I\trans$ in the notation of \eqref{eq:lec07-imu-factor}).
+where $\vect{z}_I$ is the IMU \emph{preintegrated measurement} and $\vect{Q}_I$ of \eqref{eq:lec07-QI} the covariance of the IMU \emph{preintegrated noise}.
 
 % =====================================================================
 \subsection{Computing the Preintegration: Recursive Formulation}
@@ -254,7 +261,7 @@ where $\vect{z}_I$ is the IMU \emph{preintegrated measurement} and $\vect{n}_I$ 
 
 The remaining question is how to actually perform the IMU preintegration and obtain
 \begin{align}
-\vect{z}_I, \quad \vect{Q}_I, \quad \vect{H}_b^p, \quad \vect{H}_b^v, \quad \vect{H}_{b_g}^R .
+\vect{z}_I, \quad \vect{Q}_I, \quad \vect{H}_b^p, \quad \vect{H}_b^v, \quad \vect{H}_g^R .
 \end{align}
 There are many IMU readings between $k$ and $j$ (Fig.~\ref{fig:lec07-imutimeline}); the way to solve this is to use a \emph{recursive formulation} over the individual IMU intervals $i \in [k, j]$.
 
@@ -288,7 +295,7 @@ There are many IMU readings between $k$ and $j$ (Fig.~\ref{fig:lec07-imutimeline
 \end{cases}
 \qquad
 \begin{cases}
-\vect{R}_{i,i+1} = \Exp\big(\hat{\vect{\omega}}_i\,\delta t\big), \\[2pt]
+\vect{R}_{i,i+1} = \Exp\big(\hat{\vect{\omega}}_i\,\delta t_i\big), \\[2pt]
 \vect{p}_{i,i+1} = \displaystyle\int_{t_i}^{t_{i+1}}\!\!\int_{t_i}^{\tau} {}^{I_i}_{I_s}\vect{R}\;{}^{I_s}\vect{a}\;ds\,d\tau, \\[2pt]
 \vect{v}_{i,i+1} = \displaystyle\int_{t_i}^{t_{i+1}} {}^{I_i}_{I_\tau}\vect{R}\;{}^{I_\tau}\vect{a}\;d\tau,
 \end{cases}
@@ -309,7 +316,7 @@ where $\vect{n}_{Id}$ is the discrete IMU noise
 & \sigma_a^2\vect{I}_3 & & \\
 & & \sigma_{wg}^2\vect{I}_3 & \\
 & & & \sigma_{wa}^2\vect{I}_3
-\end{bmatrix}\frac{1}{\delta t}\right),
+\end{bmatrix}\frac{1}{\delta t_i}\right),
 \end{align}
 and the boxed $\vect{\Phi}_b$ is exactly the block that \textbf{contains the Jacobians} $\vect{H}_g^R, \vect{H}_b^p, \vect{H}_b^v$ needed in \eqref{eq:lec07-zI}. With this, the IMU preintegration factor is complete.
 
@@ -340,7 +347,7 @@ A typical optimization-based VINS combines a prior, the IMU factor, and the came
 so that the cost is
 \begin{empheq}[box=\fbox]{align}
 C_{\mathrm{VINS}} = \underbrace{\norm{\vect{x}_k - \hat{\vect{x}}_k}^2_{\vect{P}_k}}_{\text{prior}}
-+ \underbrace{\norm{\vect{z}_I - \vect{h}(\vect{x}_k, \vect{x}_{k+1}, \vect{0})}^2_{\vect{G}\vect{Q}\vect{G}\trans}}_{C_{\mathrm{IMU}}}
++ \underbrace{\norm{\vect{z}_I - \vect{h}(\vect{x}_k, \vect{x}_{k+1}, \vect{0})}^2_{\vect{Q}_I}}_{C_{\mathrm{IMU}}}
 + \underbrace{\norm{\vect{z}_{k+1} - \vect{h}(\vect{x}_{k+1})}^2_{\vect{R}_{k+1}}}_{C_{\mathrm{cam}}}. \notag
 \end{empheq}
 The corresponding factor graph is shown in Fig.~\ref{fig:lec07-vinsgraph}.
