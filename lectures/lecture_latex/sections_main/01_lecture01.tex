@@ -129,6 +129,18 @@ with the conditional variance
 &= \int_{-\infty}^{+\infty}(x-m_{x\mid A})^2\,p(x\mid A)\,\mathrm{d}x.
 \end{align}
 
+\paragraph{Homework: variance identity.}
+\textbf{Problem.} Show that the variance of a scalar random variable can be written as $\sigma_x^2 = \E(\mathrm{x}^2) - \big(\E(\mathrm{x})\big)^2$, and discuss when it vanishes.
+
+\textbf{Solution.} Expanding the definition with $m_x = \E(\mathrm{x})$,
+\begin{align}
+\sigma_x^2 &= \E\big((\mathrm{x}-m_x)^2\big) \\
+&= \E\big(\mathrm{x}^2 - 2 m_x \mathrm{x} + m_x^2\big) \\
+&= \E(\mathrm{x}^2) - 2 m_x \E(\mathrm{x}) + m_x^2 \\
+&= \E(\mathrm{x}^2) - m_x^2.
+\end{align}
+Since $\sigma_x^2\ge 0$, we have $\E(\mathrm{x}^2)\ge \big(\E(\mathrm{x})\big)^2$, with equality if and only if $\sigma_x^2=0$, i.e. $\mathrm{x}=m_x$ almost surely (a deterministic variable) --- a degenerate special case.
+
 \paragraph{A set of random variables.}
 The joint pdf of $x_1,\dots,x_n$ satisfies
 \begin{align}
@@ -146,6 +158,36 @@ If $x_i,x_j$ are independent, $p(x_i,x_j) = p(x_i)\,p(x_j)$. Expectation is line
 \end{align}
 When $\sigma_{ij}=0$ we have $\E(x_i x_j) = \E(x_i)\,\E(x_j)$ and $x_i,x_j$ are \emph{uncorrelated}.
 
+\paragraph{Homework: scalar covariance identity.}
+\textbf{Problem.} For two random variables $x_i,x_j$, show that $\sigma_{ij} = \E(x_i x_j) - \E(x_i)\E(x_j)$.
+
+\textbf{Solution.} With $m_i = \E(x_i)$, $m_j=\E(x_j)$, expand
+\begin{align}
+\sigma_{ij}
+&= \E\big((x_i-m_i)(x_j-m_j)\big) \\
+&= \iint (x_i-m_i)(x_j-m_j)\,p(x_i,x_j)\,\mathrm{d}x_i\,\mathrm{d}x_j \\
+&= \iint x_i x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j
+ - m_j\!\iint x_i\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j \notag\\
+&\quad - m_i\!\iint x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j
+ + m_i m_j\!\iint p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j.
+\end{align}
+Using the marginalization identities (and symmetrically for $x_j$)
+\begin{align}
+\int p(x_i,x_j)\,\mathrm{d}x_i = p(x_j), \qquad
+\iint p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j = 1,
+\end{align}
+we get
+\begin{align}
+m_i\!\iint x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j
+&= m_i\!\int x_j\, p(x_j)\,\mathrm{d}x_j \\
+&= m_i m_j,
+\end{align}
+and likewise for the other term, so
+\begin{align}
+\sigma_{ij} &= \E(x_i x_j) - m_i m_j - m_i m_j + m_i m_j \\
+&= \E(x_i x_j) - \E(x_i)\E(x_j).
+\end{align}
+
 \begin{quote}
 \textbf{Discussion questions.}
 \begin{enumerate}[itemsep=0.2em]
@@ -154,6 +196,37 @@ When $\sigma_{ij}=0$ we have $\E(x_i x_j) = \E(x_i)\,\E(x_j)$ and $x_i,x_j$ are 
 \item If $x_i,x_j$ are jointly Gaussian, is independence equivalent to being uncorrelated?
 \end{enumerate}
 \end{quote}
+
+\paragraph{Solution: independence versus uncorrelatedness.}
+\emph{(1) Independent $\Rightarrow$ uncorrelated.} If $p(x_i,x_j)=p(x_i)p(x_j)$, then
+\begin{align}
+\E(x_i x_j) &= \iint x_i x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j \\
+&= \int x_i\, p(x_i)\,\mathrm{d}x_i \cdot \int x_j\, p(x_j)\,\mathrm{d}x_j \\
+&= \E(x_i)\E(x_j),
+\end{align}
+so $\sigma_{ij}=0$.
+
+\emph{(2) Uncorrelated $\not\Rightarrow$ independent.} Uncorrelatedness gives only
+\begin{align}
+\E(x_i x_j) - \E(x_i)\E(x_j)
+&= \iint x_i x_j\,\big(p(x_i,x_j) - p(x_i)p(x_j)\big)\,\mathrm{d}x_i\mathrm{d}x_j \\
+&= 0,
+\end{align}
+which does \emph{not} force $p(x_i,x_j) = p(x_i)p(x_j)$ in general. Hence uncorrelated does not imply independent.
+
+\emph{(3) Jointly Gaussian.} For $x_i\sim\mathcal{N}(m_i,\sigma_i^2)$ and $x_j\sim\mathcal{N}(m_j,\sigma_j^2)$, the product of marginals is
+\begin{align}
+p(x_i)p(x_j) = \frac{1}{2\pi\sigma_i\sigma_j}\exp\!\left\{-\tfrac{1}{2}\begin{bmatrix} x_i-m_i \\ x_j-m_j \end{bmatrix}\trans
+\begin{bmatrix} \sigma_i^2 & 0 \\ 0 & \sigma_j^2 \end{bmatrix}^{-1}
+\begin{bmatrix} x_i-m_i \\ x_j-m_j \end{bmatrix}\right\}.
+\end{align}
+The joint Gaussian $[x_i,x_j]\trans\sim\mathcal{N}\big([m_i,m_j]\trans,\vect{P}_{xx}\big)$ with $\vect{P}_{xx} = \begin{bmatrix} \sigma_i^2 & \sigma_{ij} \\ \sigma_{ji} & \sigma_j^2 \end{bmatrix}$ is
+\begin{align}
+p(x_i,x_j) = \frac{1}{2\pi\sqrt{|\vect{P}_{xx}|}}\exp\!\left\{-\tfrac{1}{2}\begin{bmatrix} x_i-m_i \\ x_j-m_j \end{bmatrix}\trans
+\vect{P}_{xx}^{-1}
+\begin{bmatrix} x_i-m_i \\ x_j-m_j \end{bmatrix}\right\}.
+\end{align}
+If $\sigma_{ij}=\sigma_{ji}=0$, then $\vect{P}_{xx}$ is diagonal and $p(x_i,x_j)=p(x_i)p(x_j)$. Hence, for (jointly) Gaussian variables, \emph{independent $\Leftrightarrow$ uncorrelated}.
 
 \paragraph{Random vector.}
 Let $\vect{x} = [x_1,\dots,x_n]\trans$, where all elements are random variables, with mean $\E(\vect{x})\triangleq\vect{m}_x$ and covariance
@@ -168,6 +241,19 @@ P_{ii} &= \E\big((x_i-m_i)^2\big) \\
 P_{ij} &= \E\big((x_i-m_i)(x_j-m_j)\big).
 \end{align}
 Since $P_{ij}=P_{ji}$, the covariance $\vect{P}$ is a symmetric matrix; it is also positive (semi-)definite.
+
+\paragraph{Homework: covariance matrix identity.}
+\textbf{Problem.} For a random vector $\vect{x}$ with mean $\vect{m}_x$, show that $\vect{P} = \E\big((\vect{x}-\vect{m}_x)(\vect{x}-\vect{m}_x)\trans\big) = \E(\vect{x}\vect{x}\trans) - \E(\vect{x})\E(\vect{x}\trans)$.
+
+\textbf{Solution.} Expanding the outer product and using linearity of expectation, together with $\E(\vect{x})=\vect{m}_x$,
+\begin{align}
+\vect{P}
+&= \E\big(\vect{x}\vect{x}\trans - \vect{x}\vect{m}_x\trans - \vect{m}_x\vect{x}\trans + \vect{m}_x\vect{m}_x\trans\big) \\
+&= \E(\vect{x}\vect{x}\trans) - \E(\vect{x})\vect{m}_x\trans - \vect{m}_x\E(\vect{x}\trans) + \vect{m}_x\vect{m}_x\trans \\
+&= \E(\vect{x}\vect{x}\trans) - \vect{m}_x\vect{m}_x\trans - \vect{m}_x\vect{m}_x\trans + \vect{m}_x\vect{m}_x\trans \\
+&= \E(\vect{x}\vect{x}\trans) - \vect{m}_x\vect{m}_x\trans \\
+&= \E(\vect{x}\vect{x}\trans) - \E(\vect{x})\E(\vect{x}\trans).
+\end{align}
 
 \paragraph{Gaussian vector pdf.}
 \begin{align}
@@ -185,6 +271,51 @@ q &= \vect{y}\trans\vect{y} = \sum_i y_i^2.
 \end{align*}
 What are the mean and covariance of $q$?
 \end{quote}
+
+\paragraph{Solution: the \texorpdfstring{$\chi^2$}{chi-squared} distribution.}
+Factor $\vect{P}_{xx} = \vect{L}\vect{L}\trans$ (Cholesky), so $\vect{P}_{xx}^{-1} = \vect{L}^{-\top}\vect{L}^{-1}$, and define the whitened variable $\vect{y} = \vect{L}^{-1}(\vect{x}-\vect{m}_x)$. Then
+\begin{align}
+q &= (\vect{x}-\vect{m}_x)\trans \vect{L}^{-\top}\vect{L}^{-1}(\vect{x}-\vect{m}_x) \\
+&= \vect{y}\trans\vect{y} \\
+&= \sum_{i=1}^n y_i^2.
+\end{align}
+The whitened variable has zero mean and identity covariance,
+\begin{align}
+\vect{m}_y &= \E(\vect{y}) \\
+&= \vect{L}^{-1}\big(\E(\vect{x}) - \vect{m}_x\big) \\
+&= \vect{0}, \\
+\vect{P}_{yy} &= \E(\vect{y}\vect{y}\trans) \\
+&= \vect{L}^{-1}\,\E\big((\vect{x}-\vect{m}_x)(\vect{x}-\vect{m}_x)\trans\big)\,\vect{L}^{-\top} \\
+&= \vect{L}^{-1}\vect{P}_{xx}\vect{L}^{-\top} \\
+&= \vect{L}^{-1}\vect{L}\vect{L}\trans\vect{L}^{-\top} \\
+&= \vect{I}_n,
+\end{align}
+so $y_i\sim\mathcal{N}(0,1)$ are independent. Therefore the mean of $q$ is
+\begin{align}
+\E(q) &= \E(\vect{y}\trans\vect{y}) \\
+&= \sum_{i=1}^n \E(y_i^2) \\
+&= n.
+\end{align}
+For the variance, with $\E(y_i^2)=1$ the cross terms vanish by independence, giving
+\begin{align}
+\sigma_{qq}^2 &= \E\big((q - n)^2\big) \\
+&= \E\Big(\big(\textstyle\sum_i (y_i^2-1)\big)^2\Big) \\
+&= \sum_i \E\big((y_i^2-1)^2\big) \\
+&= \sum_i \big(\E(y_i^4) - 2\E(y_i^2) + 1\big).
+\end{align}
+The fourth moment of a standard normal follows from integration by parts (with $u=y_i^3$, $\mathrm{d}v = y_i\,p(y_i)\,\mathrm{d}y_i$, $v=-p(y_i)$):
+\begin{align}
+\E(y_i^4) &= \int_{-\infty}^{+\infty} y_i^4\, p(y_i)\,\mathrm{d}y_i \\
+&= \underbrace{\big[-y_i^3 p(y_i)\big]_{-\infty}^{+\infty}}_{=\,0}
++ \int_{-\infty}^{+\infty} 3 y_i^2\, p(y_i)\,\mathrm{d}y_i \\
+&= 3\,\E(y_i^2) \\
+&= 3.
+\end{align}
+Hence each term equals $3 - 2 + 1 = 2$, and
+\begin{align}
+\sigma_{qq}^2 = \sum_{i=1}^n 2 = 2n.
+\end{align}
+So $q\sim\chi^2(n)$ has mean $n$ and variance $2n$.
 
 % =====================================================================
 \subsection{Maximum Likelihood and Maximum a Posteriori Estimation}
@@ -291,141 +422,3 @@ so that, with $\vect{\Phi}(t,0)=e^{\int_0^t \vect{A}(\tau)\mathrm{d}\tau}$ and $
 \end{empheq}
 This is one of the most important properties of linear systems.
 
-% =====================================================================
-\subsection{Homework Problems and Solutions}
-
-\paragraph{Variance identity.}
-\textbf{Problem.} Show that the variance of a scalar random variable can be written as $\sigma_x^2 = \E(\mathrm{x}^2) - \big(\E(\mathrm{x})\big)^2$, and discuss when it vanishes.
-
-\textbf{Solution.} Expanding the definition with $m_x = \E(\mathrm{x})$,
-\begin{align}
-\sigma_x^2 &= \E\big((\mathrm{x}-m_x)^2\big) \\
-&= \E\big(\mathrm{x}^2 - 2 m_x \mathrm{x} + m_x^2\big) \\
-&= \E(\mathrm{x}^2) - 2 m_x \E(\mathrm{x}) + m_x^2 \\
-&= \E(\mathrm{x}^2) - m_x^2.
-\end{align}
-Since $\sigma_x^2\ge 0$, we have $\E(\mathrm{x}^2)\ge \big(\E(\mathrm{x})\big)^2$, with equality if and only if $\sigma_x^2=0$, i.e. $\mathrm{x}=m_x$ almost surely (a deterministic variable) --- a degenerate special case.
-
-\paragraph{Covariance matrix identity.}
-\textbf{Problem.} For a random vector $\vect{x}$ with mean $\vect{m}_x$, show that $\vect{P} = \E\big((\vect{x}-\vect{m}_x)(\vect{x}-\vect{m}_x)\trans\big) = \E(\vect{x}\vect{x}\trans) - \E(\vect{x})\E(\vect{x}\trans)$.
-
-\textbf{Solution.} Expanding the outer product and using linearity of expectation, together with $\E(\vect{x})=\vect{m}_x$,
-\begin{align}
-\vect{P}
-&= \E\big(\vect{x}\vect{x}\trans - \vect{x}\vect{m}_x\trans - \vect{m}_x\vect{x}\trans + \vect{m}_x\vect{m}_x\trans\big) \\
-&= \E(\vect{x}\vect{x}\trans) - \E(\vect{x})\vect{m}_x\trans - \vect{m}_x\E(\vect{x}\trans) + \vect{m}_x\vect{m}_x\trans \\
-&= \E(\vect{x}\vect{x}\trans) - \vect{m}_x\vect{m}_x\trans - \vect{m}_x\vect{m}_x\trans + \vect{m}_x\vect{m}_x\trans \\
-&= \E(\vect{x}\vect{x}\trans) - \vect{m}_x\vect{m}_x\trans \\
-&= \E(\vect{x}\vect{x}\trans) - \E(\vect{x})\E(\vect{x}\trans).
-\end{align}
-
-\paragraph{Scalar covariance identity.}
-\textbf{Problem.} For two random variables $x_i,x_j$, show that $\sigma_{ij} = \E(x_i x_j) - \E(x_i)\E(x_j)$.
-
-\textbf{Solution.} With $m_i = \E(x_i)$, $m_j=\E(x_j)$, expand
-\begin{align}
-\sigma_{ij}
-&= \E\big((x_i-m_i)(x_j-m_j)\big) \\
-&= \iint (x_i-m_i)(x_j-m_j)\,p(x_i,x_j)\,\mathrm{d}x_i\,\mathrm{d}x_j \\
-&= \iint x_i x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j
- - m_j\!\iint x_i\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j \notag\\
-&\quad - m_i\!\iint x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j
- + m_i m_j\!\iint p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j.
-\end{align}
-Using the marginalization identities (and symmetrically for $x_j$)
-\begin{align}
-\int p(x_i,x_j)\,\mathrm{d}x_i = p(x_j), \qquad
-\iint p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j = 1,
-\end{align}
-we get
-\begin{align}
-m_i\!\iint x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j
-&= m_i\!\int x_j\, p(x_j)\,\mathrm{d}x_j \\
-&= m_i m_j,
-\end{align}
-and likewise for the other term, so
-\begin{align}
-\sigma_{ij} &= \E(x_i x_j) - m_i m_j - m_i m_j + m_i m_j \\
-&= \E(x_i x_j) - \E(x_i)\E(x_j).
-\end{align}
-
-\paragraph{Independence versus uncorrelatedness.}
-\textbf{Problem.} Resolve the three discussion questions: (1) does independence imply uncorrelatedness? (2) does uncorrelatedness imply independence? (3) for jointly Gaussian variables, are the two equivalent?
-
-\textbf{Solution.}
-\emph{(1) Independent $\Rightarrow$ uncorrelated.} If $p(x_i,x_j)=p(x_i)p(x_j)$, then
-\begin{align}
-\E(x_i x_j) &= \iint x_i x_j\, p(x_i,x_j)\,\mathrm{d}x_i\mathrm{d}x_j \\
-&= \int x_i\, p(x_i)\,\mathrm{d}x_i \cdot \int x_j\, p(x_j)\,\mathrm{d}x_j \\
-&= \E(x_i)\E(x_j),
-\end{align}
-so $\sigma_{ij}=0$.
-
-\emph{(2) Uncorrelated $\not\Rightarrow$ independent.} Uncorrelatedness gives only
-\begin{align}
-\E(x_i x_j) - \E(x_i)\E(x_j)
-&= \iint x_i x_j\,\big(p(x_i,x_j) - p(x_i)p(x_j)\big)\,\mathrm{d}x_i\mathrm{d}x_j \\
-&= 0,
-\end{align}
-which does \emph{not} force $p(x_i,x_j) = p(x_i)p(x_j)$ in general. Hence uncorrelated does not imply independent.
-
-\emph{(3) Jointly Gaussian.} For $x_i\sim\mathcal{N}(m_i,\sigma_i^2)$ and $x_j\sim\mathcal{N}(m_j,\sigma_j^2)$, the product of marginals is
-\begin{align}
-p(x_i)p(x_j) = \frac{1}{2\pi\sigma_i\sigma_j}\exp\!\left\{-\tfrac{1}{2}\begin{bmatrix} x_i-m_i \\ x_j-m_j \end{bmatrix}\trans
-\begin{bmatrix} \sigma_i^2 & 0 \\ 0 & \sigma_j^2 \end{bmatrix}^{-1}
-\begin{bmatrix} x_i-m_i \\ x_j-m_j \end{bmatrix}\right\}.
-\end{align}
-The joint Gaussian $[x_i,x_j]\trans\sim\mathcal{N}\big([m_i,m_j]\trans,\vect{P}_{xx}\big)$ with $\vect{P}_{xx} = \begin{bmatrix} \sigma_i^2 & \sigma_{ij} \\ \sigma_{ji} & \sigma_j^2 \end{bmatrix}$ is
-\begin{align}
-p(x_i,x_j) = \frac{1}{2\pi\sqrt{|\vect{P}_{xx}|}}\exp\!\left\{-\tfrac{1}{2}\begin{bmatrix} x_i-m_i \\ x_j-m_j \end{bmatrix}\trans
-\vect{P}_{xx}^{-1}
-\begin{bmatrix} x_i-m_i \\ x_j-m_j \end{bmatrix}\right\}.
-\end{align}
-If $\sigma_{ij}=\sigma_{ji}=0$, then $\vect{P}_{xx}$ is diagonal and $p(x_i,x_j)=p(x_i)p(x_j)$. Hence, for (jointly) Gaussian variables, \emph{independent $\Leftrightarrow$ uncorrelated}.
-
-\paragraph{The \texorpdfstring{$\chi^2$}{chi-squared} distribution.}
-\textbf{Problem.} Let $\vect{x}=[x_1,\dots,x_n]\trans$ with $p(\vect{x})=\mathcal{N}(\vect{m}_x,\vect{P}_{xx})$ and define $q = (\vect{x}-\vect{m}_x)\trans \vect{P}_{xx}^{-1}(\vect{x}-\vect{m}_x)$. Find the mean and variance of $q$.
-
-\textbf{Solution.} Factor $\vect{P}_{xx} = \vect{L}\vect{L}\trans$ (Cholesky), so $\vect{P}_{xx}^{-1} = \vect{L}^{-\top}\vect{L}^{-1}$, and define the whitened variable $\vect{y} = \vect{L}^{-1}(\vect{x}-\vect{m}_x)$. Then
-\begin{align}
-q &= (\vect{x}-\vect{m}_x)\trans \vect{L}^{-\top}\vect{L}^{-1}(\vect{x}-\vect{m}_x) \\
-&= \vect{y}\trans\vect{y} \\
-&= \sum_{i=1}^n y_i^2.
-\end{align}
-The whitened variable has zero mean and identity covariance,
-\begin{align}
-\vect{m}_y &= \E(\vect{y}) \\
-&= \vect{L}^{-1}\big(\E(\vect{x}) - \vect{m}_x\big) \\
-&= \vect{0}, \\
-\vect{P}_{yy} &= \E(\vect{y}\vect{y}\trans) \\
-&= \vect{L}^{-1}\,\E\big((\vect{x}-\vect{m}_x)(\vect{x}-\vect{m}_x)\trans\big)\,\vect{L}^{-\top} \\
-&= \vect{L}^{-1}\vect{P}_{xx}\vect{L}^{-\top} \\
-&= \vect{L}^{-1}\vect{L}\vect{L}\trans\vect{L}^{-\top} \\
-&= \vect{I}_n,
-\end{align}
-so $y_i\sim\mathcal{N}(0,1)$ are independent. Therefore the mean of $q$ is
-\begin{align}
-\E(q) &= \E(\vect{y}\trans\vect{y}) \\
-&= \sum_{i=1}^n \E(y_i^2) \\
-&= n.
-\end{align}
-For the variance, with $\E(y_i^2)=1$ the cross terms vanish by independence, giving
-\begin{align}
-\sigma_{qq}^2 &= \E\big((q - n)^2\big) \\
-&= \E\Big(\big(\textstyle\sum_i (y_i^2-1)\big)^2\Big) \\
-&= \sum_i \E\big((y_i^2-1)^2\big) \\
-&= \sum_i \big(\E(y_i^4) - 2\E(y_i^2) + 1\big).
-\end{align}
-The fourth moment of a standard normal follows from integration by parts (with $u=y_i^3$, $\mathrm{d}v = y_i\,p(y_i)\,\mathrm{d}y_i$, $v=-p(y_i)$):
-\begin{align}
-\E(y_i^4) &= \int_{-\infty}^{+\infty} y_i^4\, p(y_i)\,\mathrm{d}y_i \\
-&= \underbrace{\big[-y_i^3 p(y_i)\big]_{-\infty}^{+\infty}}_{=\,0}
-+ \int_{-\infty}^{+\infty} 3 y_i^2\, p(y_i)\,\mathrm{d}y_i \\
-&= 3\,\E(y_i^2) \\
-&= 3.
-\end{align}
-Hence each term equals $3 - 2 + 1 = 2$, and
-\begin{align}
-\sigma_{qq}^2 = \sum_{i=1}^n 2 = 2n.
-\end{align}
-So $q\sim\chi^2(n)$ has mean $n$ and variance $2n$.
