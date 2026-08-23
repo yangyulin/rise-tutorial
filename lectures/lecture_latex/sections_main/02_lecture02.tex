@@ -76,7 +76,7 @@ Adding the translation ${}^{A}\vect{p}_{B}$ (the origin of $\{B\}$ expressed in 
 % =====================================================================
 \subsection{Defining rotation}
 
-\subsubsection{Euler angles}
+\paragraph{Euler angles.}
 With roll $\theta$ (about $x$), pitch $r$ (about $y$), yaw $\psi$ (about $z$),
 \begin{align}
 \vect{R}(\theta) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix},\;
@@ -91,7 +91,7 @@ and the yaw--pitch--roll composition is
 \begin{bmatrix} 1 & 0 & 0 \\ 0 & \cos\theta & -\sin\theta \\ 0 & \sin\theta & \cos\theta \end{bmatrix}.
 \end{align}
 
-\subsubsection{Infinitesimal rotation and the skew-symmetric matrix}
+\paragraph{Infinitesimal rotation and the skew-symmetric matrix.}
 For small angles $\delta\theta,\delta r,\delta\psi\to 0$ each elementary rotation linearizes ($\cos\to1$, $\sin\to$ angle):
 \begin{align}
 \vect{R}(\delta\theta) = \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & -\delta\theta \\ 0 & \delta\theta & 1 \end{bmatrix},\quad
@@ -151,7 +151,7 @@ which gives \textbf{Rodrigues' rotation formula}
 \end{empheq}
 For a small angle $\delta\theta\to0$, $\vect{R}(\delta\vect{\theta}) \approx \vect{I} + \skewsym{\delta\vect{\theta}}$ (small-angle approximation).
 
-\subsubsection{Logarithmic map}
+\paragraph{Logarithmic map.}
 The log map is the inverse of the exponential map:
 \begin{align}
 \log(\vect{R}) = \skewsym{\vect{\theta}}, \quad \Log(\vect{R}) = \vect{\theta}_{3\times1}, \qquad
@@ -277,7 +277,7 @@ Since this holds for all $\vect{R}\vect{v}$, we conclude $\skewsym{\vect{R}\vect
 \textbf{Homework.} Prove $\Exp(\vect{R}\vect{\varphi}) = \vect{R}\,\Exp(\vect{\varphi})\,\vect{R}\trans$.
 \end{quote}
 
-\subsubsection{Worked applications}
+\paragraph{Worked applications.}
 \textbf{(11) Recovering ${}^{C}_{I}\vect{R}$ from vector pairs.} Given camera frame $\{C\}$ and IMU frame $\{I\}$ with ${}^{C}\vect{v}_1 = {}^{C}_{I}\vect{R}\,{}^{I}\vect{v}_1$ and ${}^{C}\vect{v}_2 = {}^{C}_{I}\vect{R}\,{}^{I}\vect{v}_2$, the trick is to stack three independent directions (the third from the cross product) into an invertible matrix:
 \begin{align}
 \big[\,{}^{C}\vect{v}_1 \;\; {}^{C}\vect{v}_2 \;\; {}^{C}\vect{v}_1\times{}^{C}\vect{v}_2\,\big]
@@ -313,7 +313,7 @@ The four axioms: \emph{closure}
 \end{align}
 and \emph{associativity} $(\vect{T}_1\vect{T}_2)\vect{T}_3 = \vect{T}_1(\vect{T}_2\vect{T}_3)$.
 
-\subsubsection{Matrix Lie groups}
+\paragraph{Matrix Lie groups.}
 A \emph{group} is a set with an operation satisfying closure, associativity, identity, and invertibility. A \emph{Lie group} is a group that is also a smooth (differentiable) manifold whose group operation is smooth. A \emph{matrix Lie group} has matrices as its elements. The maps between the vector space, the Lie algebra, and the Lie group are
 \begin{align}
 \Reals^{m} \xrightarrow{\;\wedge\;(\text{wedge})\;} \mathfrak{so}(n) \xrightarrow{\;\exp\;} SO(n), \qquad
@@ -321,7 +321,7 @@ SO(n) \xrightarrow{\;\log\;} \mathfrak{so}(n) \xrightarrow{\;\vee\;(\text{vee})\
 \end{align}
 and for short we write $\vect{X} = \Exp(\vect{x}) = \exp(\vect{x}^{\wedge})$ and $\vect{x} = \Log(\vect{X}) = \log(\vect{X})^{\vee}$. For $SO(3)$ specifically, $\vect{\theta}\in\Reals^3 \to \skewsym{\vect{\theta}} = \vect{\theta}^{\wedge} \to \vect{R} = \exp(\vect{\theta}^{\wedge})$, and $\vect{R}\in SO(3) \to \skewsym{\vect{\theta}} = \log(\vect{R}) \to \vect{\theta} = \log(\vect{R})^{\vee}$.
 
-\subsubsection{Why this (manifold) machinery?}
+\paragraph{Why this (manifold) machinery?}
 It \emph{simplifies} estimation: the core idea is to use a smooth manifold to model parameters that are awkward in plain vector space, which makes optimization, interpolation, integration, and differentiation easier or even possible (Fig.~\ref{fig:lec02-manifold}). For example, a raw angle $\theta\in[-\pi,\pi]$ has a wrap-around cut; the circle/sphere is smooth, and the tangent line at a point models the small change / error state used in optimization.
 
 \begin{figure}[H]
@@ -419,7 +419,7 @@ with $\Ad_{\vect{T}} = \begin{bmatrix}\vect{R} & \vect{0}\\ \skewsym{\vect{p}}\v
 \textbf{Homework.} Prove $\vect{T}\,\Exp(\vect{\xi})\,\vect{T}^{-1} = \Exp(\Ad_{\vect{T}}\vect{\xi})$.
 \end{quote}
 
-\subsubsection{More operations}
+\subsubsection*{More operations}
 \paragraph{(1) Interpolation.} For ${}^{G}_{t_1}\vect{T},{}^{G}_{t_2}\vect{T}$, $t\in[t_1,t_2]$, $\lambda = \tfrac{t-t_1}{t_2-t_1}$: in $SE(3)$, with ${}^{t_1}_{t_2}\vect{\xi} = \Log({}^{G}_{t_1}\vect{T}^{-1}\,{}^{G}_{t_2}\vect{T})$,
 \begin{align}
 {}^{G}_{t}\vect{T} = {}^{G}_{t_1}\vect{T}\,\Exp\!\big(\lambda\,{}^{t_1}_{t_2}\vect{\xi}\big);

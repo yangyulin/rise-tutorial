@@ -329,7 +329,7 @@ which is the Jacobian for $t_d$. This is then the full calibration for the visio
 % =====================================================================
 \subsection{Point / line / plane representation}
 
-\subsubsection{Point representation}
+\subsubsection*{Point representation}
 In $\Reals^{3}$ (closest point),
 \begin{align}
 \vect{P}_f = \begin{bmatrix} x \\ y \\ z \end{bmatrix} = z\begin{bmatrix} x/z \\ y/z \\ 1 \end{bmatrix} = z\begin{bmatrix} u_n \\ v_n \\ 1 \end{bmatrix}.
@@ -364,7 +364,7 @@ with the three blocks
 \end{align}
 If the feature is far away, then the rotation is improved, but the Jacobian for translation will not be improved (the $-\lambda\,{}^{C_2}_{C_1}\vect{R}$ and $\lambda\vect{e}_1,\lambda\vect{e}_2$ columns vanish as $\lambda\to0$).
 
-\subsubsection{Plane representation}
+\subsubsection*{Plane representation}
 A plane is parameterized by its normal direction and distance to the origin (Fig.~\ref{fig:lec03-plane}):
 \begin{align}
 \vect{\pi} = \begin{bmatrix} \vect{n}_\pi \\ d_\pi \end{bmatrix}_{4\times1}, \qquad
@@ -452,7 +452,7 @@ The transformation chain is therefore
 {}^{G}\vect{p}_\pi \to ({}^{C}\vect{n}_\pi,{}^{C}d_\pi) \to ({}^{I}_{C}\vect{R},{}^{I}\vect{p}_C) \to ({}^{I}\vect{n}_\pi,{}^{I}d_\pi) \to {}^{I}\vect{p}_\pi.
 \end{align}
 
-\subsubsection{Line representation}
+\subsubsection*{Line representation}
 How do we represent a 3D line (Fig.~\ref{fig:lec03-line3d})? For a line $L$: $\vect{v}_e$ is the 3D direction, $d_L$ is the distance from the origin to the line, and $\vect{n}_e$ is the normal direction of the plane (through the line and the origin).
 
 \begin{figure}[H]
