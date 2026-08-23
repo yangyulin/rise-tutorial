@@ -1,7 +1,17 @@
 \section{Lecture 5: The IMU Model and IMU Integration}
 \label{sec:lecture05}
 
-\paragraph{Topics.} (1) the IMU measurement model (gyroscope, accelerometer, biases, noise); (2) continuous vs.\ discrete noise; (3) the IMU kinematics as a first-order ODE; (4) the big picture: IMU integration in a visual-inertial navigation system; (5) exact integration from $t_k$ to $t_{k+1}$; (6) computing $\Delta\vect{R},\Delta\vect{p},\Delta\vect{v}$ --- preintegration and three methods; (7) mean and covariance propagation with $SO(3)+\mathbb{R}^{3}$ errors; (8) the linearization using $SE_2(3)$.
+\subsection*{Topics}
+\begin{itemize}[itemsep=0.3em]
+\item the IMU measurement model (gyroscope, accelerometer, biases, noise);
+\item continuous vs.\ discrete noise;
+\item the IMU kinematics as a first-order ODE;
+\item the big picture: IMU integration in a visual-inertial navigation system;
+\item exact integration from $t_k$ to $t_{k+1}$;
+\item computing $\Delta\vect{R},\Delta\vect{p},\Delta\vect{v}$ --- preintegration and three methods;
+\item mean and covariance propagation with $SO(3)+\mathbb{R}^{3}$ errors;
+\item the linearization using $SE_2(3)$.
+\end{itemize}
 
 % Tighten matrix column spacing for the dense block-matrix algebra in this lecture.
 \setlength{\arraycolsep}{3.5pt}
