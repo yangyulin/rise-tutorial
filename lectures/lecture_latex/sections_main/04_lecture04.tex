@@ -1,7 +1,7 @@
 \section{Lecture 4: Information, Marginalization, and Estimator Design}
 \label{sec:lecture04}
 
-\subsection*{Topics}
+\subsection{Topics}
 \begin{itemize}[itemsep=0.3em]
 \item the matrix inversion lemma;
 \item covariance vs.\ information;
@@ -452,7 +452,7 @@ The extended Kalman filter is thus the incremental (marginalize-then-update) sol
 % =====================================================================
 \subsection{The relationship between Schur complement and nullspace projection}
 
-The Schur-complement marginalization (\S4.3) and the nullspace projection (\S4.6, item~4, the MSCKF) both eliminate $\vect{x}_B$ --- it turns out they are the \emph{same} operation. Take $\vect{z} = \vect{h}(\vect{x}_A,\vect{x}_B) + \vect{n}$, $\vect{n}\sim\mathcal{N}(\vect{0},\vect{R})$, with $\tilde{\vect{z}} = \vect{H}_A\tilde{\vect{x}}_A + \vect{H}_B\tilde{\vect{x}}_B + \vect{n}$.
+The Schur-complement marginalization (\S4.4) and the nullspace projection (\S4.7, item~4, the MSCKF) both eliminate $\vect{x}_B$ --- it turns out they are the \emph{same} operation. Take $\vect{z} = \vect{h}(\vect{x}_A,\vect{x}_B) + \vect{n}$, $\vect{n}\sim\mathcal{N}(\vect{0},\vect{R})$, with $\tilde{\vect{z}} = \vect{H}_A\tilde{\vect{x}}_A + \vect{H}_B\tilde{\vect{x}}_B + \vect{n}$.
 
 \paragraph{(1) Information form.} The normal equations are
 \begin{align}
