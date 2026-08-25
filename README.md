@@ -29,7 +29,7 @@ This course is designed to cover the in-depth math knowledge essential for resea
 | 7 | IMU pre-integration based VINS, multi-visual-inertial                        | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
 | 8 | State formulation (global-centric, invariant, robocentric, equivariant…)     | Chuchu Chen | todo | — |
 | 9 | Graph marginalization and sparsification, C-KLAM                             | Chuchu Chen | todo | — |
-| 10 | Learning-based SLAM / Dense Mapping                                         | Xingxing Zuo | todo | — |
+| 10 | Learning-based SLAM / Dense Mapping                                         | Xingxing Zuo | done | [Slides](lectures/10-learning-slam-dense-mapping/RiSE_DenseMapping_LearningSLAM202608.pdf) |
 
 ## Reference Reading
 
