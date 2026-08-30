@@ -18,18 +18,18 @@ This course is designed to cover the in-depth math knowledge essential for resea
 
 ## Outline
 
-| # | Topic | Instructor |
+| # | Topic | Contents |
 |:-:|---|---|
-| 1 | Basics: probability, linear algebra, linear systems                          | Yulin Yang |
-| 2 | Rotation, Lie / quaternion, translation, SE(3), SE<sub>2</sub>(3)            | Yulin Yang |
-| 3 | Camera model, triangulation, calibration, point / line / plane               | Yulin Yang |
-| 4 | Bundle adjustment, vision-based navigation, P3P / PnP, Schur complement       | Yulin Yang |
-| 5 | IMU model, IMU integration                                                   | Yulin Yang |
-| 6 | Kalman filter and batch least squares, marginalization, null space           | Yulin Yang |
-| 7 | State formulation (global-centric, invariant, robocentric, equivariant…)     | Chuchu Chen |
-| 8 | Kalman-filter-based VINS, optimization-based, observability analysis         | Chuchu Chen |
-| 9 | IMU pre-integration-based VINS, multi-IMU                                    | Yulin Yang |
-| 10 | Learning-based SLAM / Dense Mapping                                         | Xingxing Zuo |
+| 1 | Basics                            | probability, estimator, linear system                    |
+| 2 | 3D Geometry                       | rotation, Lie group (SE(3), SE<sub>2</sub>(3))           |
+| 3 | Visual SLAM I                     | camera model, point / line / plane                       |
+| 4 | Visual SLAM II                    | information, marginalization and pipeline                |
+| 5 | IMU                               | IMU model and integration                                |
+| 6 | Kalman Filter For SLAM            | KF and observability analysis, KF-based VINS             |
+| 7 | Batch Optimization For SLAM       | IMU pre-integration based VINS, multi-visual-inertial    |
+| 8 | Information Theory for Estimation | TBD                                                      |
+| 9 | System Consistency                | TBD                                                      |
+| 10 | Learning-based SLAM              | dense mapping                                            |
 
 ## Course Logistics
 
