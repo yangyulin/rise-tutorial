@@ -18,18 +18,18 @@ This course is designed to cover the in-depth math knowledge essential for resea
 
 ## Outline
 
-| # | Topic | Instructor | Status | Notes |
+| # | Topic | Contents | Recording | PDF |
 |:-:|---|---|:-:|:-:|
-| 1 | Basics: probability, estimator, linear system                                | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 2 | 3D geometry: rotation, Lie group (SE(3), SE<sub>2</sub>(3))                  | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 3 | Visual SLAM I: camera model, point / line / plane                            | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 4 | Visual SLAM II: information, marginalization and pipeline                    | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 5 | IMU model and integration                                                    | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 6 | Kalman filter (KF) and observability analysis, KF-based VINS                 | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 7 | IMU pre-integration based VINS, multi-visual-inertial                        | Yulin Yang | done | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 8 | State formulation (global-centric, invariant, robocentric, equivariant…)     | Chuchu Chen | todo | — |
-| 9 | Graph marginalization and sparsification, C-KLAM                             | Chuchu Chen | todo | — |
-| 10 | Learning-based SLAM / Dense Mapping                                         | Xingxing Zuo | done | [Slides](lectures/10-learning-slam-dense-mapping/RiSE_DenseMapping_LearningSLAM202608.pdf) |
+| 1 | Basics                            | probability, estimator, linear system                    | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 2 | 3D Geometry                       | rotation, Lie group (SE(3), SE<sub>2</sub>(3))           | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 3 | Visual SLAM I                     | camera model, point / line / plane                       | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 4 | Visual SLAM II                    | information, marginalization and pipeline                | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 5 | IMU                               | IMU model and integration                                | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 6 | Kalman Filter For SLAM            | KF and observability analysis, KF-based VINS             | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 7 | Batch Optimization For SLAM       | IMU pre-integration based VINS, multi-visual-inertial    | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 8 | Information Theory for Estimation | TBD                                                      | — | — |
+| 9 | System Consistency                | TBD                                                      | — | — |
+| 10 | Learning-based SLAM              | dense mapping                                            | — | [Slides](lectures/10-learning-slam-dense-mapping/RiSE_DenseMapping_LearningSLAM202608.pdf) |
 
 ## Reference Reading
 
