@@ -18,18 +18,18 @@ This course is designed to cover the in-depth math knowledge essential for resea
 
 ## Outline
 
-| # | Topic | Contents |
-|:-:|---|---|
-| 1 | Basics                            | probability, estimator, linear system                    |
-| 2 | 3D Geometry                       | rotation, Lie group (SE(3), SE<sub>2</sub>(3))           |
-| 3 | Visual SLAM I                     | camera model, point / line / plane                       |
-| 4 | Visual SLAM II                    | information, marginalization and pipeline                |
-| 5 | IMU                               | IMU model and integration                                |
-| 6 | Kalman Filter For SLAM            | KF and observability analysis, KF-based VINS             |
-| 7 | Batch Optimization For SLAM       | IMU pre-integration based VINS, multi-visual-inertial    |
-| 8 | Information Theory for Estimation | TBD                                                      |
-| 9 | System Consistency                | TBD                                                      |
-| 10 | Learning-based SLAM              | dense mapping                                            |
+| # | Topic | Contents | Instructor |
+|:-:|---|---|---|
+| 1 | Basics                            | probability, estimator, linear system                    | Yulin Yang |
+| 2 | 3D Geometry                       | rotation, Lie group (SE(3), SE<sub>2</sub>(3))           | Yulin Yang |
+| 3 | Visual SLAM I                     | camera model, point / line / plane                       | Yulin Yang |
+| 4 | Visual SLAM II                    | information, marginalization and pipeline                | Yulin Yang |
+| 5 | IMU                               | IMU model and integration                                | Yulin Yang |
+| 6 | Kalman Filter For SLAM            | KF and observability analysis, KF-based VINS             | Yulin Yang |
+| 7 | Batch Optimization For SLAM       | IMU pre-integration based VINS, multi-visual-inertial    | Yulin Yang |
+| 8 | Information Theory for Estimation | TBD                                                      | Chuchu Chen |
+| 9 | System Consistency                | TBD                                                      | Chuchu Chen |
+| 10 | Learning-based SLAM              | dense mapping                                            | Xingxing Zuo |
 
 ## Course Logistics
 
