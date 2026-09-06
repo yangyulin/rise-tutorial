@@ -20,16 +20,16 @@ This course is designed to cover the in-depth math knowledge essential for resea
 
 | # | Topic | Contents | Instructor | Recording | PDF |
 |:-:|---|---|---|:-:|:-:|
-| 1 | Basics                            | probability, estimator, linear system                    | Yulin Yang | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 2 | 3D Geometry                       | rotation, Lie group (SE(3), SE<sub>2</sub>(3))           | Yulin Yang | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 3 | Visual SLAM I                     | camera model, point / line / plane                       | Yulin Yang | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 4 | Visual SLAM II                    | information, marginalization and pipeline                | Yulin Yang | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 5 | IMU                               | IMU model and integration                                | Yulin Yang | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 6 | Kalman Filter For SLAM            | KF and observability analysis, KF-based VINS             | Yulin Yang | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
-| 7 | Batch Optimization For SLAM       | IMU pre-integration based VINS, multi-visual-inertial    | Yulin Yang | — | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 1 | Basics                            | probability, estimator, linear system                    | Yulin Yang | [Video](https://drive.google.com/file/d/1HRGrbFuXfynd2-6rvDumLeVc_6lCAzi3/view) · 91 min | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 2 | 3D Geometry                       | rotation, Lie group (SE(3), SE<sub>2</sub>(3))           | Yulin Yang | [Video](https://drive.google.com/file/d/1vwjgKtdbrztgwA3NI-uGDzshWJkM4zg1/view) · 121 min | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 3 | Visual SLAM I                     | camera model, point / line / plane                       | Yulin Yang | [Video](https://drive.google.com/file/d/1e7_ReJUc-0zpXk61Rzlyz1BPRkw4TxGy/view) · 60 min | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 4 | Visual SLAM II                    | information, marginalization and pipeline                | Yulin Yang | [Video](https://drive.google.com/file/d/16eASmR8Ov5nTpGIpdpywXcJ2SVoo5td6/view) · 63 min | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 5 | IMU                               | IMU model and integration                                | Yulin Yang | [Video](https://drive.google.com/file/d/1TQ3PXG9yEHVVWUb6icUNG7pPxK-he2Vl/view) · 52 min | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 6 | Kalman Filter For SLAM            | KF and observability analysis, KF-based VINS             | Yulin Yang | [Video](https://drive.google.com/file/d/1CQdPAIN9kUd9L9KbUzMtU0wZqCpUpmuQ/view) · 112 min | [PDF](lectures/lecture_latex/rise_notes.pdf) |
+| 7 | Batch Optimization For SLAM       | IMU pre-integration based VINS, multi-visual-inertial    | Yulin Yang | [Video](https://drive.google.com/file/d/10yUtOS2AWcOsU-PsvfVOq7hoUliKqiz5/view) · 78 min | [PDF](lectures/lecture_latex/rise_notes.pdf) |
 | 8 | Information Theory for Estimation | TBD                                                      | Chuchu Chen | — | — |
 | 9 | System Consistency                | TBD                                                      | Chuchu Chen | — | — |
-| 10 | Learning-based SLAM              | dense mapping                                            | Xingxing Zuo | — | [Slides](lectures/10-learning-slam-dense-mapping/RiSE_DenseMapping_LearningSLAM202608.pdf) |
+| 10 | Learning-based SLAM              | dense mapping                                            | Xingxing Zuo | [Video](https://drive.google.com/file/d/17RyOlIUV04p3X8vmu0KWbI0l19waEyK2/view) · 83 min | [Slides](lectures/10-learning-slam-dense-mapping/RiSE_DenseMapping_LearningSLAM202608.pdf) |
 
 ## Reference Reading
 
